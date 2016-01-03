@@ -40,4 +40,10 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('tokens', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
     Route::get('debug', 'AuthController@debug');
+
+    Route::group(array('prefix' => 'users/me'), function() {
+        Route::get('/', 'UsersController@getMe');
+        Route::put('/', 'UsersController@updateMe');
+
+    });
 });

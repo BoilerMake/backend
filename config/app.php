@@ -158,6 +158,7 @@ return [
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
         'Barryvdh\Cors\ServiceProvider',
         'Zizaco\Entrust\EntrustServiceProvider',
+        'Spatie\Tail\TailServiceProvider',
 
     ],
 
