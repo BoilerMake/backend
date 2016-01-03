@@ -4,12 +4,19 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/hiendv/entrust"
+        }
+    ],
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "spatie/laravel-tail": "^1.1",
         "tymon/jwt-auth": "0.5.*",
-        "barryvdh/laravel-cors": "0.7.x"
+        "barryvdh/laravel-cors": "0.7.x",
+        "zizaco/entrust": "dev-laravel-5-2@dev"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

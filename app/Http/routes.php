@@ -29,3 +29,15 @@ Route::get('/', function () {
 Route::group(['middleware' => ['web']], function () {
     //
 });
+
+/**
+ * API ROUTES
+ */
+Route::group(['prefix' => 'v1','namespace'=>'API'], function()
+{
+    //splash page signups
+    Route::get('test','GeneralController@test');
+    Route::post('tokens', 'AuthController@login');
+    Route::post('users', 'AuthController@signUp');
+    Route::get('debug', 'AuthController@debug');
+});
