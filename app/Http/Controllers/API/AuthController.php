@@ -27,7 +27,7 @@ class AuthController extends Controller {
         if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
             $roles = Auth::user()->roles()->get()->lists('name');
             $token = JWTAuth::fromUser(Auth::user(),['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>Auth::user()->slug()]);
-            return GeneralController::successWrap(compact('token'));
+            return compact('token');
         }
         else {
             // invalid
@@ -60,20 +60,11 @@ class AuthController extends Controller {
             $user->email = $request['email'];
             $user->save();
 
-            return array('success', 'true');
+            $user->postSignupActions(); // Attach roles
 
-            /**
-            * Needs comments, don't really understand what this does
-            **/
-
-            //  //signup actions
-            // $user->postSignupActions();
-
-            // $data  = $user->attributesToArray();
-            // $roles = $user->roles()->get()->lists('name');
-            // $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
-            // $data ['token']=$token;
-            // return GeneralController::successWrap($data);
+            $roles = $user->roles()->get()->lists('name');
+            $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
+            return compact('token');
         }
     }
 
