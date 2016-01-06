@@ -67,10 +67,10 @@ class AuthController extends Controller {
             $roles = $user->roles()->get()->lists('name');
             $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
             
-   //          Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
-   //  			$message->from('hello@boilermake.org', 'Laravel');
-   //  			$message->to($user->email);
-			// });
+            Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
+    			$message->from('hello@boilermake.org', 'Laravel');
+    			$message->to($user->email);
+			});
 			
             return compact('token');
         }

@@ -32,4 +32,7 @@ class User extends Authenticatable
     public function slug() {
         return $this->first_name." ".$this->last_name." (#".$this->id.")";
     }
+    public function application() {
+        return $this->hasOne('App\Models\Application');
+    }
 }
