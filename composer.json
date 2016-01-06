@@ -16,7 +16,8 @@
         "spatie/laravel-tail": "^1.1",
         "tymon/jwt-auth": "0.5.*",
         "barryvdh/laravel-cors": "0.7.x",
-        "zizaco/entrust": "dev-laravel-5-2@dev"
+        "zizaco/entrust": "dev-laravel-5-2@dev",
+        "guzzlehttp/guzzle": "~5.3|~6.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

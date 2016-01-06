@@ -37,13 +37,13 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 {
     //splash page signups
     Route::get('test','GeneralController@test');
-    Route::post('tokens', 'AuthController@login');
+    Route::post('auth', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
     Route::get('debug', 'AuthController@debug');
 
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
-
+        Route::get('attributes', 'UsersController@getAttributes');
     });
 });
