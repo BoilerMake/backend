@@ -29,14 +29,20 @@ Route::get('/', function () {
 Route::group(['middleware' => ['web']], function () {
     //
 });
+Route::get('password/email', 'Auth\PasswordController@getEmail');
+Route::post('password/email', 'Auth\PasswordController@postEmail');
 
+
+Route::get('password/reset{token}','Auth\PasswordController@getReset');
+Route::post('password/reset', 'Auth\PasswordController@postReset');
 /**
  * API ROUTES
  */
 Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 {
     //splash page signups
-    Route::get('test','GeneralController@test');
+
+    Route::get('test','UsersController@test')->middleware(['jwt.auth', 'role:exec']);
     Route::post('auth', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
     Route::get('debug', 'AuthController@debug');
