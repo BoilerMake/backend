@@ -42,7 +42,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('debug', 'AuthController@debug');
 
     Route::group(array('prefix' => 'users/me'), function() {
-        Route::get('/', 'UsersController@getMe');
+        Route::get('/', 'UsersController@getAttributes');
         Route::put('/', 'UsersController@updateMe');
         Route::get('attributes', 'UsersController@getAttributes');
         Route::post('app', 'UsersController@application');
