@@ -4,9 +4,8 @@ namespace App\Models;
 use Tymon\JWTAuth\JWTAuth;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-class User extends Authenticatable implements CanResetPasswordContract
+
+class User extends Authenticatable
 {
     use EntrustUserTrait;
     /**
