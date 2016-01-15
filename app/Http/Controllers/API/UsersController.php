@@ -51,4 +51,8 @@ class UsersController extends Controller {
 			$application->save();
 		}
 	}
+
+	public function test(Request $request) {
+		var_dump("OK");
+	}
 }
