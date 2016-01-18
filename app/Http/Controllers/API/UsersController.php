@@ -17,8 +17,8 @@ class UsersController extends Controller {
 
 	// Example method that is automatically authenticated by middleware
 	public function getAttributes() {
-		// return Auth::user()->getAttributes();
-		return Auth::user()->application->toArray();
+		 return Auth::user()->getAttributes();
+		//return Auth::user()->application->toArray();
 	}
 
 	public function application(Request $request) {

@@ -25,9 +25,16 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    /**
+    * makes a user a hacker by default and gives them an application
+    */
     public function postSignupActions()
     {
         $this->attachRole(Role::where('name','hacker')->first());
+
+        $app = new Application();
+        $app->user_id=$this->id;
+        $app->save();
     }
     public function slug() {
         return $this->first_name." ".$this->last_name." (#".$this->id.")";
