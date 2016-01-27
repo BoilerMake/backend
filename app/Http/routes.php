@@ -45,6 +45,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::get('/', 'UsersController@getAttributes');
         Route::put('/', 'UsersController@updateMe');
         Route::get('attributes', 'UsersController@getAttributes');
-        Route::post('app', 'UsersController@application');
+        Route::get('application', 'UsersController@getApplication');
+        Route::post('application', 'UsersController@updateApplication');
     });
 });
