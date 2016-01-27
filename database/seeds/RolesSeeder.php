@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-
+use App\Models\Role;
 class RolesSeeder extends Seeder
 {
     /**
@@ -11,20 +11,9 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-        $hacker = new App\Models\Role();
-		$hacker->name         = 'hacker';
-		$hacker->save();
-
-		$sponsor = new App\Models\Role();
-		$sponsor->name         = 'sponsor';
-		$sponsor->save();
-
-		$exec = new App\Models\Role();
-		$exec->name         = 'exec';
-		$exec->save();
-
-		$admin = new App\Models\Role();
-		$admin->name         = 'admin';
-		$admin->save();
+    	$a = Role::firstOrCreate(['name' => 'hacker']);
+    	$a = Role::firstOrCreate(['name' => 'sponsor']);
+    	$a = Role::firstOrCreate(['name' => 'exec']);
+    	$a = Role::firstOrCreate(['name' => 'admin']);
     }
 }
