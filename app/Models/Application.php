@@ -10,4 +10,14 @@ class Application extends Model {
 	public function user() {
 		return $this->belongsTo('App\Models\User');
 	}
+    public function school() {
+        return $this->belongsTo('App\Models\School');
+    }
+	protected $appends = array('completed');
+
+    public function getCompletedAttribute()
+    {
+    	//TODO: logic for determining if an app is 'complete'
+        return true;   
+    }
 }
