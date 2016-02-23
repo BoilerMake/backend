@@ -10,6 +10,7 @@
 	  * ubuntu/debian linux: `sudo apt-get install php5-mysql`
 	* also remember to start the service if you're in linux
   * composer: [instructions here](https://getcomposer.org/doc/00-intro.md)
+  	* useful: [https://adamcod.es/2013/03/07/composer-install-vs-composer-update.html](https://adamcod.es/2013/03/07/composer-install-vs-composer-update.html) 
 * run `composer install`
 * copy .env.example into .env and configure your DB credentials (and create a DB)
 * create the database
