@@ -13,12 +13,12 @@ class CreateApplicationRankingsTable extends Migration
     public function up()
     {
         Schema::create('application_rankings', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('application_id')->unsigned()->index();
-            $table->foreign('application_id')->references('id')->on('applications')->onDelete('cascade');
+            $table->foreign('application_id')->references('id')->on('applications');
             $table->integer('user_id')->unsigned()->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->integer('ranking')->nullable();
-            $table->primary(['application_id', 'user_id']);
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('rating')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateApplicationRankingsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('application_user');
+        Schema::drop('application_rankings');
     }
 }

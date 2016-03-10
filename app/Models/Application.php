@@ -13,11 +13,18 @@ class Application extends Model {
     public function school() {
         return $this->belongsTo('App\Models\School');
     }
-	protected $appends = array('completed');
+	protected $appends = ['completed','reviews'];
 
     public function getCompletedAttribute()
     {
     	//TODO: logic for determining if an app is 'complete'
         return true;   
+    }
+    /**
+    * Determine number of times the application has been reviewed
+    */
+    public function getReviewsAttribute()
+    {
+        return ApplicationRanking::where('application_id',$this->id)->get()->count();
     }
 }

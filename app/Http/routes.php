@@ -50,5 +50,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     });
     Route::group(array('prefix' => 'execs'), function() {
         Route::get('hackers', 'ExecController@getHackers');
+        Route::get('applications/next','ExecController@getNextApplicationID');
+        Route::get('applications/{id}/view', 'ExecController@getApplication');
+        Route::put('applications/{id}/rate', 'ExecController@rateApplication');
     });
 });
