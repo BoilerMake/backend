@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateApplicationRankingsTable extends Migration
+class CreateApplicationRatingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class CreateApplicationRankingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('application_rankings', function (Blueprint $table) {
+        Schema::create('application_ratings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('application_id')->unsigned()->index();
             $table->foreign('application_id')->references('id')->on('applications');
@@ -30,6 +30,6 @@ class CreateApplicationRankingsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('application_rankings');
+        Schema::drop('application_ratings');
     }
 }

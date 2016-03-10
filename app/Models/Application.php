@@ -25,6 +25,6 @@ class Application extends Model {
     */
     public function getReviewsAttribute()
     {
-        return ApplicationRanking::where('application_id',$this->id)->get()->count();
+        return ApplicationRating::where('application_id',$this->id)->get()->count();
     }
 }

@@ -2,7 +2,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
-class ApplicationRanking extends Model
+class ApplicationRating extends Model
 {
 	protected $fillable = ['*'];
 }
