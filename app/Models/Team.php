@@ -14,4 +14,14 @@ class Team extends Model
         }
         return $hackers;
     }
+    public function getHackersWithRating()
+    {
+    	$hackers = [];
+        foreach (Application::where("team_id",$this->id)->get() as $app) {
+        	$hacker = User::with('application','application.ratings')->find($app->user_id);
+        	$hacker['application']['ratinginfo']=$hacker->application->ratingInfo();
+        	$hackers[]=$hacker;
+        }
+        return $hackers;
+    }
 }

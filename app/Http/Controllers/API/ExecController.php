@@ -9,6 +9,7 @@ use App\Models\Application;
 use Input;
 use Log;
 use DB;
+use App\Models\Team;
 use App\Models\Role;
 use App\Models\ApplicationRating;
 class ExecController extends Controller {
@@ -58,5 +59,36 @@ class ExecController extends Controller {
 		$ranking->rating =$rating;
 		$ranking->save();
 		return ['next'=>self::getNextApplicationID()];
+	}
+	public function getTeams()
+	{
+		$teams = Team::all();
+		foreach ($teams as $team ) {
+			$team['hd']=$team->getHackersWithRating();
+			$hackerRatings=[];
+			$ratingSum=0;
+			$ratingCount=0;
+			foreach ($team['hd'] as $eachHackerDetail) {
+				$eachHackerRating=$eachHackerDetail['application']['ratinginfo']['average'];
+				$hackerRatings[]=$eachHackerRating;
+				$ratingCount+=$eachHackerDetail['application']['ratinginfo']['count'];
+				$ratingSum+=$eachHackerRating;
+			}
+			$min=0; $max=0; $avg=0;
+			if($ratingCount!=0)
+			{
+				$avg = $ratingSum/$ratingCount;
+				$min = min($hackerRatings);
+				$max = max($hackerRatings);
+			}
+			$team['overall_ratings']=[
+            "count"=>$ratingCount,
+            "min"=>$min,
+            "max"=>$max,
+            // "ratings"=>$ratings,
+            "average"=>$avg
+        ];
+		}
+		return $teams;
 	}
 }
