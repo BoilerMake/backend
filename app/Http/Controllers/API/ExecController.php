@@ -44,7 +44,7 @@ class ExecController extends Controller {
 		$user = Auth::user();
 		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
 			return;
-		$app = Application::with('user','school')->find($id);
+		$app = Application::with('user','school','team')->find($id);
 		$app->myrating = ApplicationRating::where('application_id',$id)->where('user_id',$user->id)->first();
 		return $app;
 	}

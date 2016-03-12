@@ -6,8 +6,10 @@ use Auth;
 use Validator;
 use Illuminate\Http\Request;
 use App\Models\Application;
+use App\Models\Team;
 use Input;
 use Log;
+use Carbon\Carbon;
 class UsersController extends Controller {
 
 	public function __construct() {
@@ -26,35 +28,50 @@ class UsersController extends Controller {
 		Log::info($request);
 		$user = Auth::user();
 		$data = $request->all();
-			foreach($data as $key => $value)
+		foreach($data as $key => $value)
+		{
+			//update the user info
+			if(in_array($key,['email','first_name','first_name','phone']))
 			{
-				if(in_array($key,['email','first_name','first_name','phone']))
+				$user->$key=$value;
+				$user->save();
+			}
+		
+		}
+		if(isset($data['application']))
+		{
+			//update the application
+			$application = self::getApplication();
+			foreach ($data['application'] as $key => $value) {
+				if(in_array($key,['age','gender','major','diet','diet_restrictions','tshirt']))
 				{
-					$user->$key=$value;
-					$user->save();
-					Log::info($value);
+					$application->$key=$value;
+				}
+				if($key=="team_code")
+				{
+					$team = Team::where("code",$value)->get()->first();
+					$application->team_id=$team->id;
 				}
 			}
-			if(isset($data['application']))
-			{
-				//update the application
-				$application = Application::firstOrCreate(['user_id' => Auth::user()->id]);
-				foreach ($data['application'] as $key => $value) {
-					if(in_array($key,['age','gender','major','diet','diet_restrictions','tshirt']))
-					{
-						$application->$key=$value;
-						$application->save();
-					}
-				}
-			}
+			$application->save();
+		}
 
 	}
 
 	public function getApplication()
 	{
 		$application = Application::firstOrCreate(['user_id' => Auth::user()->id]);
+		if(!$application->team_id)
+		{
+			$team = new Team();
+			$team->code = md5(Carbon::now().getenv("APP_KEY"));
+			$team->save();
+			$application->team_id = $team->id;
+		}
 		$application->save();
+		$application->teaminfo = $application->team;
 		return $application;
+
 	}
 	// public function updateApplication(Request $request) {
 	// 	$validator = Validator::make($request->all(), [
