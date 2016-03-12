@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Application extends Model {
     use SoftDeletes;
     public $teaminfo = null;
+    public $schoolinfo = null;
 	protected $fillable =  ['user_id', 'age', 'gender', 'major', 'grad_year', 'diet', 'diet_restrictions', 'tshirt', 'phone', 'created_at', 'updated_at', 'deleted_at'];
 	public function user() {
 		return $this->belongsTo('App\Models\User');
