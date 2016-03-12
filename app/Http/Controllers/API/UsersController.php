@@ -36,7 +36,6 @@ class UsersController extends Controller {
 				$user->$key=$value;
 				$user->save();
 			}
-		
 		}
 		if(isset($data['application']))
 		{
@@ -50,7 +49,8 @@ class UsersController extends Controller {
 				if($key=="team_code")
 				{
 					$team = Team::where("code",$value)->get()->first();
-					$application->team_id=$team->id;
+					if($team)//todo return status of this
+						$application->team_id=$team->id;
 				}
 			}
 			$application->save();
@@ -60,6 +60,7 @@ class UsersController extends Controller {
 
 	public function getApplication()
 	{
+		//todo: only send along the application if they are a hacker!
 		$application = Application::firstOrCreate(['user_id' => Auth::user()->id]);
 		if(!$application->team_id)
 		{

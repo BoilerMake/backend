@@ -17,6 +17,29 @@ class Application extends Model {
     public function team() {
         return $this->belongsTo('App\Models\Team');
     }
+    public function ratings()
+    {
+        return $this->hasMany('App\Models\ApplicationRating');
+    }
+    public function ratingInfo()
+    {
+        $count = ApplicationRating::where('application_id',$this->id)->get()->count();
+        $sum = 0;
+        $ratings=[];
+        foreach ($this->ratings as $each) {
+            $rating=intval($each->rating);
+            $sum+=$rating;
+            $ratings[]=$rating;
+        }
+        return 
+        [
+            "count"=>$count,
+            "min"=>min($ratings),
+            "max"=>max($ratings),
+            // "ratings"=>$ratings,
+            "average"=>$sum/$count
+        ];
+    }
 	protected $appends = ['completed','reviews'];
     
     public function getCompletedAttribute()

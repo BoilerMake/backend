@@ -24,6 +24,9 @@ class ExecController extends Controller {
 		{
 		    $q->where('name', 'hacker');
 		})->with('application','application.school')->get();
+		foreach ($users as $user) {
+			$user['application']['rating_info']=$user->application->ratingInfo();
+		}
 		return $users;
 	}
 	public function getNextApplicationID()
