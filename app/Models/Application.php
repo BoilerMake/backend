@@ -53,8 +53,7 @@ class Application extends Model {
     
     public function getCompletedAttribute()
     {
-    	//TODO: logic for determining if an app is 'complete'
-        return true;   
+        return isset($this->age, $this->gender, $this->major, $this->grad_year, $this->essay1, $this->essay2);
     }
     /**
     * Determine number of times the application has been reviewed
