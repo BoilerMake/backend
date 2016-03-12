@@ -32,13 +32,21 @@ class Application extends Model {
             $sum+=$rating;
             $ratings[]=$rating;
         }
+        $min=0; $max=0; $avg=0;
+            if($count!=0)
+            {
+                $avg = $sum/$count;
+                $min = min($ratings);
+                $max = max($ratings);
+                $avg = $sum/$count;
+            }
         return 
         [
             "count"=>$count,
-            "min"=>min($ratings),
-            "max"=>max($ratings),
+            "min"=>$min,
+            "max"=>$max,
             // "ratings"=>$ratings,
-            "average"=>$sum/$count
+            "average"=>$avg
         ];
     }
 	protected $appends = ['completed','reviews'];
