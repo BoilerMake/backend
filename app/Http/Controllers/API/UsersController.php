@@ -74,6 +74,16 @@ class UsersController extends Controller {
 		return $application;
 
 	}
+	public function leaveCurrentTeam()
+	{
+		$app = self::getApplication();
+		$old_team_id = $app->team_id;
+		$app->team_id=null;
+		$app->save();
+		if(Application::where("team_id",$old_team_id)->get()->count()==0)//we don't want empty teams
+			Team::find($old_team_id)->delete();
+		return ['ok'];
+	}
 	// public function updateApplication(Request $request) {
 	// 	$validator = Validator::make($request->all(), [
  //            'age' => 'integer|min:0|max:255',
