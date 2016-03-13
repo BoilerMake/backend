@@ -94,4 +94,48 @@ class ExecController extends Controller {
 		}
 		return $teams;
 	}
+	public function getAllStats() {
+		$users = User::whereHas('roles', function($q) {
+		    $q->where('name', 'hacker');
+		})->with('application','application.school')->get();
+		$gender = array();
+		$grad_year = array();
+		$school = array();
+		$completed = array(0, 0);
+		foreach($users as $user) {
+			if($user->application->completed) {
+				if(!isset($gender[$user->application->gender])) {
+					$gender[$user->application->gender] = 1;
+				}
+				else {
+					$gender[$user->gender]++;
+				}
+
+				if(!isset($grad_year[$user->application->grad_year])) {
+					$grad_year[$user->application->grad_year] = 1;
+				}
+				else {
+					$grad_year[$user->application->grad_year]++;
+				}
+				if(!isset($school[$user->application->school])) {
+					$school[$user->application->school] = 1;
+				}
+				else {
+					$school[$user->application->school]++;
+				}
+				$completed[1]++;
+			}
+			else {
+				$completed[0]++;
+			}
+		}
+		var_dump($gender);
+		var_dump($grad_year);
+		// var_dump($school);
+		var_dump($completed);
+	}
+
+	public function getStatsBySchool() {
+		
+	}
 }
