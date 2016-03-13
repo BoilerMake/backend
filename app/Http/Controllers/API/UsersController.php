@@ -42,7 +42,7 @@ class UsersController extends Controller {
 			//update the application
 			$application = self::getApplication();
 			foreach ($data['application'] as $key => $value) {
-				if(in_array($key,['age','gender','major','diet','diet_restrictions','tshirt','github','essay1','essay2','school_id']))
+				if(in_array($key,['age','grad_year', 'gender','major','diet','diet_restrictions','tshirt','github','essay1','essay2','school_id']))
 				{
 					$application->$key=$value;
 				}
