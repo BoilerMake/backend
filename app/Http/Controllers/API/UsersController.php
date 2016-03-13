@@ -52,6 +52,10 @@ class UsersController extends Controller {
 					if($team)//todo return status of this
 						$application->team_id=$team->id;
 				}
+				if($key=="school")
+				{
+					$application->school_id=$value['id'];
+				}
 			}
 			$application->save();
 		}
