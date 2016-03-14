@@ -12,6 +12,7 @@ use DB;
 use App\Models\Team;
 use App\Models\Role;
 use App\Models\ApplicationRating;
+use AWS;
 class ExecController extends Controller {
 
 	public function __construct() {
@@ -49,6 +50,15 @@ class ExecController extends Controller {
 		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
 			return;
 		$app = Application::with('user','school','team')->find($id);
+
+		$s3 = AWS::createClient('s3');
+        $cmd = $s3->getCommand('getObject', [
+            'Bucket' => getenv('S3_BUCKET'),
+            'Key'    => 'r/'.$app->user->id.'.pdf',
+            'ResponseContentType' => 'application/pdf'
+        ]);
+        $request = $s3->createPresignedRequest($cmd, '+1 day');
+		$app->resumeURL = (string) $request->getUri();
 		$app->myrating = ApplicationRating::where('application_id',$id)->where('user_id',$user->id)->first();
 		return $app;
 	}
