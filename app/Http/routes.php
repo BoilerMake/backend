@@ -47,6 +47,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::put('/', 'UsersController@updateMe');
         Route::put('leaveteam', 'UsersController@leaveCurrentTeam');
         Route::get('attributes', 'UsersController@getAttributes');
+        Route::get('resumePUT','UsersController@getResumePutUrl');
         Route::get('application', 'UsersController@getApplication');
         Route::post('application', 'UsersController@updateApplication');
     });

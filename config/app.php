@@ -160,6 +160,8 @@ return [
         'Zizaco\Entrust\EntrustServiceProvider',
         'Spatie\Tail\TailServiceProvider',
 
+        Aws\Laravel\AwsServiceProvider::class,
+
     ],
 
     /*
@@ -211,6 +213,7 @@ return [
         'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
         'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
         'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
+        'AWS' => Aws\Laravel\AwsFacade::class,
 
 
     ],

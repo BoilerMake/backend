@@ -10,6 +10,7 @@ use App\Models\Team;
 use Input;
 use Log;
 use Carbon\Carbon;
+use AWS;
 class UsersController extends Controller {
 
 	public function __construct() {
@@ -42,7 +43,9 @@ class UsersController extends Controller {
 			//update the application
 			$application = self::getApplication();
 			foreach ($data['application'] as $key => $value) {
-				if(in_array($key,['age','grad_year', 'gender','major','diet','diet_restrictions','tshirt','github','essay1','essay2','school_id']))
+				if(in_array($key,['age','grad_year', 'gender','major','diet',
+					'diet_restrictions','tshirt','github','essay1','essay2',
+					'resume_filename','resume_uploaded']))
 				{
 					$application->$key=$value;
 				}
@@ -78,6 +81,19 @@ class UsersController extends Controller {
 		$application->schoolinfo = $application->school;
 		return $application;
 
+	}
+	public function getResumePutUrl()
+	{
+		$user = Auth::user();
+
+		$s3 = AWS::createClient('s3');
+        $cmd = $s3->getCommand('PutObject', [
+            'Bucket' => getenv('S3_BUCKET'),
+            'Key'    => 'r/'.$user->id.'.pdf'
+        ]);
+
+        $request = $s3->createPresignedRequest($cmd, '+1 day');
+        return (string) $request->getUri();
 	}
 	public function leaveCurrentTeam()
 	{

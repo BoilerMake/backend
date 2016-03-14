@@ -17,7 +17,8 @@
         "tymon/jwt-auth": "0.5.*",
         "barryvdh/laravel-cors": "0.7.x",
         "zizaco/entrust": "dev-laravel-5-2@dev",
-        "guzzlehttp/guzzle": "~5.3|~6.0"
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "aws/aws-sdk-php-laravel": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
