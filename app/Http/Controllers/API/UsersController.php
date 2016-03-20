@@ -26,7 +26,7 @@ class UsersController extends Controller {
 	}
 	public function updateMe(Request $request)
 	{
-		Log::info($request);
+		// Log::info($request);
 		$user = Auth::user();
 		$data = $request->all();
 		foreach($data as $key => $value)
@@ -41,7 +41,7 @@ class UsersController extends Controller {
 		if(isset($data['application']))
 		{
 			//update the application
-			$application = self::getApplication();
+			$application = self::getApplication()['application'];
 			foreach ($data['application'] as $key => $value) {
 				if(in_array($key,['age','grad_year', 'gender','major','diet',
 					'diet_restrictions','tshirt','github','essay1','essay2',
@@ -62,13 +62,19 @@ class UsersController extends Controller {
 			}
 			$application->save();
 		}
+		return [
+			'application'=>$application,
+			'validation'=>$application->validationDetails(),
+			'phase'=>intval(getenv('APP_PHASE'))
+		];
 
 	}
 
 	public function getApplication()
 	{
+		$user_id = Auth::user()->id;
 		//todo: only send along the application if they are a hacker!
-		$application = Application::firstOrCreate(['user_id' => Auth::user()->id]);
+		$application = Application::firstOrCreate(['user_id' => $user_id]);
 		if(!$application->team_id)
 		{
 			$team = new Team();
@@ -79,7 +85,11 @@ class UsersController extends Controller {
 		$application->save();
 		$application->teaminfo = $application->team;
 		$application->schoolinfo = $application->school;
-		return $application;
+		return [
+			'application'=>$application,
+			'validation'=>$application->validationDetails(),
+			'phase'=>intval(getenv('APP_PHASE'))
+		];
 
 	}
 	public function getResumePutUrl()
@@ -105,34 +115,4 @@ class UsersController extends Controller {
 			Team::find($old_team_id)->delete();
 		return ['ok'];
 	}
-	// public function updateApplication(Request $request) {
-	// 	$validator = Validator::make($request->all(), [
- //            'age' => 'integer|min:0|max:255',
- //            'gender' => 'string',
- //            'major' => 'string',
- //            'grad_year' => 'integer', // should be string
- //            'diet' => 'string|max:255',
- //            'diet_restrictions' => 'string',
- //            'tshirt' => 'integer|min:0|max:255',
- //            'phone' => 'string|max:255',
-
- //        ]);
-
- //        if ($validator->fails()) {
- //        	// uh oh
- //        }
- //        else {
-	// 		$application = Application::firstOrCreate(['user_id' => Auth::user()->id]);
-	// 		$application->user_id = Auth::user()->id;
-	// 		$application->age = $request->input('age');
-	// 		$application->gender = $request->input('gender');
-	// 		$application->major = $request->input('major');
-	// 		$application->grad_year = $request->input('grad_year');
-	// 		$application->diet = $request->input('diet');
-	// 		$application->diet_restrictions = $request->input('diet_restrictions');
-	// 		$application->tshirt = $request->input('tshirt');
-	// 		$application->phone = $request->input('phone');
-	// 		$application->save();
-	// 	}
-	// }
 }
