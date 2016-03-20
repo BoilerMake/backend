@@ -30,6 +30,13 @@ class ExecController extends Controller {
 		}
 		return $users;
 	}
+	public function getUsers() {
+        $users = User::all();
+        foreach ($users as $eachUser) {
+            $eachUser->roles = $eachUser->roles()->lists('name');
+        }
+        return $users;
+	}
 	public function getNextApplicationID()
 	{
 		$user = Auth::user();
