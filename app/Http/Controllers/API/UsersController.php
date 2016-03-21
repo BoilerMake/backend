@@ -87,7 +87,7 @@ class UsersController extends Controller {
 		$application->schoolinfo = $application->school;
 		$phase = intval(getenv('APP_PHASE'));
 		if($phase < 3)
-			$application->decision = "nice try ;)";
+			$application->decision = 5;
 		return [
 			'application'=>$application,
 			'validation'=>$application->validationDetails(),

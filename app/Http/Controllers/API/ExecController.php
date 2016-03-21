@@ -30,6 +30,21 @@ class ExecController extends Controller {
 		}
 		return $users;
 	}
+	public function getHackersBulk(Request $request)
+	{
+		$ids = $request->all();
+		Log::info($ids);
+		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+			return;
+		$users = User::whereHas('roles', function($q) use ($ids)
+		{
+		    $q->where('name', 'hacker')->whereIn('id',$ids);
+		})->with('application','application.school')->get();
+		foreach ($users as $user) {
+			$user['application']['rating_info']=$user->application->ratingInfo();
+		}
+		return $users;
+	}
 	public function getUsers() {
         $users = User::all();
         foreach ($users as $eachUser) {
