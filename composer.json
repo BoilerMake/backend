@@ -18,7 +18,9 @@
         "barryvdh/laravel-cors": "0.7.x",
         "zizaco/entrust": "dev-laravel-5-2@dev",
         "guzzlehttp/guzzle": "~5.3|~6.0",
-        "aws/aws-sdk-php-laravel": "^3.1"
+        "aws/aws-sdk-php-laravel": "^3.1",
+        "symfony/psr-http-message-bridge": "0.2",
+        "twilio/sdk": "^4.10"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
