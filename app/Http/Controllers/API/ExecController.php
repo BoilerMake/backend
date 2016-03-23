@@ -33,7 +33,6 @@ class ExecController extends Controller {
 	public function getHackersBulk(Request $request)
 	{
 		$ids = $request->all();
-		Log::info($ids);
 		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
 			return;
 		$users = User::whereHas('roles', function($q) use ($ids)
@@ -42,6 +41,22 @@ class ExecController extends Controller {
 		})->with('application','application.school')->get();
 		foreach ($users as $user) {
 			$user['application']['rating_info']=$user->application->ratingInfo();
+		}
+		return $users;
+	}
+	public function putHackersBulk(Request $request)
+	{
+		$ids = $request->all()['hackers'];
+		$decision = $request->all()['decision'];
+		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+			return;
+		$users = User::whereHas('roles', function($q) use ($ids)
+		{
+		    $q->where('name', 'hacker')->whereIn('id',$ids);
+		})->with('application','application.school')->get();
+		foreach ($users as $user) {
+			$user->application->decision=$decision;
+			$user->application->save();
 		}
 		return $users;
 	}

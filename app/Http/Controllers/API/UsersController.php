@@ -26,7 +26,6 @@ class UsersController extends Controller {
 	}
 	public function updateMe(Request $request)
 	{
-		// Log::info($request);
 		$user = Auth::user();
 		$data = $request->all();
 		foreach($data as $key => $value)
@@ -42,13 +41,11 @@ class UsersController extends Controller {
 		{
 			//update the application
 			$application = self::getApplication()['application'];
-			Log::info($application);
 			foreach ($data['application'] as $key => $value) {
 				if(in_array($key,['age','grad_year', 'gender','major','diet',
 					'diet_restrictions','tshirt','github','essay1','essay2',
 					'resume_filename','resume_uploaded']))
 				{
-					Log::info($key);
 					$application->$key=$value;
 				}
 				if($key=="team_code")
