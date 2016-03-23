@@ -20,7 +20,7 @@ class UsersController extends Controller {
 	}
 
 	// Example method that is automatically authenticated by middleware
-	public function getAttributes() {
+	public function getMe() {
 		 return Auth::user()->getAttributes();
 		//return Auth::user()->application->toArray();
 	}
@@ -42,11 +42,13 @@ class UsersController extends Controller {
 		{
 			//update the application
 			$application = self::getApplication()['application'];
+			Log::info($application);
 			foreach ($data['application'] as $key => $value) {
 				if(in_array($key,['age','grad_year', 'gender','major','diet',
 					'diet_restrictions','tshirt','github','essay1','essay2',
 					'resume_filename','resume_uploaded']))
 				{
+					Log::info($key);
 					$application->$key=$value;
 				}
 				if($key=="team_code")
@@ -86,12 +88,13 @@ class UsersController extends Controller {
 		$application->teaminfo = $application->team;
 		$application->schoolinfo = $application->school;
 		$phase = intval(getenv('APP_PHASE'));
-		if($phase < 3)
-			$application->decision = 5;
+		if($phase < 3) //don't reveal decisions early
+			$application->setHidden(['decision']);
 		return [
 			'application'=>$application,
 			'validation'=>$application->validationDetails(),
-			'phase'=>$phase
+			'phase'=>$phase,
+			'teamsEnabled'=> (getenv('TEAMS') === 'true')
 		];
 
 	}
