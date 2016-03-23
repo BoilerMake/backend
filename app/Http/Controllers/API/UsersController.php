@@ -110,7 +110,7 @@ class UsersController extends Controller {
 	}
 	public function leaveCurrentTeam()
 	{
-		$app = self::getApplication();
+		$app = self::getApplication()['application'];
 		$old_team_id = $app->team_id;
 		$app->team_id=null;
 		$app->save();
