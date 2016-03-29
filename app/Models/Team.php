@@ -18,7 +18,7 @@ class Team extends Model
     {
     	$hackers = [];
         foreach (Application::where("team_id",$this->id)->get() as $app) {
-        	$hacker = User::with('application','application.ratings')->find($app->user_id);
+        	$hacker = User::with('application','application.ratings','application.school')->find($app->user_id);
         	$hacker['application']['ratinginfo']=$hacker->application->ratingInfo();
         	$hackers[]=$hacker;
         }

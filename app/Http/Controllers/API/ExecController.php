@@ -114,11 +114,11 @@ class ExecController extends Controller {
 	{
 		$teams = Team::all();
 		foreach ($teams as $team ) {
-			$team['hd']=$team->getHackersWithRating();
+			$team['hackers_detail']=$team->getHackersWithRating();
 			$hackerRatings=[];
 			$ratingSum=0;
 			$ratingCount=0;
-			foreach ($team['hd'] as $eachHackerDetail) {
+			foreach ($team['hackers_detail'] as $eachHackerDetail) {
 				$eachHackerRating=$eachHackerDetail['application']['ratinginfo']['average'];
 				$hackerRatings[]=$eachHackerRating;
 				$ratingCount+=$eachHackerDetail['application']['ratinginfo']['count'];
