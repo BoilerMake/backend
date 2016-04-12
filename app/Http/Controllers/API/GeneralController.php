@@ -6,6 +6,7 @@ use App\Models\InboundMessage;
 use Log;
 use Illuminate\Http\Request;
 use AWS;
+use App\Models\InterestSignup;
 use GuzzleHttp;
 use App\Services\Notifier;
 class GeneralController extends Controller {
@@ -44,6 +45,17 @@ class GeneralController extends Controller {
         $n->number = $phone;
         $n->message = $input['Body'];
         $n->save();
+    }
+    public function interestSignup(Request $request)
+    {
+        $email = $request->input("email");
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['status'=>'fail','message'=>'email is not valid!'];
+        }
+        $signup = InterestSignup::firstOrCreate(['email' => $email]);
+        if($signup->wasRecentlyCreated)
+            return ['status'=>'ok','message'=>'all signed up!'];
+        return['status'=>'ok','message'=>'you were already signed up!'];
     }
 
 }

@@ -41,6 +41,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('users', 'AuthController@signUp');
     Route::get('debug', 'AuthController@debug');
     Route::get('schools', 'GeneralController@getSchools');
+    Route::post('interest/signup','GeneralController@interestSignup');
 
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
