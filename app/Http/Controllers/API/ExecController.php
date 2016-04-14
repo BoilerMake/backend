@@ -15,6 +15,7 @@ use App\Models\Event;
 use App\Models\ApplicationRating;
 use AWS;
 use Carbon\Carbon;
+use \Eluceo\iCal\Component\Calendar;
 
 class ExecController extends Controller {
 
@@ -269,7 +270,8 @@ class ExecController extends Controller {
     }
 
     public function generateCalendar(Request $request) {
-    	$events = Events::all();
+    	$vCalendar = new Calendar('www.boilermake.org');
+    	$events = Event::all();
         // Iterate through all events
         foreach($events as $event) {
             $vEvent = new \Eluceo\iCal\Component\Event();

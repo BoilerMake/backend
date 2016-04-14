@@ -42,7 +42,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('debug', 'AuthController@debug');
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup','GeneralController@interestSignup');
-
+    Route::get('calendar', 'ExecController@generateCalendar');
+    
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
@@ -62,5 +63,9 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::put('applications/{id}/rate', 'ExecController@rateApplication');
 
         Route::get('teams', 'ExecController@getTeams');
+
+        Route::post('events/create', 'ExecController@createEvent');
+        Route::post('events/update', 'ExecController@editEvent');
+        Route::post('events/delete', 'ExecController@deleteEvent');
     });
 });
