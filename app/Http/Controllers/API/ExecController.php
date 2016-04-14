@@ -11,12 +11,15 @@ use Log;
 use DB;
 use App\Models\Team;
 use App\Models\Role;
+use App\Models\Event;
 use App\Models\ApplicationRating;
 use AWS;
+use Carbon\Carbon;
+
 class ExecController extends Controller {
 
 	public function __construct() {
-       $this->middleware('jwt.auth', ['except' => []]);
+       $this->middleware('jwt.auth', ['except' => ['generateCalendar']]);
 	}
 	public function getHackers() {
 		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
@@ -185,4 +188,108 @@ class ExecController extends Controller {
 	public function getStatsBySchool() {
 		
 	}
+
+    public function createEvent(Request $request) {
+    	$validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'begin' => 'required|integer',
+            'end' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        if($request->end < $request->begin) {
+        	return "invalid time";
+        }
+		
+        $event = new Event;
+        $event->title = $request->title;
+        $event->description = $request->description;
+        // unnecessary, should just be forcing api to datetime
+        $event->begin = Carbon::createFromTimestamp($request->begin, 'America/New_York')->toDateTimeString();  
+        $event->end = Carbon::createFromTimestamp($request->end, 'America/New_York')->toDateTimeString();  
+        $event->save();
+        return "success";
+    }
+
+    // probably can be merged with create
+    public function editEvent(Request $request) {
+    	$validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'begin' => 'required|integer',
+            'end' => 'required|integer',
+            'event_id' => 'required|exists:events,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        if($request->end < $request->begin) {
+        	return "invalid time";
+        }
+        
+		$event = Event::where('id', '=', $request->event_id);
+        if($event->count()) {
+        	$event = $event->first();
+        }
+        else {
+        	return "invalid event";
+        }
+        
+        $event->title = $request->title;
+        $event->description = $request->description;
+        $event->begin = Carbon::createFromTimestamp($request->begin, 'America/New_York')->toDateTimeString();
+        $event->end = Carbon::createFromTimestamp($request->end, 'America/New_York')->toDateTimeString();
+        $event->save();
+        return "success";
+    }
+
+    public function deleteEvent(Request $request) {
+		$validator = Validator::make($request->all(), [
+            'event_id' => 'required|exists:events,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
+        $event = Event::where('id', '=', $request->event_id);
+        if($event->count()) {
+        	$event = $event->first();
+        }
+        else {
+        	return "invalid event";
+        }
+        
+        $event = Event::where('id', '=', $request->event_id)->first()->delete();
+        return "success";
+    }
+
+    public function generateCalendar(Request $request) {
+    	$events = Events::all();
+        // Iterate through all events
+        foreach($events as $event) {
+            $vEvent = new \Eluceo\iCal\Component\Event();
+            $vEvent
+                ->setDtStart(new \DateTime($event->begin))
+                ->setDtEnd(new \DateTime($event->end))
+                ->setNoTime(true)
+                ->setSummary($event->title);
+            $vCalendar->addComponent($vEvent);
+        }
+        
+        // Headers that might not actually do anything
+		header( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' ); //date in the past
+		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' ); //tell it we just updated
+		header( 'Cache-Control: no-store, no-cache, must-revalidate' ); //force revaidation
+		header( 'Cache-Control: post-check=0, pre-check=0', false );
+		header( 'Pragma: no-cache' );
+
+        header('Content-Type: text/calendar; charset=utf-8');
+        header('Content-Disposition: attachment; filename="cal.ics"');
+        echo $vCalendar->render();
+    }
 }
