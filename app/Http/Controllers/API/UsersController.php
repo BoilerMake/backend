@@ -44,7 +44,7 @@ class UsersController extends Controller {
 			foreach ($data['application'] as $key => $value) {
 				if(in_array($key,['age','grad_year', 'gender','major','diet',
 					'diet_restrictions','tshirt','github','essay1','essay2',
-					'resume_filename','resume_uploaded']))
+					'resume_filename','resume_uploaded','travellingFrom', 'isTravellingFromSchool']))
 				{
 					$application->$key=$value;
 				}
