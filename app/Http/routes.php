@@ -48,7 +48,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('users/reset/send','UsersController@sendPasswordReset');
     Route::post('users/reset/perform','UsersController@performPasswordReset');
 
-    
+
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
@@ -66,6 +66,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::get('applications/next','ExecController@getNextApplicationID');
         Route::get('applications/{id}/view', 'ExecController@getApplication');
         Route::put('applications/{id}/rate', 'ExecController@rateApplication');
+        Route::post('applications/{id}/notes', 'ExecController@addApplicationNote');
 
         Route::get('teams', 'ExecController@getTeams');
 

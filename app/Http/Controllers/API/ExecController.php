@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\API;
 
+use App\Models\ApplicationNote;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -90,7 +91,7 @@ class ExecController extends Controller {
 		$user = Auth::user();
 		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
 			return;
-		$app = Application::with('user','school','team')->find($id);
+		$app = Application::with('user','school','team','notes.user')->find($id);
 
 		//todo: move this s3 thing elsewhere
 		$s3 = AWS::createClient('s3');
@@ -107,6 +108,8 @@ class ExecController extends Controller {
 	}
 	public function rateApplication(Request $request, $id)
 	{
+        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+            return;
 		$user = Auth::user();
 		$rating = $request->all()['rating'];
 		$ranking = ApplicationRating::firstOrNew(['application_id'=>intval($id),'user_id'=>$user->id]);
@@ -116,8 +119,21 @@ class ExecController extends Controller {
 		$ranking->save();
 		return ['next'=>self::getNextApplicationID()];
 	}
+    public function addApplicationNote(Request $request, $application_id)
+    {
+        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+            return;
+        $note  = new ApplicationNote();
+        $note->application_id =intval($application_id);
+        $note->user_id =Auth::user()->id;
+        $note->message =$request->message;
+        $note->save();
+        return 'ok';
+    }
 	public function getTeams()
 	{
+        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+            return;
 		$teams = Team::all();
 		foreach ($teams as $team ) {
 			$team['hackers_detail']=$team->getHackersWithRating();

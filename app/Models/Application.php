@@ -26,6 +26,9 @@ class Application extends Model {
     {
         return $this->hasMany('App\Models\ApplicationRating');
     }
+    public function notes() {
+        return $this->hasMany('App\Models\ApplicationNote');
+    }
     public function ratingInfo()
     {
         $count = ApplicationRating::where('application_id',$this->id)->get()->count();
