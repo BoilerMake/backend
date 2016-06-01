@@ -43,6 +43,11 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup','GeneralController@interestSignup');
     Route::get('calendar', 'ExecController@generateCalendar');
+
+
+    Route::post('users/reset/send','UsersController@sendPasswordReset');
+    Route::post('users/reset/perform','UsersController@performPasswordReset');
+
     
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
