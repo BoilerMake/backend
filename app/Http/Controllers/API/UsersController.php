@@ -100,15 +100,7 @@ class UsersController extends Controller {
 	public function getResumePutUrl()
 	{
 		$user = Auth::user();
-
-		$s3 = AWS::createClient('s3');
-        $cmd = $s3->getCommand('PutObject', [
-            'Bucket' => getenv('S3_BUCKET'),
-            'Key'    => 'r/'.$user->id.'.pdf'
-        ]);
-
-        $request = $s3->createPresignedRequest($cmd, '+1 day');
-        return (string) $request->getUri();
+        return GeneralController::resumeUrl($user->id,'put');
 	}
 	public function leaveCurrentTeam()
 	{

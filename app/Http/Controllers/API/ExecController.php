@@ -92,16 +92,9 @@ class ExecController extends Controller {
 		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
 			return;
 		$app = Application::with('user','school','team','notes.user')->find($id);
-
-		//todo: move this s3 thing elsewhere
-		$s3 = AWS::createClient('s3');
-        $cmd = $s3->getCommand('getObject', [
-            'Bucket' => getenv('S3_BUCKET'),
-            'Key'    => 'r/'.$app->user->id.'.pdf',
-            'ResponseContentType' => 'application/pdf'
-        ]);
-        $request = $s3->createPresignedRequest($cmd, '+1 day');
-		$app->resumeURL = (string) $request->getUri();
+        
+        
+		$app->resumeURL = GeneralController::resumeUrl($app->user->id,'get');
 		$app->myrating = ApplicationRating::where('application_id',$id)->where('user_id',$user->id)->first();
         $app->github_summary = $app->getGithubSummary();
 		return $app;
