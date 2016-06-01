@@ -92,6 +92,7 @@ class ExecController extends Controller {
 			return;
 		$app = Application::with('user','school','team')->find($id);
 
+		//todo: move this s3 thing elsewhere
 		$s3 = AWS::createClient('s3');
         $cmd = $s3->getCommand('getObject', [
             'Bucket' => getenv('S3_BUCKET'),
@@ -101,6 +102,7 @@ class ExecController extends Controller {
         $request = $s3->createPresignedRequest($cmd, '+1 day');
 		$app->resumeURL = (string) $request->getUri();
 		$app->myrating = ApplicationRating::where('application_id',$id)->where('user_id',$user->id)->first();
+        $app->github_summary = $app->getGithubSummary();
 		return $app;
 	}
 	public function rateApplication(Request $request, $id)
