@@ -4,6 +4,7 @@ namespace app\Http\Controllers\API;
 use App\Models\Pod;
 use App\Models\PodEvent;
 use App\Models\PodScan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Log;
 use Auth;
@@ -12,7 +13,7 @@ use App\Http\Controllers\Controller;
 class PodController extends Controller
 {
     public function __construct() {
-        $this->middleware('jwt.auth');
+        $this->middleware('jwt.auth',['except' => ['scan']]);
     }
     public function scan(Request $request)
     {
@@ -36,7 +37,9 @@ class PodController extends Controller
         }
         $scan->input = $request->code;
 
-        //todo: $scan->user_id = User::where('code',$code)->first();
+        $user = User::where('identifier',$request->code)->first();
+        if($user)
+            $scan->user_id = $user->id;
         //todo: see if the user has already scanned for this event
 
         $scan->message = $message;

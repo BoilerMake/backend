@@ -41,6 +41,14 @@ class User extends Authenticatable
                 $app->save();
             }
         }
+        $this->generateUniqueIdentifier();
+    }
+    public function generateUniqueIdentifier()
+    {
+        if(!$this->identifier) {
+            $this->identifier = substr(str_shuffle(str_repeat('0123456789', 13)), 0, 13);
+            $this->save();//todo: check for conflict
+        }
     }
     public function slug() {
         return $this->first_name." ".$this->last_name." (#".$this->id.")";
