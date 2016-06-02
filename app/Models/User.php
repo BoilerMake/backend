@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Models;
+use App\Services\Notifier;
 use Tymon\JWTAuth\JWTAuth;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use Carbon\Carbon;
 class User extends Authenticatable
 {
     use EntrustUserTrait;
@@ -41,5 +42,16 @@ class User extends Authenticatable
     }
     public function application() {
         return $this->hasOne('App\Models\Application');
+    }
+    public function sendPasswordResetEmail()
+    {
+        $token = md5(Carbon::now().env('APP_KEY'));
+        $reset = new PasswordReset();
+        $reset->user_id = $this->id;
+        $reset->token = $token;
+        $reset->save();
+
+        $n = new Notifier($this);
+        $n->sendEmail("BoilerMake Password Reset!",'password-reset',['token_url'=>getenv('FRONTEND_ADDRESS')."/pwr?tok=".$token]);
     }
 }

@@ -119,15 +119,7 @@ class UsersController extends Controller {
 		$user = User::where('email',$email)->first();
 		if(!$user)
 			return('No user '.$email);
-		$token = md5(Carbon::now().env('APP_KEY'));
-		$reset = new PasswordReset();
-		$reset->user_id = $user->id;
-		$reset->token = $token;
-		$reset->save();
-
-		$n = new Notifier($user);
-		$n->sendEmail("BoilerMake Password Reset!",'password-reset',['token_url'=>getenv('FRONTEND_ADDRESS')."/pwr?tok=".$token]);
-
+		$user->sendPasswordResetEmail();
 		return 'ok';
 	}
 	public function performPasswordReset(Request $request)
