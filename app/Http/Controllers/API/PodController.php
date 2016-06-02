@@ -2,13 +2,18 @@
 
 namespace app\Http\Controllers\API;
 use App\Models\Pod;
+use App\Models\PodEvent;
 use App\Models\PodScan;
 use Illuminate\Http\Request;
 use Log;
+use Auth;
 use App\Http\Controllers\Controller;
 
 class PodController extends Controller
 {
+    public function __construct() {
+        $this->middleware('jwt.auth');
+    }
     public function scan(Request $request)
     {
         if($request->pod_token!=env('POD_TOKEN'))
@@ -37,5 +42,28 @@ class PodController extends Controller
         $scan->message = $message;
         $scan->save();
         return $scan;
+    }
+    public function listPods()
+    {
+        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+            return 'not authorized';
+        //todo: filter by successful scans??
+        $pods = Pod::with('event','scans','scans.user')->get();
+        return $pods;
+    }
+    public function listEvents()
+    {
+        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+            return 'not authorized';
+        //todo: filter by successful scans??
+        $events = PodEvent::with('active_pods','scans','scans.user')->get();
+        return $events;
+    }
+    public function listScans()
+    {
+        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+            return 'not authorized';
+        $scans = PodScan::with('user','pod','event')->get();
+        return $scans;
     }
 }

@@ -49,6 +49,9 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('users/reset/perform','UsersController@performPasswordReset');
 
     Route::post('pods/scan','PodController@scan');
+    Route::get('pods/list','PodController@listPods');
+    Route::get('pods/events','PodController@listEvents');
+    Route::get('pods/scans','PodController@listScans');
 
 
     Route::group(array('prefix' => 'users/me'), function() {
