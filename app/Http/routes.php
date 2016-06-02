@@ -48,6 +48,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('users/reset/send','UsersController@sendPasswordReset');
     Route::post('users/reset/perform','UsersController@performPasswordReset');
 
+    Route::post('pods/scan','PodController@scan');
+
 
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
