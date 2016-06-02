@@ -29,13 +29,18 @@ class User extends Authenticatable
     /**
     * makes a user a hacker by default and gives them an application
     */
-    public function postSignupActions()
+    public function postSignupActions($roles=["hacker"])
     {
-        $this->attachRole(Role::where('name','hacker')->first());
-
-        $app = new Application();
-        $app->user_id=$this->id;
-        $app->save();
+        foreach ($roles as $role)
+        {
+            $this->attachRole(Role::where('name',$role)->first());
+            if($role=="hacker")
+            {
+                $app = new Application();
+                $app->user_id=$this->id;
+                $app->save();
+            }
+        }
     }
     public function slug() {
         return $this->first_name." ".$this->last_name." (#".$this->id.")";
