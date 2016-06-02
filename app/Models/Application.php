@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use GuzzleHttp;
+use Cache;
+use Carbon\Carbon;
 class Application extends Model {
     use SoftDeletes;
     public $teaminfo = null;
@@ -21,6 +25,9 @@ class Application extends Model {
     public function ratings()
     {
         return $this->hasMany('App\Models\ApplicationRating');
+    }
+    public function notes() {
+        return $this->hasMany('App\Models\ApplicationNote');
     }
     public function ratingInfo()
     {
@@ -98,5 +105,45 @@ class Application extends Model {
     public function getReviewsAttribute()
     {
         return ApplicationRating::where('application_id',$this->id)->get()->count();
+    }
+    public function getGithubSummary()
+    {
+        $github_username = $this->github;//todo: catch bad username
+        if(!$github_username)
+            return ['success'=>false, 'message'=>'github username not provided'];
+
+        if (Cache::has('github_summary-'.$github_username)) {
+            return Cache::get('github_summary-'.$github_username);
+        }
+        $client = new GuzzleHttp\Client();
+
+        try {
+        $response = $client->get('https://api.github.com/users/'.$github_username.'/repos?sort=updated',
+            [
+            'auth' => [
+                env('GITHUB_API_USERNAME'),
+                env('GITHUB_API_TOKEN')
+            ]
+        ]);
+        }
+        catch (GuzzleHttp\Exception\ClientException $e) {
+            return ['success'=>false, 'message'=>'github username was invalid'];
+        }
+        $response = json_decode($response->getBody(),true);
+        $summary = [];
+        foreach ($response as $each)
+        {
+            $summary[]=[
+                'url'=>$each['html_url'],
+                'full_name'=>$each['full_name'],
+                'language'=>$each['language'],
+                'description'=>$each['description'],
+                'description'=>$each['description'],
+            ];
+        }
+        $data = ['success'=>true, 'summary'=> $summary];
+        Cache::put('github_summary-'.$github_username, $data, Carbon::now()->addDays(10));
+
+         return $data;
     }
 }

@@ -58,4 +58,27 @@ class GeneralController extends Controller {
         return['status'=>'ok','message'=>'you were already signed up!'];
     }
 
+    public static function resumeUrl($id, $method)
+    {
+        $s3 = AWS::createClient('s3');
+        switch ($method)
+        {
+            case 'get':
+                $cmd = $s3->getCommand('getObject', [
+                    'Bucket' => getenv('S3_BUCKET'),
+                    'Key'    => 'r/'.$id.'.pdf',
+                    'ResponseContentType' => 'application/pdf'
+                ]);
+                break;
+            case 'put':
+                $cmd = $s3->getCommand('PutObject', [
+                'Bucket' => getenv('S3_BUCKET'),
+                'Key'    => 'r/'.$id.'.pdf'
+                ]);
+                break;
+        }
+        $request = $s3->createPresignedRequest($cmd, '+1 day');
+        return (string) $request->getUri();
+    }
+
 }

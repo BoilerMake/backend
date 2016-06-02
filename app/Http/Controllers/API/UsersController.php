@@ -1,7 +1,9 @@
 <?php namespace App\Http\Controllers\API;
 
+use App\Models\PasswordReset;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Services\Notifier;
 use Auth;
 use Validator;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class UsersController extends Controller {
 	public function __construct() {
        // Apply the jwt.auth middleware to all methods in this controller
        // Except allows for fine grain exclusion if necessary
-       $this->middleware('jwt.auth', ['except' => []]);
+       $this->middleware('jwt.auth', ['except' => ['sendPasswordReset','performPasswordReset']]);
 	}
 
 	// Example method that is automatically authenticated by middleware
@@ -44,7 +46,7 @@ class UsersController extends Controller {
 			foreach ($data['application'] as $key => $value) {
 				if(in_array($key,['age','grad_year', 'gender','major','diet',
 					'diet_restrictions','tshirt','github','essay1','essay2',
-					'resume_filename','resume_uploaded']))
+					'resume_filename','resume_uploaded','travellingFrom', 'isTravellingFromSchool']))
 				{
 					$application->$key=$value;
 				}
@@ -98,15 +100,7 @@ class UsersController extends Controller {
 	public function getResumePutUrl()
 	{
 		$user = Auth::user();
-
-		$s3 = AWS::createClient('s3');
-        $cmd = $s3->getCommand('PutObject', [
-            'Bucket' => getenv('S3_BUCKET'),
-            'Key'    => 'r/'.$user->id.'.pdf'
-        ]);
-
-        $request = $s3->createPresignedRequest($cmd, '+1 day');
-        return (string) $request->getUri();
+        return GeneralController::resumeUrl($user->id,'put');
 	}
 	public function leaveCurrentTeam()
 	{
@@ -117,5 +111,43 @@ class UsersController extends Controller {
 		if(Application::where("team_id",$old_team_id)->get()->count()==0)//we don't want empty teams
 			Team::find($old_team_id)->delete();
 		return ['ok'];
+	}
+
+	public function sendPasswordReset(Request $request)
+	{
+		$email = $request->email;
+		$user = User::where('email',$email)->first();
+		if(!$user)
+			return('No user '.$email);
+		$token = md5(Carbon::now().env('APP_KEY'));
+		$reset = new PasswordReset();
+		$reset->user_id = $user->id;
+		$reset->token = $token;
+		$reset->save();
+
+		$n = new Notifier($user);
+		$n->sendEmail("BoilerMake Password Reset!",'password-reset',['token_url'=>getenv('FRONTEND_ADDRESS')."/pwr?tok=".$token]);
+
+		return 'ok';
+	}
+	public function performPasswordReset(Request $request)
+	{
+		$token = $request->token;
+		$password = $request->password;
+
+		$reset = PasswordReset::where('token',$token)->first();
+		if(!$reset)
+			return 'oops';
+		if(Carbon::parse($reset->created_at)->addHour(48)->lte(Carbon::now()))
+			return 'expired';
+		if($reset->is_used)
+			return 'already used';
+		$user = User::find($reset->user_id);
+		$user->password = bcrypt($password);
+		$user->save();
+
+		$reset->is_used = true;
+		$reset->save();
+		return 'ok';
 	}
 }

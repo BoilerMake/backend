@@ -42,8 +42,19 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('debug', 'AuthController@debug');
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup','GeneralController@interestSignup');
+    Route::get('interest','ExecController@getInterestData');
     Route::get('calendar', 'ExecController@generateCalendar');
-    
+
+
+    Route::post('users/reset/send','UsersController@sendPasswordReset');
+    Route::post('users/reset/perform','UsersController@performPasswordReset');
+
+    Route::post('pods/scan','PodController@scan');
+    Route::get('pods/list','PodController@listPods');
+    Route::get('pods/events','PodController@listEvents');
+    Route::get('pods/scans','PodController@listScans');
+
+
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
@@ -61,6 +72,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::get('applications/next','ExecController@getNextApplicationID');
         Route::get('applications/{id}/view', 'ExecController@getApplication');
         Route::put('applications/{id}/rate', 'ExecController@rateApplication');
+        Route::post('applications/{id}/notes', 'ExecController@addApplicationNote');
 
         Route::get('teams', 'ExecController@getTeams');
 
