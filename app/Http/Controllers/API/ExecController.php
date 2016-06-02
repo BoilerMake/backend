@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\API;
 
 use App\Models\ApplicationNote;
+use App\Models\InterestSignup;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -23,6 +24,11 @@ class ExecController extends Controller {
 	public function __construct() {
        $this->middleware('jwt.auth', ['except' => ['generateCalendar']]);
 	}
+    public function getInterestData() {
+        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+            return;
+        return InterestSignup::all();
+    }
 	public function getHackers() {
 		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
 			return;

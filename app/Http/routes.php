@@ -42,6 +42,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('debug', 'AuthController@debug');
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup','GeneralController@interestSignup');
+    Route::get('interest','ExecController@getInterestData');
     Route::get('calendar', 'ExecController@generateCalendar');
 
 
