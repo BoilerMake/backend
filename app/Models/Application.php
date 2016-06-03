@@ -108,7 +108,7 @@ class Application extends Model {
     }
     public function getGithubSummary()
     {
-        $github_username = $this->github;//todo: catch bad username
+        $github_username = $this->github;
         if(!$github_username)
             return ['success'=>false, 'message'=>'github username not provided'];
 

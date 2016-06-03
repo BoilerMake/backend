@@ -2,7 +2,7 @@
 
 namespace app\Http\Controllers\API;
 use App\Models\Pod;
-use App\Models\PodEvent;
+use App\Models\Event;
 use App\Models\PodScan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -59,7 +59,7 @@ class PodController extends Controller
         if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
             return 'not authorized';
         //todo: filter by successful scans??
-        $events = PodEvent::with('active_pods','scans','scans.user')->get();
+        $events = Event::with('active_pods','scans','scans.user')->get();
         return $events;
     }
     public function listScans()
