@@ -54,6 +54,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('pods/events','PodController@listEvents');
     Route::get('pods/scans','PodController@listScans');
 
+    Route::get('events', 'GeneralController@getEvents');
 
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');

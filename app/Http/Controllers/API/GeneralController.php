@@ -2,6 +2,7 @@
 use App\Http\Controllers\Controller;
 use App\Models\School;
 use App\Models\User;
+use App\Models\Event;
 use App\Models\InboundMessage;
 use Log;
 use Illuminate\Http\Request;
@@ -79,6 +80,9 @@ class GeneralController extends Controller {
         }
         $request = $s3->createPresignedRequest($cmd, '+1 day');
         return (string) $request->getUri();
+    }
+    public function getEvents() {
+        return Event::orderBy('begin')->get(array('title', 'description', 'begin', 'end'));
     }
 
 }
