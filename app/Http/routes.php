@@ -53,6 +53,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('pods/list','PodController@listPods');
     Route::get('pods/events','PodController@listEvents');
     Route::get('pods/scans','PodController@listScans');
+    Route::post('pods/heartbeat','PodController@heartbeat');
 
     Route::get('events', 'GeneralController@getEvents');
 

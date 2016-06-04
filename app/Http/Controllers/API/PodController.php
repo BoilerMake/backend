@@ -13,10 +13,10 @@ use App\Http\Controllers\Controller;
 class PodController extends Controller
 {
     public function __construct() {
-        $this->middleware('jwt.auth',['except' => ['scan']]);
+        $this->middleware('jwt.auth',['except' => ['scan', 'heartbeat']]);
     }
     public function scan(Request $request)
-    {
+    {  
         if($request->pod_key != env('PODPOD_KEY'))
             return "auth error";
         $pod = Pod::find($request->pod_id);
@@ -37,6 +37,7 @@ class PodController extends Controller
         }
         $scan->input = $request->code;
 
+        //todo: robustness in case this doesnt exist
         $user = User::where('identifier',$request->code)->first();
         if($user)
             $scan->user_id = $user->id;
@@ -68,5 +69,15 @@ class PodController extends Controller
             return 'not authorized';
         $scans = PodScan::with('user','pod','event')->get();
         return $scans;
+    }
+    public function heartbeat(Request $request) {
+        if($request->pod_key != env('PODPOD_KEY'))
+            return "auth error";
+        $pod = Pod::find($request->pod_id);
+        if(!$pod)
+            return 'error with pod_id';
+        $pod->touch();
+        //TODO: Change this return value on pod status so we can control scanning execution
+        return 1;
     }
 }
