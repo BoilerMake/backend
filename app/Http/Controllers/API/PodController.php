@@ -17,7 +17,7 @@ class PodController extends Controller
     }
     public function scan(Request $request)
     {
-        if($request->pod_token!=env('POD_TOKEN'))
+        if($request->pod_key != env('PODPOD_KEY'))
             return "auth error";
         $pod = Pod::find($request->pod_id);
         if(!$pod)

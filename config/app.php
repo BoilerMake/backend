@@ -14,7 +14,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
-
+    
+    'podpod' => env('PODPOD_KEY'),
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
