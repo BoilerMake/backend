@@ -53,6 +53,14 @@ class PodController extends Controller
             return 'not authorized';
         //todo: filter by successful scans??
         $pods = Pod::with('event','scans','scans.user')->get();
+        foreach($pods as $pod) {
+            if($pod->updated_at->addSeconds(140) > \Carbon\Carbon::now()) {
+                $pod->status = true;
+            }
+            else {
+                $pod->status = false;
+            }
+        }
         return $pods;
     }
     public function listEvents()
