@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\PodScan;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\API\AnalyticsController;
 use Log;
 use Auth;
 use App\Http\Controllers\Controller;
@@ -27,6 +28,8 @@ class PodController extends Controller
         $scan->ip = $request->ip();
         $scan->pod_id = $pod->id;
         $scan->event_id = $pod->current_event_id;
+        $scan->message = "ok";//default to good
+        $scan->success = true;//default to good
         if($pod->current_event_id==NULL) {
             //pod is not assigned to an event
             $scan->success = false;
@@ -38,12 +41,22 @@ class PodController extends Controller
         $event = Event::find($scan->event_id);
 
 
+        if($request->code==null || !isset($request->code))
+        {
+            //todo: robustness in case this doesnt exist
+            $scan->success = false;
+            $scan->message = "somehting wrong with the code!";
+            $scan->save();
+            return $scan;
+        }
         $scan->input = $request->code;
-        //todo: robustness in case this doesnt exist
+
+
         $user = User::where('identifier',$request->code)->first();
         if(!$user)
         {
-            //can't find a user behidn the code
+            //this would really only happen if someone is trying to hack us!
+            //can't find a user behind the code
             //todo: robustness
             $scan->success = false;
             $scan->message = "user id not valid!";
@@ -54,9 +67,9 @@ class PodController extends Controller
         $scan->user_id = $user->id;
 
         Log::info("[POD] processed pod scan from pod ".$pod->id." for event ".$event->name." (#".$event->id.") from user ".$user->slug()." @ ".$request->ip());
+        AnalyticsController::log($user->id,'pod-scan',['pod_id'=>$pod->id,'event'=>$event,'scan'=>$scan],['client'=>'pod-'.$pod->id,'ip'=>$request->ip()]);
 
-        $scan->message = "ok";
-        $scan->success = true;
+
         $scan->save();
         return $scan;
     }
