@@ -18,32 +18,45 @@ class PodController extends Controller
     public function scan(Request $request)
     {  
         if($request->pod_key != env('PODPOD_KEY'))
-            return "auth error";
+            return ['success'=>false, "message"=>"auth error"];
         $pod = Pod::find($request->pod_id);
         if(!$pod)
-            return 'error with pod_id';
+            return ['success'=>false, "message"=>'error with pod_id'];
 
         $scan = new PodScan();
-        $scan->success = true;
-        $message = "ok";
-
-
+        $scan->ip = $request->ip();
         $scan->pod_id = $pod->id;
-        $scan->pod_event_id = $pod->current_pod_event_id;
-        if($pod->current_pod_event_id==NULL) {
+        $scan->event_id = $pod->current_event_id;
+        if($pod->current_event_id==NULL) {
+            //pod is not assigned to an event
             $scan->success = false;
-            $message="this pod is currently not assigned to an event";
             //todo: check if the event is 'active'
+            $scan->message = "this pod is currently not assigned to an event";
+            $scan->save();
+            return $scan;
         }
-        $scan->input = $request->code;
+        $event = Event::find($scan->event_id);
 
+
+        $scan->input = $request->code;
         //todo: robustness in case this doesnt exist
         $user = User::where('identifier',$request->code)->first();
-        if($user)
-            $scan->user_id = $user->id;
+        if(!$user)
+        {
+            //can't find a user behidn the code
+            //todo: robustness
+            $scan->success = false;
+            $scan->message = "user id not valid!";
+            $scan->save();
+            return $scan;
+        }
         //todo: see if the user has already scanned for this event
+        $scan->user_id = $user->id;
 
-        $scan->message = $message;
+        Log::info("[POD] processed pod scan from pod ".$pod->id." for event ".$event->name." (#".$event->id.") from user ".$user->slug()." @ ".$request->ip());
+
+        $scan->message = "ok";
+        $scan->success = true;
         $scan->save();
         return $scan;
     }
