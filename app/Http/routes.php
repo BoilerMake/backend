@@ -56,6 +56,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('pods/heartbeat','PodController@heartbeat');
 
     Route::get('events', 'GeneralController@getEvents');
+    Route::put('analytics/event', 'AnalyticsController@event');
 
 
     Route::get('sponsor/info','SponsorController@info');
