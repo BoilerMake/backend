@@ -11,9 +11,11 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-    	$a = Role::firstOrCreate(['name' => 'hacker']);
-    	$a = Role::firstOrCreate(['name' => 'sponsor']);
-    	$a = Role::firstOrCreate(['name' => 'exec']);
-    	$a = Role::firstOrCreate(['name' => 'admin']);
+		Role::firstOrCreate(['name' => 'hacker']);
+    	Role::firstOrCreate(['name' => 'exec']);
+        Role::firstOrCreate(['name' => 'sponsor']);
+        Role::firstOrCreate(['name' => 'sponsor-group-1']);
+        Role::firstOrCreate(['name' => 'sponsor-group-2']);
+        Role::firstOrCreate(['name' => 'sponsor-group-3']);
     }
 }

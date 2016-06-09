@@ -57,6 +57,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 
     Route::get('events', 'GeneralController@getEvents');
 
+
+    Route::get('sponsor/info','SponsorController@info');
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
