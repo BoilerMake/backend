@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\AnalyticsController;
 use Log;
 use Auth;
+use JWTAuth;
 use App\Http\Controllers\Controller;
 
 class PodController extends Controller
@@ -17,9 +18,20 @@ class PodController extends Controller
         $this->middleware('jwt.auth',['except' => ['scan', 'heartbeat']]);
     }
     public function scan(Request $request)
-    {  
-        if($request->pod_key != env('PODPOD_KEY'))
+    {
+        $isAdmin=false;
+        try {
+            $exec = JWTAuth::parseToken()->toUser();
+        }
+        catch (\Exception $e) {
+            $exec = null;
+        }
+        if($exec)
+            $isExecAuthValid = $exec->hasRole('exec');
+        $isPodAuthValid = $request->pod_key == env('PODPOD_KEY');
+        if(!$isPodAuthValid && !$isExecAuthValid)//allow authorized pod clients OR execs
             return ['success'=>false, "message"=>"auth error"];
+
         $pod = Pod::find($request->pod_id);
         if(!$pod)
             return ['success'=>false, "message"=>'error with pod_id'];
@@ -66,8 +78,9 @@ class PodController extends Controller
         //todo: see if the user has already scanned for this event
         $scan->user_id = $user->id;
 
-        Log::info("[POD] processed pod scan from pod ".$pod->id." for event ".$event->name." (#".$event->id.") from user ".$user->slug()." @ ".$request->ip());
-        AnalyticsController::log($user->id,'pod-scan',['pod_id'=>$pod->id,'event'=>$event,'scan'=>$scan],['client'=>'pod-'.$pod->id,'ip'=>$request->ip()]);
+        $scan->message = "processed pod scan from pod: ".$pod->name." (#".$pod->id.") for event: ".$event->name." (#".$event->id.") from user: ".$user->slug()." @ ".$request->ip();
+        Log::info("[POD] ".$scan->message);
+        AnalyticsController::log($user->id,'pod-scan',['pod_id'=>$pod->id,'pod_name'=>$pod->name,'event'=>$event,'scan'=>$scan],['client'=>'pod-'.$pod->id,'ip'=>$request->ip()]);
 
 
         $scan->save();
