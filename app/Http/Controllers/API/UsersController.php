@@ -20,11 +20,8 @@ class UsersController extends Controller {
        // Except allows for fine grain exclusion if necessary
        $this->middleware('jwt.auth', ['except' => ['sendPasswordReset','performPasswordReset']]);
 	}
-
-	// Example method that is automatically authenticated by middleware
 	public function getMe() {
-		 return Auth::user()->getAttributes();
-		//return Auth::user()->application->toArray();
+		 return Auth::user();
 	}
 	public function updateMe(Request $request)
 	{
@@ -33,14 +30,17 @@ class UsersController extends Controller {
 		foreach($data as $key => $value)
 		{
 			//update the user info
-			if(in_array($key,['email','first_name','first_name','phone']))
+			if(in_array($key,['email','first_name','last_name','phone']))
 			{
 				$user->$key=$value;
 				$user->save();
+				Log::info($user);
 			}
 		}
+		$hasApplication = false;
 		if(isset($data['application']))
 		{
+			$hasApplication=true;
 			//update the application
 			$application = self::getApplication()['application'];
 			foreach ($data['application'] as $key => $value) {
@@ -58,22 +58,32 @@ class UsersController extends Controller {
 				}
 				if($key=="school")
 				{
-					$application->school_id=$value['id'];
+					if(isset($value['id']))
+						$application->school_id=$value['id'];
+					else
+						$application->school_id=NULL;
 				}
 			}
 			$application->save();
 		}
-		return [
-			'application'=>$application,
-			'validation'=>$application->validationDetails(),
-			'phase'=>intval(getenv('APP_PHASE'))
-		];
+		if($hasApplication)
+		{
+			return [
+				'application'=>$application,
+				'validation'=>$application->validationDetails(),
+				'phase'=>intval(getenv('APP_PHASE')),
+				'status'=>'ok',
+			];
+		}
+		return ['status'=>'ok'];
 
 	}
 
 	public function getApplication()
 	{
 		$user_id = Auth::user()->id;
+		if(!Auth::user()->hasRole('hacker'))//TODO middleware perhaps?
+			return;
 		//todo: only send along the application if they are a hacker!
 		$application = Application::firstOrCreate(['user_id' => $user_id]);
 		if(!$application->team_id)

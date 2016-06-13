@@ -12,9 +12,7 @@ use App\Http\Controllers\Controller;
 class AnalyticsController extends Controller
 {
     public function event(Request $request)
-    {  
-        Log::info($request);
-
+    {
         try {
             $user_id = JWTAuth::parseToken()->toUser()->id;
         }
