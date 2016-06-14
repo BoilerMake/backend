@@ -85,4 +85,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::post('events/update', 'ExecController@editEvent');
         Route::post('events/delete', 'ExecController@deleteEvent');
     });
+    Route::get('ping', function () {
+        return 'pong';
+    });
 });
