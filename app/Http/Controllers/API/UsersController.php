@@ -34,7 +34,6 @@ class UsersController extends Controller {
 			{
 				$user->$key=$value;
 				$user->save();
-				Log::info($user);
 			}
 		}
 		$hasApplication = false;

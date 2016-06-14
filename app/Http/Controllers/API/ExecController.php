@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\API;
 
+use App\Models\AnalyticsEvent;
 use App\Models\ApplicationNote;
 use App\Models\InterestSignup;
 use App\Models\User;
@@ -77,6 +78,40 @@ class ExecController extends Controller {
             $eachUser->roles = $eachUser->roles()->lists('name');
         }
         return $users;
+	}
+	public function getUser($id)
+	{
+		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
+			return;
+		$user = User::find($id);
+		$application = null;
+		if($user->hasRole('hacker'))
+			$application=$user->getApplication();
+		return [
+			'user'=>$user,
+			'application'=>$application,
+			'roles'=>$user->roles()->lists('name'),
+			'isHacker'=>$user->hasRole('hacker'),
+			];
+	}
+	public function getUserAnalytics($id)
+	{
+		$events = AnalyticsEvent::where('user_id',$id)->get();
+		return $events;
+	}
+	public function doAction(Request $request, $id)
+	{
+		$user = User::find($id);
+		switch ($request->action) {
+			case "password-reset":
+				$user->sendPasswordResetEmail();
+				return ['status'=>'ok'];
+				break;
+			case "check-in":
+				//todo
+				return ['status'=>'error','message'=>'todo'];
+				break;
+		}
 	}
 	public function getNextApplicationID()
 	{

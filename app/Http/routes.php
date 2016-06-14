@@ -73,6 +73,9 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::post('hackers/bulk', 'ExecController@getHackersBulk');
         Route::put('hackers/bulk', 'ExecController@putHackersBulk');
         Route::get('users', 'ExecController@getUsers');
+        Route::get('users/{id}/view', 'ExecController@getUser');
+        Route::get('users/{id}/analytics', 'ExecController@getUserAnalytics');
+        Route::post('users/{id}/action', 'ExecController@doAction');
         Route::get('allstats', 'ExecController@getAllStats');
         Route::get('applications/next','ExecController@getNextApplicationID');
         Route::get('applications/{id}/view', 'ExecController@getApplication');
