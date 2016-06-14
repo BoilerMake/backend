@@ -81,21 +81,11 @@ class UsersController extends Controller {
 
 	public function getApplication()
 	{
-		$user_id = Auth::user()->id;
+		$user = Auth::user();
 		if(!Auth::user()->hasRole('hacker'))//TODO middleware perhaps?
 			return;
-		//todo: only send along the application if they are a hacker!
-		$application = Application::firstOrCreate(['user_id' => $user_id]);
-		if(!$application->team_id)
-		{
-			$team = new Team();
-			$team->code = md5(Carbon::now().getenv("APP_KEY"));
-			$team->save();
-			$application->team_id = $team->id;
-		}
-		$application->save();
-		$application->teaminfo = $application->team;
-		$application->schoolinfo = $application->school;
+		$application = $user->getApplication();
+		
 		$phase = intval(getenv('APP_PHASE'));
 		if($phase < 3) //don't reveal decisions early
 			$application->setHidden(['decision']);

@@ -67,4 +67,20 @@ class User extends Authenticatable
         $n = new Notifier($this);
         $n->sendEmail("BoilerMake Password Reset!",'password-reset',['token_url'=>getenv('FRONTEND_ADDRESS')."/pwr?tok=".$token]);
     }
+    public function getApplication()
+    {
+        $application = Application::with('school','team','ratings','notes')->firstOrCreate(['user_id' => $this->id]);
+        if(!$application->team_id)
+        {
+            //assign them to a team of 1 in lieu of no team
+            $team = new Team();
+            $team->code = md5(Carbon::now().getenv("APP_KEY"));
+            $team->save();
+            $application->team_id = $team->id;
+        }
+        $application->save();
+        $application->teaminfo = $application->team;
+        $application->schoolinfo = $application->school;
+        return $application;
+    }
 }
