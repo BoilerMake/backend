@@ -45,6 +45,12 @@ class TwillioSMS extends Job implements SelfHandling, ShouldQueue
         $message=$this->message;
         $name=$this->name;
         $to = $this->user->phone;
+
+        if(!env('ENABLE_TWILLIO'))
+        {
+            $this->notif->logNotification('SMS','(local) '.$name,['message'=>$message,'to'=>$to]);
+            return;
+        }
        
         if(!$to){
             $this->notif->logNotification('SMS',"FAIL-".$name,['message'=>$message,'to'=>$to]);
@@ -60,8 +66,6 @@ class TwillioSMS extends Job implements SelfHandling, ShouldQueue
                     'Body' => $message
                 ]
             );
-                    Log::info("yay twillio worked");
-
         }
         catch(\Exception $e) {
             Log::error(
