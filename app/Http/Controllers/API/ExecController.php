@@ -2,9 +2,11 @@
 
 use App\Models\AnalyticsEvent;
 use App\Models\ApplicationNote;
+use App\Models\GroupMessage;
 use App\Models\InterestSignup;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Services\Notifier;
 use Auth;
 use Validator;
 use Illuminate\Http\Request;
@@ -112,6 +114,43 @@ class ExecController extends Controller {
 				return ['status'=>'error','message'=>'todo'];
 				break;
 		}
+	}
+	public function getGroupMessages()
+	{
+		return GroupMessage::all();
+	}
+	public function sendGroupMessage(Request $request)
+	{
+		switch ($request->group) {
+			case "all":
+				$roles = ['exec','hacker','sponsor'];
+				break;
+			case "hackers":
+				$roles = ['exec','hacker'];
+				break;
+			case "sponsors":
+				$roles = ['exec','sponsor'];
+				break;
+			case "exec":
+				$roles = ['exec'];
+				break;
+		}
+		$users = User::whereHas('roles', function($q) use($roles)
+		{
+			$q->whereIn('name', $roles);
+		})->get();
+
+		foreach($users as $u)
+		{
+			$n = new Notifier($u);
+			$n->sendSMS($request->message,'group-message');
+		}
+		$log = new GroupMessage();
+		$log->group = $request->group;
+		$log->message = $request->message;
+		$log->num_recipients = $users->count();
+		$log->save();
+		return ['status'=>'ok','message'=>'message sent to'.$users->count().'users'];
 	}
 	public function getNextApplicationID()
 	{

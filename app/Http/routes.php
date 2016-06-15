@@ -76,6 +76,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::get('users/{id}/view', 'ExecController@getUser');
         Route::get('users/{id}/analytics', 'ExecController@getUserAnalytics');
         Route::post('users/{id}/action', 'ExecController@doAction');
+        Route::get('messaging/group', 'ExecController@getGroupMessages');
+        Route::post('messaging/group', 'ExecController@sendGroupMessage');
         Route::get('allstats', 'ExecController@getAllStats');
         Route::get('applications/next','ExecController@getNextApplicationID');
         Route::get('applications/{id}/view', 'ExecController@getApplication');
