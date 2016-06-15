@@ -16,4 +16,12 @@ class ExampleTest extends TestCase
         $this->visit('/')->see('BoilerMake');
         $this->visit('/v1/ping')->see('pong');
     }
+    public function testInterestSignup()
+    {
+        $faker = Faker\Factory::create();
+        $email = $faker->email;
+        $this->post('/v1/interest/signup', ['email' => $email])
+            ->see('ok');
+        $this->seeInDatabase('interest_signups', ['email' => $email]);
+    }
 }
