@@ -4,18 +4,13 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ExampleTest extends TestCase
+class InterestTest extends TestCase
 {
     /**
-     * A basic functional test example.
+     * Test that user interest signups are working
      *
      * @return void
      */
-    public function testBasicExample()
-    {
-        $this->visit('/')->see('BoilerMake');
-        $this->visit('/v1/ping')->see('pong');
-    }
     public function testInterestSignup()
     {
         $faker = Faker\Factory::create();
