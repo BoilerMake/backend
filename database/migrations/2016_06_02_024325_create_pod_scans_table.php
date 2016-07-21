@@ -17,7 +17,7 @@ class CreatePodScansTable extends Migration
             $table->integer('pod_id')->unsigned();
             $table->foreign('pod_id')->references('id')->on('pods');
             $table->integer('pod_event_id')->unsigned()->nullable();
-            $table->foreign('pod_event_id')->references('id')->on('pod_events');
+            $table->foreign('pod_event_id')->references('id')->on('events');
             $table->string('input');
             $table->integer('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users');

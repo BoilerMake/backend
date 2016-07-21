@@ -16,7 +16,7 @@ class CreatePodsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->integer('current_pod_event_id')->unsigned()->nullable();
-            $table->foreign('current_pod_event_id')->references('id')->on('pod_events');
+            $table->foreign('current_pod_event_id')->references('id')->on('events');
             $table->timestamps();
         });
     }
