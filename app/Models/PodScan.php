@@ -13,6 +13,6 @@ class PodScan extends Model
         return $this->belongsTo('App\Models\Pod');
     }
     public function event() {
-        return $this->belongsTo('App\Models\PodEvent');
+        return $this->belongsTo('App\Models\Event');
     }
 }

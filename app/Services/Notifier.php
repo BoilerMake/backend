@@ -1,5 +1,6 @@
 <?php
 namespace App\Services;
+use App\Http\Controllers\API\AnalyticsController;
 use App\Jobs\TwillioSMS;
 use App\Models\OutgoingMessage;
 use App\Models\User;
@@ -13,9 +14,10 @@ class Notifier
     public function __construct(User $user_obj) {
         $this->user= $user_obj;
     }
-    public function sendEmail($subject,$template_name,$data=NULL)
+    public function sendEmail($subject,$template_name,$data=[])
     {
         $user = $this->user;
+        $data['email_template_name']=$template_name;
         Mail::queue('emails.'.$template_name, ['user' => $user, 'data'=>$data], function ($m) use ($user,$subject,$data,$template_name)
         {
                 $m->to($user->email, $user->preferred_name)->subject($subject);
@@ -36,6 +38,7 @@ class Notifier
         $l->name=$name;
         $l->data=json_encode($data);
         $l->save();
+        AnalyticsController::log($this->user->id,'outgoing-'.$type,$data);
         Log::info('[NOTIFIER] '.$type.' sent to id#'.$this->user->id.'. data: '.json_encode($data));
     }
 }

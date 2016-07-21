@@ -53,9 +53,13 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('pods/list','PodController@listPods');
     Route::get('pods/events','PodController@listEvents');
     Route::get('pods/scans','PodController@listScans');
+    Route::post('pods/heartbeat','PodController@heartbeat');
 
     Route::get('events', 'GeneralController@getEvents');
+    Route::put('analytics/event', 'AnalyticsController@event');
 
+
+    Route::get('sponsor/info','SponsorController@info');
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
@@ -69,6 +73,11 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::post('hackers/bulk', 'ExecController@getHackersBulk');
         Route::put('hackers/bulk', 'ExecController@putHackersBulk');
         Route::get('users', 'ExecController@getUsers');
+        Route::get('users/{id}/view', 'ExecController@getUser');
+        Route::get('users/{id}/analytics', 'ExecController@getUserAnalytics');
+        Route::post('users/{id}/action', 'ExecController@doAction');
+        Route::get('messaging/group', 'ExecController@getGroupMessages');
+        Route::post('messaging/group', 'ExecController@sendGroupMessage');
         Route::get('allstats', 'ExecController@getAllStats');
         Route::get('applications/next','ExecController@getNextApplicationID');
         Route::get('applications/{id}/view', 'ExecController@getApplication');
@@ -80,5 +89,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::post('events/create', 'ExecController@createEvent');
         Route::post('events/update', 'ExecController@editEvent');
         Route::post('events/delete', 'ExecController@deleteEvent');
+    });
+    Route::get('ping', function () {
+        return 'pong';
     });
 });

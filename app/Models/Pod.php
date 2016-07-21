@@ -8,7 +8,7 @@ class Pod extends Model
 {
     public function event()
     {
-        return $this->hasOne('App\Models\PodEvent','id','current_pod_event_id');
+        return $this->hasOne('App\Models\Event','id','current_event_id');
     }
     public function scans()
     {
