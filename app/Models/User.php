@@ -6,6 +6,7 @@ use Tymon\JWTAuth\JWTAuth;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Carbon\Carbon;
+use Log;
 class User extends Authenticatable
 {
     use EntrustUserTrait;
@@ -46,8 +47,10 @@ class User extends Authenticatable
     public function generateUniqueIdentifier()
     {
         if(!$this->identifier) {
-            $this->identifier = substr(str_shuffle(str_repeat('0123456789', 13)), 0, 13);
-            $this->save();//todo: check for conflict
+            $rand = substr(str_shuffle(str_repeat('0123456789', 9)), 0, 9);
+            //appending ID will ensure uniqueness as well as allow for easier visual debugging without
+            $this->identifier =$rand.str_pad($this->id,4,"0",STR_PAD_LEFT);
+            $this->save();
         }
     }
     public function slug() {
@@ -74,7 +77,8 @@ class User extends Authenticatable
         {
             //assign them to a team of 1 in lieu of no team
             $team = new Team();
-            $team->code = md5(Carbon::now().getenv("APP_KEY"));
+            //adding user ID to the end of a hash guaruntee it to be unique, even if md5 isn't, without doing a DB check
+            $team->code = substr(md5(Carbon::now().getenv("APP_KEY")),0,4).$this->id;
             $team->save();
             $application->team_id = $team->id;
         }
