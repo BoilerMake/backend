@@ -9,6 +9,7 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Models\Team;
+use App\Models\PuzzleProgress;
 use Input;
 use Log;
 use Carbon\Carbon;
@@ -141,4 +142,29 @@ class UsersController extends Controller {
 		$reset->save();
 		return 'ok';
 	}
+	public function completePuzzle(Request $request) {
+        if(!Auth::user())
+            return ['auth plz'];
+        $puzzle_id = $request->get('puzzle_id');
+        if(!$puzzle_id)
+        	return ['puzzle id null'];
+        $user_id = Auth::user()->id;
+
+        if($request->get('puzzle_secret')!=env('PUZZLE_SECRET'))
+            return ['bad puzzle secret'];
+
+        if(PuzzleProgress::where('user_id',$user_id)->where('puzzle_id',$puzzle_id)->exists())
+        	return ['dup'];
+
+        $r = new PuzzleProgress();
+        $r->user_id = $user_id;
+        $r->puzzle_id = $puzzle_id;
+        $r->save();
+        return ['ok'];
+    }
+    public function getCompletedPuzzleIDs(Request $request) {
+        $user_id = Auth::user()->id;
+        $ids = PuzzleProgress::where('user_id',$user_id)->get()->lists('puzzle_id');
+        return ['puzzles'=>$ids];
+    }
 }
