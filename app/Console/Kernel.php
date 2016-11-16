@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Inspire::class,
         Commands\CreateUser::class,
-        Commands\PodPodKey::class
+        Commands\PodPodKey::class,
+        Commands\JWTKey::class
     ];
 
     /**
