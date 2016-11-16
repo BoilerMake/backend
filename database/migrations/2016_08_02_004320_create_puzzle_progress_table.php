@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePodEventsTable extends Migration
+class CreatePuzzleProgressTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,12 @@ class CreatePodEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pod_events', function (Blueprint $table) {
+        Schema::create('puzzle_progress', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('event_name');
-            $table->boolean('active')->default(true);
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('puzzle_id');
+            $table->timestamp('completed_at');
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ class CreatePodEventsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('pod_events');
+        Schema::drop('puzzle_progress');
     }
 }

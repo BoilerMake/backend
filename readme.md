@@ -7,10 +7,10 @@ This API is currently being actively developed for use in BoilerMake 4, ~October
 * Have PHP, MySQL, and Composer installed.
   * PHP: Install via package manager
   * MySQL: install via package manager
-	* remember to install/setup the php mysql driver
-	  * arch linux: https://wiki.archlinux.org/index.php/PHP#MySQL.2FMariaDB
-	  * ubuntu/debian linux: `sudo apt-get install php5-mysql`
-	* also remember to start the service if you're in linux
+	* Remember to install/setup the PHP MySql driver
+	  * Arch Linux: https://wiki.archlinux.org/index.php/PHP#MySQL.2FMariaDB
+	  * Ubuntu/Debian Linux: `sudo apt-get install php5-mysql`
+	* Also remember to start the service if you're in Linux
   * Composer: [instructions here](https://getcomposer.org/doc/00-intro.md)
 
 ###Installation
@@ -21,11 +21,11 @@ This API is currently being actively developed for use in BoilerMake 4, ~October
      * `create database boilermake;`
 * Run `php artisan migrate`
 * Run `php artisan db:seed`
-* Generate a jwt secret: `php artisan jwt:generate`
+* Generate a JWT secret: `php artisan jwtkey:generate`
 * Generate an application key: `php artisan key:generate`
 * Generate a PodPod secret (OPTIONAL): `php artisan podpod:generate`
 
-* if you are on apache for dev; read this:
+* If you're using Apache, read this:
 	* https://github.com/tymondesigns/jwt-auth/wiki/Authentication
 
 ####Phases:

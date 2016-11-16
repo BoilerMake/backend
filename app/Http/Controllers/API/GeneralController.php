@@ -56,7 +56,7 @@ class GeneralController extends Controller {
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if($signup->wasRecentlyCreated)
             return ['status'=>'ok','message'=>'all signed up!'];
-        return['status'=>'ok','message'=>'you were already signed up!'];
+        return['status'=>'fail','message'=>'you were already signed up!'];
     }
 
     public static function resumeUrl($id, $method)

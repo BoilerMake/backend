@@ -28,7 +28,7 @@ class AuthController extends Controller {
         else {
 	        if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
 	            $roles = Auth::user()->roles()->get()->lists('name');
-	            $token = JWTAuth::fromUser(Auth::user(),['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>Auth::user()->slug()]);
+	            $token = JWTAuth::fromUser(Auth::user(),['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>Auth::user()->slug(), 'user_id'=>Auth::user()->id]);
 	            return compact('token');
 	        }
     	}
@@ -68,7 +68,7 @@ class AuthController extends Controller {
             $user->postSignupActions(); // Attach roles
 
             $roles = $user->roles()->get()->lists('name');
-            $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
+            $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
             
             Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
     			$message->from('hello@boilermake.org', 'Laravel');

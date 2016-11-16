@@ -41,17 +41,16 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $response = $this->call('POST', '/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
         $token = json_decode($response->getContent(), true)['token'];
-        //temporary workaround until we can figure out how to test with http headers
-        $this->get('/v1/users/me?token=' . $token)
-            ->seeJsonStructure([
-                'id',
-                'first_name',
-                'last_name',
-                'email',
-                'phone',
-                'created_at',
-                'updated_at',
-                'identifier'
-            ]);
+        $response = $this->call('GET', '/v1/users/me?token=' . $token, [], [], [], []);
+        $this->seeJsonStructure([
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'created_at',
+            'updated_at',
+            'identifier'
+        ], json_decode($response->getContent(), true));
     }
 }

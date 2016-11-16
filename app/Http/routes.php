@@ -67,6 +67,10 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::get('resumePUT','UsersController@getResumePutUrl');
         Route::get('application', 'UsersController@getApplication');
         Route::post('application', 'UsersController@updateApplication');
+
+
+        Route::post('puzzles', 'UsersController@completePuzzle');
+        Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
     });
     Route::group(array('prefix' => 'execs'), function() {
         Route::get('hackers', 'ExecController@getHackers');
