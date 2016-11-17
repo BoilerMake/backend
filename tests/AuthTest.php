@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use \App\Models\User;
 
 class AuthTest extends TestCase
 {
@@ -105,5 +106,23 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
             ->seeJsonStructure(['token']);
+    }
+    public function testConfirmationCode() {
+        $faker = Faker\Factory::create();
+        $first_name = $faker->firstName;
+        $last_name = $faker->lastName;
+        $password = $faker->password;
+        $email = $faker->email;
+        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
+        $user = User::where('first_name', $first_name)->where('last_name', $last_name)->where('email', $email)->first();
+        $this->seeInDatabase('users', ['email' => $email, 'confirmed' => 0, 'confirmation_code' => $user->confirmation_code]);
+        $this->get('/v1/users/verify/' . $user->confirmation_code)
+            ->seeJsonEquals([
+                 'success' => 'Email Confirmed',
+             ]);
+        $this->get('/v1/users/verify/' . $user->confirmation_code)
+            ->seeJsonEquals([
+                 'error' => 'Invalid Code',
+             ]);
     }
 }
