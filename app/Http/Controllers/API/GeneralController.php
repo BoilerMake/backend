@@ -11,15 +11,9 @@ use App\Models\InterestSignup;
 use GuzzleHttp;
 use App\Services\Notifier;
 class GeneralController extends Controller {
-    public function test()
+    public function ping()
     {
-       return ['hi'];
-    }
-    public static function successWrap($data)
-    {
-        return ['data'=>$data,
-            'meta'=>['status'=>"200"]
-        ];
+       return ['pong'];
     }
     public function getSchools(Request $request)
     {
