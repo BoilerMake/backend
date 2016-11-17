@@ -52,5 +52,58 @@ class AuthTest extends TestCase
             'updated_at',
             'identifier'
         ], json_decode($response->getContent(), true));
+        $response = $this->call('GET', '/v1/debug', [], [], [], ['HTTP_Authorization' => 'Bearer: ' . $token]);
+        $this->seeJsonStructure([
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'created_at',
+            'updated_at',
+            'identifier'
+        ], json_decode($response->getContent(), true));
+    }
+    /**
+     * Test that login works correctly
+     *
+     * @return void
+     */
+    public function testAuthentication()
+    {
+        $faker = Faker\Factory::create();
+        $first_name = $faker->firstName;
+        $last_name = $faker->lastName;
+        $password = $faker->password;
+        $email = $faker->email;
+        $this->call('POST', '/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
+        $this->post('/v1/auth', ['email' => $email, 'password' => $password])
+            ->seeJsonStructure(['token']);
+        $this->post('/v1/auth', [])
+            ->see('["The email field is required.","The password field is required."]');
+        $this->post('/v1/auth', ['email' => $email, 'password' => $password . "#"])
+            ->seeJsonEquals([
+                 'error' => 'invalid_credentials'
+             ]);
+    }
+    public function testAppPhaseSignups() {
+        config(['app.phase' => 1]);
+        $faker = Faker\Factory::create();
+        $first_name = $faker->firstName;
+        $last_name = $faker->lastName;
+        $password = $faker->password;
+        $email = $faker->email;
+        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
+            ->seeJsonEquals([
+                 'error' => 'applications are not open',
+             ]);
+        config(['app.phase' => 3]);
+        $faker = Faker\Factory::create();
+        $first_name = $faker->firstName;
+        $last_name = $faker->lastName;
+        $password = $faker->password;
+        $email = $faker->email;
+        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
+            ->seeJsonStructure(['token']);
     }
 }
