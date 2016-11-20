@@ -15,7 +15,7 @@ use App\Http\Controllers\Controller;
 class PodController extends Controller
 {
     public function __construct() {
-        $this->middleware('jwt.auth',['except' => ['scan', 'heartbeat']]);
+        $this->middleware('jwt.auth', ['except' => ['scan', 'heartbeat']]);
     }
     public function scan(Request $request)
     {

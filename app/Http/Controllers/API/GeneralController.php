@@ -11,15 +11,9 @@ use App\Models\InterestSignup;
 use GuzzleHttp;
 use App\Services\Notifier;
 class GeneralController extends Controller {
-    public function test()
+    public function ping()
     {
-       return ['hi'];
-    }
-    public static function successWrap($data)
-    {
-        return ['data'=>$data,
-            'meta'=>['status'=>"200"]
-        ];
+       return ['pong'];
     }
     public function getSchools(Request $request)
     {
@@ -56,7 +50,7 @@ class GeneralController extends Controller {
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if($signup->wasRecentlyCreated)
             return ['status'=>'ok','message'=>'all signed up!'];
-        return['status'=>'ok','message'=>'you were already signed up!'];
+        return['status'=>'fail','message'=>'you were already signed up!'];
     }
 
     public static function resumeUrl($id, $method)

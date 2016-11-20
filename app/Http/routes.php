@@ -36,7 +36,7 @@ Route::group(['middleware' => ['web']], function () {
 Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 {
     //splash page signups
-    Route::get('test','GeneralController@test');
+    Route::get('ping','GeneralController@ping');
     Route::post('auth', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
     Route::get('debug', 'AuthController@debug');
@@ -44,22 +44,14 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('interest/signup','GeneralController@interestSignup');
     Route::get('interest','ExecController@getInterestData');
     Route::get('calendar', 'ExecController@generateCalendar');
+    Route::get('sponsor/info','SponsorController@info');
 
-
-    Route::post('users/reset/send','UsersController@sendPasswordReset');
-    Route::post('users/reset/perform','UsersController@performPasswordReset');
-
-    Route::post('pods/scan','PodController@scan');
-    Route::get('pods/list','PodController@listPods');
-    Route::get('pods/events','PodController@listEvents');
-    Route::get('pods/scans','PodController@listScans');
-    Route::post('pods/heartbeat','PodController@heartbeat');
-
+    // Analytics
     Route::get('events', 'GeneralController@getEvents');
     Route::put('analytics/event', 'AnalyticsController@event');
 
-
-    Route::get('sponsor/info','SponsorController@info');
+    Route::post('users/reset/send','UsersController@sendPasswordReset');
+    Route::post('users/reset/perform','UsersController@performPasswordReset'); 
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
@@ -67,12 +59,11 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::get('resumePUT','UsersController@getResumePutUrl');
         Route::get('application', 'UsersController@getApplication');
         Route::post('application', 'UsersController@updateApplication');
-
-
         Route::post('puzzles', 'UsersController@completePuzzle');
         Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
     });
-    Route::group(array('prefix' => 'execs'), function() {
+
+    Route::group(['middleware' => ['jwt.auth', 'role:exec'], 'prefix' => 'execs'], function() {
         Route::get('hackers', 'ExecController@getHackers');
         Route::post('hackers/bulk', 'ExecController@getHackersBulk');
         Route::put('hackers/bulk', 'ExecController@putHackersBulk');
@@ -87,14 +78,17 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
         Route::get('applications/{id}/view', 'ExecController@getApplication');
         Route::put('applications/{id}/rate', 'ExecController@rateApplication');
         Route::post('applications/{id}/notes', 'ExecController@addApplicationNote');
-
         Route::get('teams', 'ExecController@getTeams');
-
         Route::post('events/create', 'ExecController@createEvent');
         Route::post('events/update', 'ExecController@editEvent');
         Route::post('events/delete', 'ExecController@deleteEvent');
     });
-    Route::get('ping', function () {
-        return 'pong';
+
+    Route::group(array('prefix' => 'pods'), function() {
+        Route::post('scan','PodController@scan');
+        Route::get('list','PodController@listPods');
+        Route::get('events','PodController@listEvents');
+        Route::get('scans','PodController@listScans');
+        Route::post('heartbeat','PodController@heartbeat');
     });
 });

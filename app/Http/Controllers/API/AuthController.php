@@ -44,7 +44,7 @@ class AuthController extends Controller {
     */
     public function signUp(Request $request)
     {
-        if(intval(getenv('APP_PHASE')) < 2)
+        if(intval(config('app.phase')) < 2)
             return ['error'=>'applications are not open'];
 
         $validator = Validator::make($request->all(), [
