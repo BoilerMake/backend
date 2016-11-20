@@ -78,7 +78,7 @@ class ExecController extends Controller {
 		$user = User::find($id);
 		$application = null;
 		if($user->hasRole('hacker'))
-			$application=$user->getApplication();
+			$application=$user->getApplication(true);
 		return [
 			'user'=>$user,
 			'application'=>$application,
