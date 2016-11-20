@@ -45,8 +45,8 @@ class UsersController extends Controller {
 			$application = self::getApplication()['application'];
 			foreach ($data['application'] as $key => $value) {
 				if(in_array($key,['age','grad_year', 'gender','major','diet',
-					'diet_restrictions','tshirt','github','essay1','essay2',
-					'resume_filename','resume_uploaded','travellingFrom', 'isTravellingFromSchool']))
+					'diet_restrictions','github','race',
+					'resume_filename','resume_uploaded','needsTravelReimbursement', 'isFirstHackathon']))
 				{
 					$application->$key=$value;
 				}
