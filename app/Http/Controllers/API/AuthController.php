@@ -48,8 +48,6 @@ class AuthController extends Controller {
             return ['error'=>'applications are not open'];
 
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
             'email'   => 'required|email|unique:users',
             'password'    => 'required',
         ]);
@@ -59,8 +57,6 @@ class AuthController extends Controller {
         }
         else {
             $user = new User;
-            $user->first_name = $request['first_name'];
-            $user->last_name = $request['last_name'];
             $user->password = Hash::make($request['password']);
             $user->email = $request['email'];
             $user->save();
