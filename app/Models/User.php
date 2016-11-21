@@ -89,6 +89,7 @@ class User extends Authenticatable
         $application->save();
         $application->teaminfo = $application->team;
         $application->schoolinfo = $application->school;
+        $application->resume_uploaded = (int) $application->resume_uploaded;
         return $application;
     }
 }
