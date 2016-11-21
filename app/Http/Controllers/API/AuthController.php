@@ -71,8 +71,9 @@ class AuthController extends Controller {
 
             $roles = $user->roles()->get()->lists('name');
             $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
-            
-            Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
+
+            $link = env('FRONTEND_ADDRESS')."/tok?=".$code;
+            Mail::send('emails.welcome', ['user' => $user,'link'=>$link], function ($message) use ($user,$link) {
     			$message->from('hello@boilermake.org', 'BoilerMake');
     			$message->to($user->email);
 			});

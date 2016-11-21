@@ -1,3 +1,3 @@
 welcome to boilermake.
 please verify your email
-{{$user->confirmation_code}}
+<a href="{{$link}}">{{$link}}</a>
