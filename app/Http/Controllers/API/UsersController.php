@@ -116,12 +116,15 @@ class UsersController extends Controller {
 
 	public function sendPasswordReset(Request $request)
 	{
-		$email = $request->email;
-		$user = User::where('email',$email)->first();
-		if(!$user)
-			return('No user '.$email);
+		$validator = Validator::make($request->all(), [
+		    'email' => 'required|email|exists:users,email',
+		]);
+		if ($validator->fails()) {
+			return ['message' => 'error', 'errors' => $validator->errors()->all()];
+		}
+		$user = User::where('email', $request->email)->first();
 		$user->sendPasswordResetEmail();
-		return 'ok';
+		return ['message' => 'success'];
 	}
 	public function performPasswordReset(Request $request)
 	{
