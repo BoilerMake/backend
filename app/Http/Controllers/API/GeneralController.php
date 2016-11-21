@@ -21,7 +21,7 @@ class GeneralController extends Controller {
         Log::info($filter);
         if(!$filter)
             $filter= "";
-        $locs = School::where("name","like","%".$filter."%")->orWhere("name","other")->get();
+        $locs = School::where("name","like","%".$filter."%")->orWhere("name","Other/School not listed")->get();
         return $locs;
     }
     public function inboundSMS()
