@@ -44,9 +44,8 @@ class UsersController extends Controller {
 			//update the application
 			$application = self::getApplication()['application'];
 			foreach ($data['application'] as $key => $value) {
-				if(in_array($key,['age','grad_year', 'gender','major','diet',
-					'diet_restrictions','tshirt','github','essay1','essay2',
-					'resume_filename','resume_uploaded','travellingFrom', 'isTravellingFromSchool']))
+				if(in_array($key,['age','grad_year', 'gender','major','diet','diet_restrictions','github','race',
+					'resume_filename','resume_uploaded','needsTravelReimbursement', 'isFirstHackathon']))
 				{
 					$application->$key=$value;
 				}
@@ -93,8 +92,10 @@ class UsersController extends Controller {
 			'application'=>$application,
 			'validation'=>$application->validationDetails(),
 			'phase'=>$phase,
-			'teamsEnabled'=> (getenv('TEAMS') === 'true')
-		];
+			'teamsEnabled'=> (getenv('TEAMS') === 'true'),
+            'resume_view_url'=>$application->resume_uploaded? GeneralController::resumeUrl($application->user->id,'get') : null
+
+        ];
 
 	}
 	public function getResumePutUrl()
@@ -115,12 +116,15 @@ class UsersController extends Controller {
 
 	public function sendPasswordReset(Request $request)
 	{
-		$email = $request->email;
-		$user = User::where('email',$email)->first();
-		if(!$user)
-			return('No user '.$email);
+		$validator = Validator::make($request->all(), [
+		    'email' => 'required|email|exists:users,email',
+		]);
+		if ($validator->fails()) {
+			return ['message' => 'error', 'errors' => $validator->errors()->all()];
+		}
+		$user = User::where('email', $request->email)->first();
 		$user->sendPasswordResetEmail();
-		return 'ok';
+		return ['message' => 'success'];
 	}
 	public function performPasswordReset(Request $request)
 	{

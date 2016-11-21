@@ -25,16 +25,12 @@ use \Eluceo\iCal\Component\Calendar;
 class ExecController extends Controller {
 
 	public function __construct() {
-       $this->middleware('jwt.auth', ['except' => ['generateCalendar']]);
+       // $this->middleware('jwt.auth', ['except' => ['generateCalendar']]);
 	}
     public function getInterestData() {
-        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-            return;
         return InterestSignup::all();
     }
 	public function getHackers() {
-		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-			return;
 		$users = User::whereHas('roles', function($q)
 		{
 		    $q->where('name', 'hacker');
@@ -47,8 +43,6 @@ class ExecController extends Controller {
 	public function getHackersBulk(Request $request)
 	{
 		$ids = $request->all();
-		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-			return;
 		$users = User::whereHas('roles', function($q) use ($ids)
 		{
 		    $q->where('name', 'hacker')->whereIn('id',$ids);
@@ -62,8 +56,6 @@ class ExecController extends Controller {
 	{
 		$ids = $request->all()['hackers'];
 		$decision = $request->all()['decision'];
-		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-			return;
 		$users = User::whereHas('roles', function($q) use ($ids)
 		{
 		    $q->where('name', 'hacker')->whereIn('id',$ids);
@@ -83,12 +75,10 @@ class ExecController extends Controller {
 	}
 	public function getUser($id)
 	{
-		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-			return;
 		$user = User::find($id);
 		$application = null;
 		if($user->hasRole('hacker'))
-			$application=$user->getApplication();
+			$application=$user->getApplication(true);
 		return [
 			'user'=>$user,
 			'application'=>$application,
@@ -169,8 +159,6 @@ class ExecController extends Controller {
 	public function getApplication($id)
 	{
 		$user = Auth::user();
-		if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-			return;
 		$app = Application::with('user','school','team','notes.user')->find($id);
         
         
@@ -181,8 +169,6 @@ class ExecController extends Controller {
 	}
 	public function rateApplication(Request $request, $id)
 	{
-        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-            return;
 		$user = Auth::user();
 		$rating = $request->all()['rating'];
 		$ranking = ApplicationRating::firstOrNew(['application_id'=>intval($id),'user_id'=>$user->id]);
@@ -194,8 +180,6 @@ class ExecController extends Controller {
 	}
     public function addApplicationNote(Request $request, $application_id)
     {
-        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-            return;
         $note  = new ApplicationNote();
         $note->application_id =intval($application_id);
         $note->user_id =Auth::user()->id;
@@ -205,8 +189,6 @@ class ExecController extends Controller {
     }
 	public function getTeams()
 	{
-        if(!Auth::user()->hasRole('exec'))//TODO middleware perhaps?
-            return;
 		$teams = Team::all();
 		foreach ($teams as $team ) {
 			$team['hackers_detail']=$team->getHackersWithRating();

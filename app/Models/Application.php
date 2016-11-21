@@ -60,7 +60,7 @@ class Application extends Model {
     
     public function getCompletedAttribute()
     {
-        return isset($this->age, $this->gender, $this->major, $this->grad_year, $this->essay1, $this->essay2);
+        return $this->validationDetails()['valid'];
     }
     public function validationDetails()
     {
@@ -68,31 +68,29 @@ class Application extends Model {
         $phase = intval(getenv('APP_PHASE'));
         if($phase >= 2)
         {
-            if(!$this->school_id)
+            if(!isset($this->school_id))
                 $reasons[]="School not set.";
-            if(!$this->resume_uploaded)
+            if(!($this->resume_uploaded))
                 $reasons[]="Resume not uploaded.";
-            if(!$this->github)
-                $reasons[]="Github handle not provided";
-            if(!$this->essay1)
-                $reasons[]="Essay 1 requirements not met";
-            if(!$this->essay2)
-                $reasons[]="Essay 1 requirements not met";
-            if(!$this->age)
-                $reasons[]="Age not provided.";
-            if(!$this->grad_year)
+            if(!($this->github))
+                $reasons[]="Github username not provided";
+            if(!isset($this->grad_year))
                 $reasons[]="Grad year not provided.";
-            if(!$this->gender)
+            if(!isset($this->gender))
                 $reasons[]="Gender not provided.";
-            if(!$this->major)
+            if(!($this->major))
                 $reasons[]="Major not provided.";
+            if(!isset($this->needsTravelReimbursement))
+                $reasons[]="Travel info not provided.";
+            if(!isset($this->isFirstHackathon))
+                $reasons[]="First hackathon? not provided.";
+            if(!isset($this->race))
+                $reasons[]="Race not provided.";
         }
         if($phase >= 3)
         {
             if(!$this->diet)
                 $reasons[]="Dietary info not provided";
-            if(!$this->tshirt)
-                $reasons[]="T-shirt size not provided";
         }
         $valid = true;
         if(sizeof($reasons)!=0)

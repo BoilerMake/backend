@@ -11,15 +11,9 @@ use App\Models\InterestSignup;
 use GuzzleHttp;
 use App\Services\Notifier;
 class GeneralController extends Controller {
-    public function test()
+    public function ping()
     {
-       return ['hi'];
-    }
-    public static function successWrap($data)
-    {
-        return ['data'=>$data,
-            'meta'=>['status'=>"200"]
-        ];
+       return ['pong'];
     }
     public function getSchools(Request $request)
     {
@@ -27,7 +21,7 @@ class GeneralController extends Controller {
         Log::info($filter);
         if(!$filter)
             $filter= "";
-        $locs = School::where("name","like","%".$filter."%")->get();
+        $locs = School::where("name","like","%".$filter."%")->orWhere("name","Other/School not listed")->get();
         return $locs;
     }
     public function inboundSMS()
@@ -67,14 +61,14 @@ class GeneralController extends Controller {
             case 'get':
                 $cmd = $s3->getCommand('getObject', [
                     'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => 'r/'.$id.'.pdf',
+                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
                     'ResponseContentType' => 'application/pdf'
                 ]);
                 break;
             case 'put':
                 $cmd = $s3->getCommand('PutObject', [
                 'Bucket' => getenv('S3_BUCKET'),
-                'Key'    => 'r/'.$id.'.pdf'
+                'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf'
                 ]);
                 break;
         }
