@@ -44,8 +44,7 @@ class UsersController extends Controller {
 			//update the application
 			$application = self::getApplication()['application'];
 			foreach ($data['application'] as $key => $value) {
-				if(in_array($key,['age','grad_year', 'gender','major','diet',
-					'diet_restrictions','github','race',
+				if(in_array($key,['age','grad_year', 'gender','major','diet','diet_restrictions','github','race',
 					'resume_filename','resume_uploaded','needsTravelReimbursement', 'isFirstHackathon']))
 				{
 					$application->$key=$value;
@@ -93,8 +92,10 @@ class UsersController extends Controller {
 			'application'=>$application,
 			'validation'=>$application->validationDetails(),
 			'phase'=>$phase,
-			'teamsEnabled'=> (getenv('TEAMS') === 'true')
-		];
+			'teamsEnabled'=> (getenv('TEAMS') === 'true'),
+            'resume_view_url'=>$application->resume_uploaded? GeneralController::resumeUrl($application->user->id,'get') : null
+
+        ];
 
 	}
 	public function getResumePutUrl()
