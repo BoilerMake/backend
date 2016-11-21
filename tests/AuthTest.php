@@ -20,10 +20,10 @@ class AuthTest extends TestCase
         $password = $faker->password;
         $email = $faker->email;
         $this->post('/v1/users', ['email' => $email])
-            ->see('["The first name field is required.","The last name field is required.","The password field is required."]');
-        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password])
+            ->see('["The password field is required."]');
+        $this->post('/v1/users', ['password' => $password])
             ->see('["The email field is required."]');
-        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
+        $this->post('/v1/users', ['password' => $password, 'email' => $email])
             ->seeJsonStructure([
                  'token',
             ]);
@@ -36,17 +36,13 @@ class AuthTest extends TestCase
     public function testValidSignUpToken()
     {
         $faker = Faker\Factory::create();
-        $first_name = $faker->firstName;
-        $last_name = $faker->lastName;
         $password = $faker->password;
         $email = $faker->email;
-        $response = $this->call('POST', '/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
+        $response = $this->call('POST', '/v1/users', ['password' => $password, 'email' => $email]);
         $token = json_decode($response->getContent(), true)['token'];
         $response = $this->call('GET', '/v1/users/me?token=' . $token, [], [], [], []);
         $this->seeJsonStructure([
             'id',
-            'first_name',
-            'last_name',
             'email',
             'phone',
             'created_at',
@@ -109,12 +105,10 @@ class AuthTest extends TestCase
     }
     public function testConfirmationCode() {
         $faker = Faker\Factory::create();
-        $first_name = $faker->firstName;
-        $last_name = $faker->lastName;
         $password = $faker->password;
         $email = $faker->email;
-        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
-        $user = User::where('first_name', $first_name)->where('last_name', $last_name)->where('email', $email)->first();
+        $this->post('/v1/users', ['password' => $password, 'email' => $email]);
+        $user = User::where('email', $email)->first();
         $this->seeInDatabase('users', ['email' => $email, 'confirmed' => 0, 'confirmation_code' => $user->confirmation_code]);
         $this->get('/v1/users/verify/' . $user->confirmation_code)
             ->seeJsonEquals([
