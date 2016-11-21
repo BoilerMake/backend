@@ -72,13 +72,13 @@ class Application extends Model {
                 $reasons[]="School not set.";
             if(!isset($this->resume_uploaded))
                 $reasons[]="Resume not uploaded.";
-            if(!isset($this->github))
+            if(!($this->github))
                 $reasons[]="Github username not provided";
             if(!isset($this->grad_year))
                 $reasons[]="Grad year not provided.";
             if(!isset($this->gender))
                 $reasons[]="Gender not provided.";
-            if(!isset($this->major))
+            if(!($this->major))
                 $reasons[]="Major not provided.";
             if(!isset($this->needsTravelReimbursement))
                 $reasons[]="Travel info not provided.";
