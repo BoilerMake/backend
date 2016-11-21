@@ -61,14 +61,14 @@ class GeneralController extends Controller {
             case 'get':
                 $cmd = $s3->getCommand('getObject', [
                     'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => 'r/'.$id.'.pdf',
+                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
                     'ResponseContentType' => 'application/pdf'
                 ]);
                 break;
             case 'put':
                 $cmd = $s3->getCommand('PutObject', [
                 'Bucket' => getenv('S3_BUCKET'),
-                'Key'    => 'r/'.$id.'.pdf'
+                'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf'
                 ]);
                 break;
         }
