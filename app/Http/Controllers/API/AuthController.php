@@ -88,7 +88,7 @@ class AuthController extends Controller {
     {
         if(!isset($request->code))
             return response()->json(['error' => 'Code Required'], 401);
-        $user = User::where('confirmation_code', $request->code)->where('confirmed', 0)->first();
+        $user = User::where('confirmation_code', $request->code)->first();
         if($user) {
             $user->confirmed = 1;
             $user->save();
