@@ -122,5 +122,9 @@ class AuthTest extends TestCase
             ->seeJsonEquals([
                 'error' => 'Invalid Code',
             ]);
+        $this->get('/v1/users/verify/')
+            ->seeJsonEquals([
+                'error' => 'Code Required',
+            ]);
     }
 }
