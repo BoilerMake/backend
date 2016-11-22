@@ -14,6 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/fe', function () {
+    return env('FRONTEND_ADDRESS');
+});
 
 /*
 |--------------------------------------------------------------------------
