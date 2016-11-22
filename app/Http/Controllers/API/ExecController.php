@@ -222,41 +222,109 @@ class ExecController extends Controller {
 		$users = User::whereHas('roles', function($q) {
 		    $q->where('name', 'hacker');
 		})->with('application','application.school')->get();
-		$gender = array();
-		$grad_year = array();
-		$school = array();
-		$completed = array(0, 0);
+		$gender = [];
+		$race = [];
+		$major = [];
+		$grad_year = [];
+		$school = [];
+        $travel = [];
+        $firstHackathon = [];
+		$completed = ['yes'=>0,'no'=>0];
 		foreach($users as $user) {
 			if($user->application->completed) {
-				if(!isset($gender[$user->application->gender])) {
-					$gender[$user->application->gender] = 1;
+			    //travel
+				if(!isset($travel[$user->application->needsTravelReimbursement])) {
+                    $travel[$user->application->needsTravelReimbursement] = 1;
 				}
 				else {
-					$gender[$user->gender]++;
+                    $travel[$user->application->needsTravelReimbursement]++;
 				}
 
+                //first hackathon
+                if(!isset($firstHackathon[$user->application->isFirstHackathon])) {
+                    $firstHackathon[$user->application->isFirstHackathon] = 1;
+                }
+                else {
+                    $firstHackathon[$user->application->isFirstHackathon]++;
+                }
+
+                //gender
+                if(!isset($gender[$user->application->gender])) {
+                    $gender[$user->application->gender] = 1;
+                }
+                else {
+                    $gender[$user->application->gender]++;
+                }
+
+                //race
+                if(!isset($race[$user->application->race])) {
+                    $race[$user->application->race] = 1;
+                }
+                else {
+                    $race[$user->application->race]++;
+                }
+
+                //grad year
 				if(!isset($grad_year[$user->application->grad_year])) {
 					$grad_year[$user->application->grad_year] = 1;
 				}
 				else {
 					$grad_year[$user->application->grad_year]++;
 				}
-				if(!isset($school[$user->application->school])) {
-					$school[$user->application->school] = 1;
+
+                //major
+                if(!isset($major[$user->application->major])) {
+                    $major[$user->application->major] = 1;
+                }
+                else {
+                    $major[$user->application->major]++;
+                }
+
+
+				if(!isset($school[$user->application->school->id]['counts']['complete'])) {
+					$school[$user->application->school->id]['counts']['complete'] = 1;
+					$school[$user->application->school->id]['school'] = $user->application->school->name;
 				}
 				else {
-					$school[$user->application->school]++;
+					$school[$user->application->school->id]['counts']['complete']+=1;
 				}
-				$completed[1]++;
+				$completed["yes"]++;
 			}
 			else {
-				$completed[0]++;
+			    if(isset($user->application->school))
+                {
+                    if(!isset($school[$user->application->school->id]['counts']['incomplete'])) {
+                        $school[$user->application->school->id]['counts']['incomplete'] = 1;
+                        $school[$user->application->school->id]['school'] = $user->application->school->name;
+                    }
+                    else {
+                        $school[$user->application->school->id]['counts']['incomplete']+=1;
+                    }
+                }
+                else
+                {
+                    if(!isset($school["none"]['counts']['incomplete'])) {
+                        $school["none"]['counts']['incomplete'] = 1;
+                        $school["none"]['school'] ="none";
+                    }
+                    else
+                        $school["none"]['counts']['incomplete']+=1;
+                }
+				$completed["no"]++;
 			}
 		}
-		var_dump($gender);
-		var_dump($grad_year);
-		// var_dump($school);
-		var_dump($completed);
+		 return([
+		     'first_hackathon'=>$firstHackathon,
+		     'travel'=>$travel,
+		     'by_school'=>$school,
+		     'gender'=>$gender,
+		     'major'=>$major,
+		     'race'=>$race,
+		     'grad_year'=>$grad_year,
+             'total'=>$completed,
+             'num_schools'=>sizeof($school)
+         ]
+         );
 	}
 
 	public function getStatsBySchool() {
