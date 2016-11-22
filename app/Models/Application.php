@@ -68,6 +68,10 @@ class Application extends Model {
         $phase = intval(getenv('APP_PHASE'));
         if($phase >= 2)
         {
+            if(!$this->user->first_name)
+                $reasons[]="First name not set.";
+            if(!$this->user->last_name)
+                $reasons[]="Last name not set.";
             if(!isset($this->school_id))
                 $reasons[]="School not set.";
             if(!($this->resume_uploaded))
