@@ -5,3 +5,4 @@ Homestead.json
 .env
 coverage
 coverage.xml
+.DS_Store
