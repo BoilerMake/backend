@@ -69,7 +69,7 @@ class AuthController extends Controller {
             $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
 
             $link = env('FRONTEND_ADDRESS')."/confirm?tok=".$code;
-            Mail::send('emails.welcome', ['user' => $user,'link'=>$link], function ($message) use ($user,$link) {
+            Mail::queue('emails.welcome', ['user' => $user,'link'=>$link], function ($message) use ($user,$link) {
     			$message->from('hello@boilermake.org', 'BoilerMake');
     			$message->to($user->email)->subject("Welcome to BoilerMake!");
 			});
@@ -87,14 +87,14 @@ class AuthController extends Controller {
     public function confirm(Request $request)
     {
         if(!isset($request->code))
-            return response()->json(['error' => 'Code Required'], 401);
+            return response()->json(['error' => 'Code Required'], 200);
         $user = User::where('confirmation_code', $request->code)->first();
         if($user) {
             $user->confirmed = 1;
             $user->save();
             return response()->json(['success' => 'Email Confirmed'], 200);
         }
-        return response()->json(['error' => 'Invalid Code'], 401);
+        return response()->json(['error' => 'Invalid Code'], 200);
     }
 
 	public function debug()

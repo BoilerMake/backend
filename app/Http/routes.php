@@ -18,21 +18,6 @@ Route::get('/fe', function () {
     return env('FRONTEND_ADDRESS');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| This route group applies the "web" middleware group to every route
-| it contains. The "web" middleware group is defined in your HTTP
-| kernel and includes session state, CSRF protection, and more.
-|
-*/
-
-Route::group(['middleware' => ['web']], function () {
-    //
-});
-
 /**
  * API ROUTES
  */
@@ -55,7 +40,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 
     Route::post('users/reset/send','UsersController@sendPasswordReset');
     Route::post('users/reset/perform','UsersController@performPasswordReset');
-    Route::get('users/verify/{code}', 'AuthController@confirm');
+    Route::get('users/verify/{code?}', 'AuthController@confirm');
 
     Route::group(array('prefix' => 'users/me'), function() {
         Route::get('/', 'UsersController@getMe');

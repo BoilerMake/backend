@@ -116,7 +116,15 @@ class AuthTest extends TestCase
              ]);
         $this->get('/v1/users/verify/' . $user->confirmation_code)
             ->seeJsonEquals([
-                 'error' => 'Invalid Code',
+                 'success' => 'Email Confirmed',
              ]);
+        $this->get('/v1/users/verify/' . $faker->uuid)
+            ->seeJsonEquals([
+                'error' => 'Invalid Code',
+            ]);
+        $this->get('/v1/users/verify/')
+            ->seeJsonEquals([
+                'error' => 'Code Required',
+            ]);
     }
 }
