@@ -87,14 +87,14 @@ class AuthController extends Controller {
     public function confirm(Request $request)
     {
         if(!isset($request->code))
-            return response()->json(['error' => 'Code Required'], 401);
+            return response()->json(['error' => 'Code Required'], 200);
         $user = User::where('confirmation_code', $request->code)->first();
         if($user) {
             $user->confirmed = 1;
             $user->save();
             return response()->json(['success' => 'Email Confirmed'], 200);
         }
-        return response()->json(['error' => 'Invalid Code'], 401);
+        return response()->json(['error' => 'Invalid Code'], 200);
     }
 
 	public function debug()
