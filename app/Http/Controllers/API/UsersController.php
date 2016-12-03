@@ -149,7 +149,7 @@ class UsersController extends Controller {
 	public function completePuzzle(Request $request) {
         if(!Auth::user())
             return ['auth plz'];
-        $puzzle_id = $request->get('puzzle_id');
+        $puzzle_id = intval($request->get('puzzle_id'));
         if(!$puzzle_id)
         	return ['puzzle id null'];
         $user_id = Auth::user()->id;
