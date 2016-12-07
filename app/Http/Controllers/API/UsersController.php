@@ -45,7 +45,7 @@ class UsersController extends Controller {
 			$application = self::getApplication()['application'];
 			foreach ($data['application'] as $key => $value) {
 				if(in_array($key,['age','grad_year', 'gender','major','diet','diet_restrictions','github','race',
-					'resume_filename','resume_uploaded','needsTravelReimbursement', 'isFirstHackathon']))
+					'resume_filename','resume_uploaded','needsTravelReimbursement', 'isFirstHackathon','has_no_github']))
 				{
 					$application->$key=$value;
 				}
@@ -149,7 +149,7 @@ class UsersController extends Controller {
 	public function completePuzzle(Request $request) {
         if(!Auth::user())
             return ['auth plz'];
-        $puzzle_id = $request->get('puzzle_id');
+        $puzzle_id = intval($request->get('puzzle_id'));
         if(!$puzzle_id)
         	return ['puzzle id null'];
         $user_id = Auth::user()->id;
