@@ -77,7 +77,7 @@ class Application extends Model {
             if(!($this->resume_uploaded))
                 $reasons[]="Resume not uploaded.";
             if(!($this->github) && !($this->has_no_github))
-                $reasons[]="Github username not provided. If you don't have a github, check the box.";
+                $reasons[]="Github username not provided. If you don't have a github, indicate that.";
             if(!isset($this->grad_year))
                 $reasons[]="Grad year not provided.";
             if(!isset($this->gender))
