@@ -16,7 +16,8 @@ class Kernel extends ConsoleKernel
         Commands\Inspire::class,
         Commands\CreateUser::class,
         Commands\PodPodKey::class,
-        Commands\JWTKey::class
+        Commands\JWTKey::class,
+        Commands\CalculateApplications::class
     ];
 
     /**
@@ -27,7 +28,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')
-                 ->hourly();
+        $schedule->command('inspire')->hourly();
+        $schedule->command('applications:calculate')->everyFiveMinutes();
     }
 }
