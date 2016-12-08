@@ -150,7 +150,7 @@ class UsersController extends Controller {
         if(!Auth::user())
             return ['auth plz'];
         $puzzle_id = intval($request->get('puzzle_id'));
-        if(!$puzzle_id)
+        if(!isset($puzzle_id))
         	return ['puzzle id null'];
         $user_id = Auth::user()->id;
 
