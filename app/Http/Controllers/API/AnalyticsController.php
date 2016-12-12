@@ -21,14 +21,15 @@ class AnalyticsController extends Controller
             $user_id = null;
         }
         $meta = $request->meta;
+        $url = $request->url;
 
         $meta['ip'] = $request->ip();
         if(isset($request->meta['ip']))//override grabbing ip from request
             $meta['ip'] = $request->meta['ip'];
-        self::log($user_id,$request->name,$request->params,$meta);
+        self::log($user_id,$request->name,$request->params,$meta,$url);
 
     }
-    public static function log($user_id,$event,$params=null,$meta=null)
+    public static function log($user_id,$event,$params=null,$meta=null,$url=null)
     {
         $e = new AnalyticsEvent();
         $e->user_id = $user_id;
@@ -41,6 +42,8 @@ class AnalyticsController extends Controller
 
         if(isset($meta['client']))
             $e->client = $meta['client'];
+        if(isset($meta['url']))
+            $e->url = $meta['url'];
         $e->params = json_encode($params);
         $e->save();
         return 'ok';
