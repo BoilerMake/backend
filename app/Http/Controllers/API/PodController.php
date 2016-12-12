@@ -119,12 +119,12 @@ class PodController extends Controller
     }
     public function heartbeat(Request $request) {
         if($request->pod_key != env('PODPOD_KEY'))
-            return "auth error";
+           return ['success'=> false, "message"=> "invalid auth"];
         $pod = Pod::find($request->pod_id);
         if(!$pod)
-            return 'error with pod_id';
+            return ['success'=> false, "message"=> "could not find pod"];
         $pod->touch();
         //TODO: Change this return value on pod status so we can control scanning execution
-        return 1;
+        return ['success'=> true, "message"=> "heartbeat received " . $pod->updated_at];
     }
 }
