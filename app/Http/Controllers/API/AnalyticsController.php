@@ -41,6 +41,10 @@ class AnalyticsController extends Controller
 
         if(isset($meta['client']))
             $e->client = $meta['client'];
+        if(isset($meta['url']))
+            $e->url = $meta['url'];
+        if(isset($meta['ua']))
+            $e->ua = $meta['ua'];
         $e->params = json_encode($params);
         $e->save();
         return 'ok';
