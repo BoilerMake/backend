@@ -169,6 +169,8 @@ class UsersController extends Controller {
     public function getCompletedPuzzleIDs(Request $request) {
         $user_id = Auth::user()->id;
         $ids = PuzzleProgress::where('user_id',$user_id)->get()->lists('puzzle_id');
+        foreach($ids as &$each)
+            $each=(int) $each;
         return ['puzzles'=>$ids];
     }
 }
