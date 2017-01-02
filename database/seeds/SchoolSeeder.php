@@ -194,6 +194,22 @@ class SchoolSeeder extends Seeder
         School::firstOrCreate(['name' => "University of Florida"]);
         School::firstOrCreate(['name' => "Marymount International School Rome"]);
         School::firstOrCreate(['name' => "Monmouth University"]);
+        School::firstOrCreate(['name' => "Queen's University"]);
+        School::firstOrCreate(['name' => "Earlham College"]);
+        School::firstOrCreate(['name' => "Middle Tennessee State University"]);
+        School::firstOrCreate(['name' => "Washington University in St. Louis"]);
+        School::firstOrCreate(['name' => "Boston College"]);
+        School::firstOrCreate(['name' => "Milwaukee School of Engineering"]);
+        School::firstOrCreate(['name' => "University of Kentucky"]);
+        School::firstOrCreate(['name' => "Claremont McKenna College"]);
+        School::firstOrCreate(['name' => "Eastern Michigan University"]);
+        School::firstOrCreate(['name' => "New College of Florida"]);
+        School::firstOrCreate(['name' => "Hamilton College"]);
+        School::firstOrCreate(['name' => "Yale University"]);
+        School::firstOrCreate(['name' => "The City University of New York"]);
+        School::firstOrCreate(['name' => "The George Washington University"]);
+        School::firstOrCreate(['name' => "Texas Christian University"]);
+        School::firstOrCreate(['name' => "Michigan Technological University"]);
 
 
 
