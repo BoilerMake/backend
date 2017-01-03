@@ -13,7 +13,7 @@ class AddUniqueIdentifierToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('identifier')->unique()->nullable()->default(NULL);
+            $table->string('identifier')->unique()->nullable()->default(null);
         });
     }
 

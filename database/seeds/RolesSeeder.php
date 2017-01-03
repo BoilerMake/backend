@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Role;
+use Illuminate\Database\Seeder;
+
 class RolesSeeder extends Seeder
 {
     /**
@@ -11,8 +12,8 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-		Role::firstOrCreate(['name' => 'hacker']);
-    	Role::firstOrCreate(['name' => 'exec']);
+        Role::firstOrCreate(['name' => 'hacker']);
+        Role::firstOrCreate(['name' => 'exec']);
         Role::firstOrCreate(['name' => 'sponsor']);
         Role::firstOrCreate(['name' => 'sponsor-group-1']);
         Role::firstOrCreate(['name' => 'sponsor-group-2']);

@@ -5,9 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -52,11 +51,9 @@ class Handler extends ExceptionHandler
         if ($e instanceof Tymon\JWTAuth\Exceptions\TokenInvalidException) {
             return response()->json(['token_invalid'], $e->getStatusCode());
         }
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\JWTException)
-        {
-            return(['token_missing',$e->getMessage()]);
+        if ($e instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
+            return ['token_missing', $e->getMessage()];
         }
-
 
         return parent::render($request, $e);
     }
