@@ -20,13 +20,9 @@ class UpdateApplicationsTable extends Migration
             $table->dropColumn('isTravellingFromSchool');
             $table->dropColumn('age');
 
-
-
             $table->boolean('needsTravelReimbursement')->nullable();
             $table->boolean('isFirstHackathon')->nullable();
             $table->string('race')->nullable();
-
-
         });
     }
 
@@ -45,14 +41,9 @@ class UpdateApplicationsTable extends Migration
             $table->boolean('isTravellingFromSchool')->default(true);
             $table->tinyInteger('age')->unsigned()->nullable();
 
-
-
-
             $table->dropColumn('needsTravelReimbursement');
             $table->dropColumn('isFirstHackathon');
             $table->dropColumn('race');
-
-
         });
     }
 }

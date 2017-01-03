@@ -1,20 +1,24 @@
-<?php namespace App\Http\Controllers\API;
-use App\Models\User;
-use App\Models\Role;
-use JWTAuth;
+<?php
+
+namespace App\Http\Controllers\API;
+
 use Auth;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Validator;
 use Hash;
 use Mail;
-class AuthController extends Controller {
+use JWTAuth;
+use Validator;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class AuthController extends Controller
+{
     /**
-    * Authenticate a user
-    *
-    * @param  Request  $request
-    * @return Response
-    */
+     * Authenticate a user.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -24,28 +28,29 @@ class AuthController extends Controller {
         ]);
         if ($validator->fails()) {
             return $validator->errors()->all();
+        } else {
+            if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
+                $roles = Auth::user()->roles()->get()->lists('name');
+                $token = JWTAuth::fromUser(Auth::user(), ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>Auth::user()->slug(), 'user_id'=>Auth::user()->id]);
+
+                return compact('token');
+            }
         }
-        else {
-	        if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
-	            $roles = Auth::user()->roles()->get()->lists('name');
-	            $token = JWTAuth::fromUser(Auth::user(),['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>Auth::user()->slug(), 'user_id'=>Auth::user()->id]);
-	            return compact('token');
-	        }
-    	}
-    	// Probably a better way to do this
-		return response()->json(['error' => 'invalid_credentials'], 401);
+        // Probably a better way to do this
+        return response()->json(['error' => 'invalid_credentials'], 401);
     }
 
     /**
-    * Register a user
-    *
-    * @param  Request  $request
-    * @return Response
-    */
+     * Register a user.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
     public function signUp(Request $request)
     {
-        if(intval(config('app.phase')) < 2)
+        if (intval(config('app.phase')) < 2) {
             return ['error'=>'applications are not open'];
+        }
 
         $validator = Validator::make($request->all(), [
             'email'   => 'required|email|unique:users',
@@ -54,8 +59,7 @@ class AuthController extends Controller {
 
         if ($validator->fails()) {
             return $validator->errors()->all();
-        }
-        else {
+        } else {
             $code = str_random(24);
             $user = new User;
             $user->password = Hash::make($request['password']);
@@ -66,40 +70,44 @@ class AuthController extends Controller {
             $user->postSignupActions(); // Attach roles
 
             $roles = $user->roles()->get()->lists('name');
-            $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
+            $token = JWTAuth::fromUser($user, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
 
-            $link = env('FRONTEND_ADDRESS')."/confirm?tok=".$code;
-            Mail::queue('emails.welcome', ['user' => $user,'link'=>$link], function ($message) use ($user,$link) {
-    			$message->from('hello@boilermake.org', 'BoilerMake');
-    			$message->to($user->email)->subject("Welcome to BoilerMake!");
-			});
-			
+            $link = env('FRONTEND_ADDRESS').'/confirm?tok='.$code;
+            Mail::queue('emails.welcome', ['user' => $user, 'link'=>$link], function ($message) use ($user, $link) {
+                $message->from('hello@boilermake.org', 'BoilerMake');
+                $message->to($user->email)->subject('Welcome to BoilerMake!');
+            });
+
             return compact('token');
         }
     }
 
     /**
-    * Confirm a user
-    *
-    * @param  Request  $request
-    * @return Response
-    */
+     * Confirm a user.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
     public function confirm(Request $request)
     {
-        if(!isset($request->code))
+        if (! isset($request->code)) {
             return response()->json(['error' => 'Code Required'], 200);
+        }
         $user = User::where('confirmation_code', $request->code)->first();
-        if($user) {
+        if ($user) {
             $user->confirmed = 1;
             $user->save();
+
             return response()->json(['success' => 'Email Confirmed'], 200);
         }
+
         return response()->json(['error' => 'Invalid Code'], 200);
     }
 
-	public function debug()
-	{
-		$user = JWTAuth::parseToken()->authenticate();
-		return $user;
-	}
+    public function debug()
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        return $user;
+    }
 }

@@ -15,7 +15,6 @@ class AddResumeFieldsToApplicationsTable extends Migration
         Schema::table('applications', function (Blueprint $table) {
             $table->string('resume_filename')->nullable();
             $table->boolean('resume_uploaded')->boolean()->default(false);
-
         });
     }
 

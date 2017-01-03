@@ -1,13 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class InterestTest extends TestCase
 {
     /**
-     * Test that user interest signups are working
+     * Test that user interest signups are working.
      *
      * @return void
      */
@@ -22,8 +19,9 @@ class InterestTest extends TestCase
              ]);
         $this->seeInDatabase('interest_signups', ['email' => $email]);
     }
+
     /**
-     * Test that duplicate email results in an error
+     * Test that duplicate email results in an error.
      *
      * @return void
      */
@@ -43,8 +41,9 @@ class InterestTest extends TestCase
                  'message' => 'you were already signed up!',
              ]);
     }
+
     /**
-     * Test that duplicate email results in an error
+     * Test that duplicate email results in an error.
      *
      * @return void
      */

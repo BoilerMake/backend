@@ -39,7 +39,7 @@ class CalculateApplications extends Command
     public function handle()
     {
         foreach (Application::all() as $app) {
-            $app->completed_calculated=$app->completed;
+            $app->completed_calculated = $app->completed;
             $app->save();
         }
     }

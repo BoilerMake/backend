@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
         Commands\CreateUser::class,
         Commands\PodPodKey::class,
         Commands\JWTKey::class,
-        Commands\CalculateApplications::class
+        Commands\CalculateApplications::class,
     ];
 
     /**
