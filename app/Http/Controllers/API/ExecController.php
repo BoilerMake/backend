@@ -164,6 +164,7 @@ class ExecController extends Controller {
         
 		$app->resumeURL = GeneralController::resumeUrl($app->user->id,'get');
 		$app->myrating = ApplicationRating::where('application_id',$id)->where('user_id',$user->id)->first();
+		$app['validation'] = $app->validationDetails();
         $app->github_summary = $app->getGithubSummary();
 		return $app;
 	}
