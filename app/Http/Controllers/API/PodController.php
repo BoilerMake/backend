@@ -47,6 +47,8 @@ class PodController extends Controller
             $scan->success = false;
             //todo: check if the event is 'active'
             $scan->message = "this pod is currently not assigned to an event";
+            //save input regardless
+            $scan->input = $request->code;
             $scan->save();
             return $scan;
         }
@@ -78,7 +80,7 @@ class PodController extends Controller
         //todo: see if the user has already scanned for this event
         $scan->user_id = $user->id;
 
-        $scan->message = "processed pod scan from pod: ".$pod->name." (#".$pod->id.") for event: ".$event->name." (#".$event->id.") from user: ".$user->slug()." @ ".$request->ip();
+        $scan->message = "processed pod scan from pod: ".$pod->name." (#".$pod->id.") for event: ".$event->title." (#".$event->id.") from user: ".$user->slug()." @ ".$request->ip();
         Log::info("[POD] ".$scan->message);
         AnalyticsController::log($user->id,'pod-scan',['pod_id'=>$pod->id,'pod_name'=>$pod->name,'event'=>$event,'scan'=>$scan],['client'=>'pod-'.$pod->id,'ip'=>$request->ip()]);
 
