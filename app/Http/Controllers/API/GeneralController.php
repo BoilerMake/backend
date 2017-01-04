@@ -89,6 +89,6 @@ class GeneralController extends Controller
 
     public function getEvents()
     {
-        return Event::orderBy('begin')->get(['title', 'description', 'begin', 'end']);
+        return Event::orderBy('begin')->get(['id', 'title', 'description', 'begin', 'end']);
     }
 }

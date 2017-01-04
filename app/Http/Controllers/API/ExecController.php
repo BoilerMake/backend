@@ -373,60 +373,35 @@ class ExecController extends Controller
         return 'success';
     }
 
-    // probably can be merged with create
-    public function editEvent(Request $request)
-    {
+    public function editEvent(Request $request, Event $event) {
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'begin' => 'required|integer',
-            'end' => 'required|integer',
-            'event_id' => 'required|exists:events,id',
+            'title' => 'string',
+            'description' => 'string',
+            'begin' => 'required|string',
+            'end' => 'required|string'
         ]);
 
         if ($validator->fails()) {
-            return $validator->errors()->all();
-        }
-        if ($request->end < $request->begin) {
-            return 'invalid time';
+            return ['message' => 'validation', 'data' => $validator->errors()];
         }
 
-        $event = Event::where('id', '=', $request->event_id);
-        if ($event->count()) {
-            $event = $event->first();
-        } else {
-            return 'invalid event';
+        $begin = new Carbon($request->begin, 'America/New_York');
+        $end = new Carbon($request->end, 'America/New_York');
+
+        if($end < $begin) {
+            return ['message' => 'time error - is end before begin?'];
         }
 
-        $event->title = $request->title;
         $event->description = $request->description;
-        $event->begin = Carbon::createFromTimestamp($request->begin, 'America/New_York')->toDateTimeString();
-        $event->end = Carbon::createFromTimestamp($request->end, 'America/New_York')->toDateTimeString();
+        $event->begin = $begin;
+        $event->end = $end;
         $event->save();
-
-        return 'success';
+        return ['message' => 'success'];
     }
 
-    public function deleteEvent(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'event_id' => 'required|exists:events,id',
-        ]);
-
-        if ($validator->fails()) {
-            return $validator->errors()->all();
-        }
-
-        $event = Event::where('id', '=', $request->event_id);
-        if ($event->count()) {
-            $event = $event->first();
-        } else {
-            return 'invalid event';
-        }
-
-        $event = Event::where('id', '=', $request->event_id)->first()->delete();
-
-        return 'success';
+    public function deleteEvent(Request $request, Event $event) {      
+        $event->delete();
+        return ['message' => 'success'];
     }
 
     public function generateCalendar(Request $request)
