@@ -46,7 +46,7 @@ class UsersController extends Controller
             foreach ($data['application'] as $key => $value) {
                 if (in_array($key, ['age', 'grad_year', 'gender', 'major', 'diet', 'diet_restrictions', 'github',
                     'race','linkedin','diet_restrictions',
-                    'resume_filename', 'resume_uploaded', 'needsTravelReimbursement', 'isFirstHackathon', 'has_no_github', ])) {
+                    'resume_filename', 'resume_uploaded', 'needsTravelReimbursement', 'isFirstHackathon', 'has_no_github', 'has_no_linkedin'])) {
                     $application->$key = $value;
                 }
                 if($key=='rsvp')
