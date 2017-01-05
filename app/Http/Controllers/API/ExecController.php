@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Event;
+use App\Models\Pod;
 use App\Services\Notifier;
 use App\Models\Application;
 use App\Models\GroupMessage;
@@ -342,35 +343,34 @@ class ExecController extends Controller
          ];
     }
 
-    public function getStatsBySchool()
-    {
-    }
-
     public function createEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'description' => 'required|string',
-            'begin' => 'required|integer',
-            'end' => 'required|integer',
+            'begin' => 'required|string',
+            'end' => 'required|string',
         ]);
 
         if ($validator->fails()) {
-            return $validator->errors()->all();
+            return ['message' => 'validation', 'data' => $validator->errors()];
         }
-        if ($request->end < $request->begin) {
-            return 'invalid time';
+
+        $begin = new Carbon($request->begin, 'America/New_York');
+        $end = new Carbon($request->end, 'America/New_York');
+
+        if($end < $begin) {
+            return ['message' => 'time error - is end before begin?'];
         }
 
         $event = new Event;
         $event->title = $request->title;
         $event->description = $request->description;
-        // unnecessary, should just be forcing api to datetime
-        $event->begin = Carbon::createFromTimestamp($request->begin, 'America/New_York')->toDateTimeString();
-        $event->end = Carbon::createFromTimestamp($request->end, 'America/New_York')->toDateTimeString();
+        $event->begin = $begin;
+        $event->end = $end;
         $event->save();
 
-        return 'success';
+        return ['message' => 'success'];
     }
 
     public function editEvent(Request $request, Event $event) {
@@ -399,7 +399,10 @@ class ExecController extends Controller
         return ['message' => 'success'];
     }
 
-    public function deleteEvent(Request $request, Event $event) {      
+    public function deleteEvent(Request $request, Event $event) {
+        if(Pod::where('current_event_id', $event->id)->exists()) {
+            return ['message' => 'event_in_use'];
+        }    
         $event->delete();
         return ['message' => 'success'];
     }
