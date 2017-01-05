@@ -45,18 +45,19 @@ class UsersController extends Controller
             $application = self::getApplication()['application'];
             foreach ($data['application'] as $key => $value) {
                 if (in_array($key, ['age', 'grad_year', 'gender', 'major', 'diet', 'diet_restrictions', 'github',
-                    'race','linkedin','diet_restrictions',
-                    'resume_filename', 'resume_uploaded', 'needsTravelReimbursement', 'isFirstHackathon', 'has_no_github', 'has_no_linkedin'])) {
+                    'race', 'linkedin', 'diet_restrictions',
+                    'resume_filename', 'resume_uploaded', 'needsTravelReimbursement', 'isFirstHackathon', 'has_no_github', 'has_no_linkedin', ])) {
                     $application->$key = $value;
                 }
-                if($key=='rsvp')
-                {
+                if ($key == 'rsvp') {
                     //check to make sure they were actually accepted in case we have some sneaky mofos
-                    if($application->decision==Application::DECISION_ACCEPT)
+                    if ($application->decision == Application::DECISION_ACCEPT) {
                         $application->rsvp = $value;
+                    }
                 }
-                if($key == 'skills')
+                if ($key == 'skills') {
                     $application->skills = json_encode($value);
+                }
                 if ($key == 'team_code') {
                     $team = Team::where('code', $value)->get()->first();
                     if ($team) {//todo return status of this
@@ -92,7 +93,7 @@ class UsersController extends Controller
             return;
         }
         $application = $user->getApplication();
-        $application['skills']= json_decode($application->skills,true);
+        $application['skills'] = json_decode($application->skills, true);
 
         $phase = intval(getenv('APP_PHASE'));
 //        if ($phase < 3) { //don't reveal decisions early
