@@ -6,10 +6,10 @@ use DB;
 use Auth;
 use Validator;
 use Carbon\Carbon;
+use App\Models\Pod;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Event;
-use App\Models\Pod;
 use App\Services\Notifier;
 use App\Models\Application;
 use App\Models\GroupMessage;
@@ -359,7 +359,7 @@ class ExecController extends Controller
         $begin = new Carbon($request->begin, 'America/New_York');
         $end = new Carbon($request->end, 'America/New_York');
 
-        if($end < $begin) {
+        if ($end < $begin) {
             return ['message' => 'time error - is end before begin?'];
         }
 
@@ -373,12 +373,13 @@ class ExecController extends Controller
         return ['message' => 'success'];
     }
 
-    public function editEvent(Request $request, Event $event) {
+    public function editEvent(Request $request, Event $event)
+    {
         $validator = Validator::make($request->all(), [
             'title' => 'string',
             'description' => 'string',
             'begin' => 'required|string',
-            'end' => 'required|string'
+            'end' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -388,7 +389,7 @@ class ExecController extends Controller
         $begin = new Carbon($request->begin, 'America/New_York');
         $end = new Carbon($request->end, 'America/New_York');
 
-        if($end < $begin) {
+        if ($end < $begin) {
             return ['message' => 'time error - is end before begin?'];
         }
 
@@ -396,14 +397,17 @@ class ExecController extends Controller
         $event->begin = $begin;
         $event->end = $end;
         $event->save();
+
         return ['message' => 'success'];
     }
 
-    public function deleteEvent(Request $request, Event $event) {
-        if(Pod::where('current_event_id', $event->id)->exists()) {
+    public function deleteEvent(Request $request, Event $event)
+    {
+        if (Pod::where('current_event_id', $event->id)->exists()) {
             return ['message' => 'event_in_use'];
-        }    
+        }
         $event->delete();
+
         return ['message' => 'success'];
     }
 
