@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
         Commands\PodPodKey::class,
         Commands\JWTKey::class,
         Commands\CalculateApplications::class,
-        Commands\ProcessExpiredRSVP::class
+        Commands\ProcessExpiredRSVP::class,
     ];
 
     /**

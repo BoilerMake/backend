@@ -21,7 +21,7 @@ class Application extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'rsvp_deadline'
+        'rsvp_deadline',
     ];
     protected $fillable = ['user_id', 'age', 'gender', 'major', 'grad_year', 'diet', 'diet_restrictions', 'tshirt', 'phone', 'created_at', 'updated_at', 'deleted_at'];
 

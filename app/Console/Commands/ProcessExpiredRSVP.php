@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Application;
 use Carbon\Carbon;
+use App\Models\Application;
 use Illuminate\Console\Command;
 
 class ProcessExpiredRSVP extends Command
@@ -39,10 +39,9 @@ class ProcessExpiredRSVP extends Command
      */
     public function handle()
     {
-        foreach (Application::where('decision',Application::DECISION_ACCEPT)->get() as $app)
-        {
+        foreach (Application::where('decision', Application::DECISION_ACCEPT)->get() as $app) {
             $this->info($app->id);
-            if(Carbon::parse($app->rsvp_deadline)->lt(Carbon::now())) {
+            if (Carbon::parse($app->rsvp_deadline)->lt(Carbon::now())) {
                 $app->decision = Application::DECISION_EXPIRED;
                 $app->save();
             }
