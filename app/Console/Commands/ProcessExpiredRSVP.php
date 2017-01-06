@@ -2,24 +2,25 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use App\Models\Application;
 use Illuminate\Console\Command;
 
-class CalculateApplications extends Command
+class ProcessExpiredRSVP extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'applications:calculate';
+    protected $signature = 'applications:expiredrsvp';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Calculates application completed attr';
+    protected $description = 'Command description';
 
     /**
      * Create a new command instance.
@@ -38,9 +39,12 @@ class CalculateApplications extends Command
      */
     public function handle()
     {
-        foreach (Application::all() as $app) {
-            $app->completed_calculated = $app->completed;
-            $app->save();
+        foreach (Application::where('decision', Application::DECISION_ACCEPT)->get() as $app) {
+            $this->info($app->id);
+            if (Carbon::parse($app->rsvp_deadline)->lt(Carbon::now())) {
+                $app->decision = Application::DECISION_EXPIRED;
+                $app->save();
+            }
         }
     }
 }

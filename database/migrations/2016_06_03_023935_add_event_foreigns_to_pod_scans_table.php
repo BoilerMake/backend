@@ -16,7 +16,6 @@ class AddEventForeignsToPodScansTable extends Migration
             $table->integer('event_id')->unsigned()->nullable();
             $table->foreign('event_id')->references('id')->on('events');
 
-
             $table->dropForeign('pod_scans_pod_event_id_foreign');
             $table->dropColumn('pod_event_id');
         });

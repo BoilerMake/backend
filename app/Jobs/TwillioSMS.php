@@ -2,18 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Jobs\Job;
+use Log;
 use App\Models\User;
+use Services_Twilio;
 use App\Services\Notifier;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Services_Twilio_Twiml;
-use Services_Twilio;
-use Services_Twilio_RestException;
-use Log;
-use App;
+
 class TwillioSMS extends Job implements SelfHandling, ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
@@ -22,6 +19,7 @@ class TwillioSMS extends Job implements SelfHandling, ShouldQueue
     protected $message;
     protected $name;
     protected $notif;
+
     /**
      * Create a new job instance.
      *
@@ -42,18 +40,19 @@ class TwillioSMS extends Job implements SelfHandling, ShouldQueue
      */
     public function handle()
     {
-        $message=$this->message;
-        $name=$this->name;
+        $message = $this->message;
+        $name = $this->name;
         $to = $this->user->phone;
 
-        if(!env('ENABLE_TWILLIO'))
-        {
-            $this->notif->logNotification('SMS','(local) '.$name,['message'=>$message,'to'=>$to]);
+        if (! env('ENABLE_TWILLIO')) {
+            $this->notif->logNotification('SMS', '(local) '.$name, ['message'=>$message, 'to'=>$to]);
+
             return;
         }
-       
-        if(!$to){
-            $this->notif->logNotification('SMS',"FAIL-".$name,['message'=>$message,'to'=>$to]);
+
+        if (! $to) {
+            $this->notif->logNotification('SMS', 'FAIL-'.$name, ['message'=>$message, 'to'=>$to]);
+
             return;
         }
         $twilioService = new Services_Twilio(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
@@ -63,18 +62,18 @@ class TwillioSMS extends Job implements SelfHandling, ShouldQueue
                 [
                     'From' => env('TWILIO_NUMBER'),
                     'To' => $to,
-                    'Body' => $message
+                    'Body' => $message,
                 ]
             );
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             Log::error(
-                'Could not send SMS notification' .
-                ' Twilio replied with: ' . $e
+                'Could not send SMS notification'.
+                ' Twilio replied with: '.$e
             );
-            $this->notif->logNotification('SMS-FAILED',"FAILED-".$name,['message'=>$message,'to'=>$to]);
+            $this->notif->logNotification('SMS-FAILED', 'FAILED-'.$name, ['message'=>$message, 'to'=>$to]);
+
             return;
         }
-        $this->notif->logNotification('SMS',$name,['message'=>$message,'to'=>$to]);
+        $this->notif->logNotification('SMS', $name, ['message'=>$message, 'to'=>$to]);
     }
 }

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddResumeFieldsToApplicationsTable extends Migration
+class AddLinkedinToApplicationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,7 @@ class AddResumeFieldsToApplicationsTable extends Migration
     public function up()
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->string('resume_filename')->nullable();
-            $table->boolean('resume_uploaded')->boolean()->default(false);
+            $table->string('linkedin')->nullable()->after('github');
         });
     }
 
@@ -26,8 +25,7 @@ class AddResumeFieldsToApplicationsTable extends Migration
     public function down()
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->dropColumn('resume_filename');
-            $table->dropColumn('resume_uploaded');
+            $table->dropColumn('linkedin');
         });
     }
 }

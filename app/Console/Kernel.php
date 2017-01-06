@@ -17,7 +17,8 @@ class Kernel extends ConsoleKernel
         Commands\CreateUser::class,
         Commands\PodPodKey::class,
         Commands\JWTKey::class,
-        Commands\CalculateApplications::class
+        Commands\CalculateApplications::class,
+        Commands\ProcessExpiredRSVP::class,
     ];
 
     /**
@@ -30,5 +31,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('inspire')->hourly();
         $schedule->command('applications:calculate')->everyFiveMinutes();
+        $schedule->command('applications:expiredrsvp')->hourly();
     }
 }

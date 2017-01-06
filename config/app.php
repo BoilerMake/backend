@@ -14,7 +14,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
-    
+
     'podpod' => env('PODPOD_KEY'),
     'phase' => env('APP_PHASE'),
     /*
@@ -216,7 +216,6 @@ return [
         'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
         'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
         'AWS' => Aws\Laravel\AwsFacade::class,
-
 
     ],
 

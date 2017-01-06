@@ -2,10 +2,11 @@
 
 namespace App\Console\Commands;
 
+use Hash;
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Carbon\Carbon;
-use Hash;
+
 class CreateUser extends Command
 {
     /**
@@ -44,22 +45,20 @@ class CreateUser extends Command
      */
     public function handle()
     {
-        $this->info("first name: ".$this->argument('first_name'));
-        $this->info("last name: ".$this->argument('last_name'));
-        $this->info("email: ".$this->argument('email'));
+        $this->info('first name: '.$this->argument('first_name'));
+        $this->info('last name: '.$this->argument('last_name'));
+        $this->info('email: '.$this->argument('email'));
 
-
-        $roles = explode(",",$this->argument('roles'));
-        $this->info("roles:". print_r($roles,true));
+        $roles = explode(',', $this->argument('roles'));
+        $this->info('roles:'.print_r($roles, true));
 
         $password = $this->option('password');
-        $shouldSendPasswordReset=false;
-        if(!$password) {
+        $shouldSendPasswordReset = false;
+        if (! $password) {
             $password = Hash::make(Carbon::now().env('APP_KEY'));
             $shouldSendPasswordReset = true;
         }
-        $password=Hash::make($password);
-
+        $password = Hash::make($password);
 
         $user = new User;
         $user->first_name = $this->argument('first_name');
@@ -69,8 +68,8 @@ class CreateUser extends Command
         $user->save();
 
         $user->postSignupActions($roles);
-        if($shouldSendPasswordReset)
+        if ($shouldSendPasswordReset) {
             $user->sendPasswordResetEmail();
-
+        }
     }
 }

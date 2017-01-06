@@ -10,9 +10,9 @@ class Event extends Model
     {
         return $this->hasMany('App\Models\PodScan');
     }
+
     public function active_pods()
     {
-        return $this->hasMany('App\Models\Pod','current_event_id');
+        return $this->hasMany('App\Models\Pod', 'current_event_id');
     }
-
 }

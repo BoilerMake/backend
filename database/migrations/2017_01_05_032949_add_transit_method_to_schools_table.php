@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddUniqueIdentifierToUsersTable extends Migration
+class AddTransitMethodToSchoolsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class AddUniqueIdentifierToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('identifier')->unique()->nullable()->default(null);
+        Schema::table('schools', function (Blueprint $table) {
+            $table->string('transit_method')->default('car');
         });
     }
 
@@ -24,8 +24,8 @@ class AddUniqueIdentifierToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('identifier');
+        Schema::table('schools', function (Blueprint $table) {
+            $table->dropColumn('transit_method');
         });
     }
 }

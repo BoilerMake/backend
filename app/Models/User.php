@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Models;
+
+use Carbon\Carbon;
 use App\Services\Notifier;
-use Tymon\JWTAuth\JWTAuth;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Carbon\Carbon;
-use Log;
+
 class User extends Authenticatable
 {
     use EntrustUserTrait;
@@ -27,38 +27,43 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
     /**
-    * makes a user a hacker by default and gives them an application
-    */
-    public function postSignupActions($roles=["hacker"])
+     * makes a user a hacker by default and gives them an application.
+     */
+    public function postSignupActions($roles = ['hacker'])
     {
-        foreach ($roles as $role)
-        {
-            $this->attachRole(Role::where('name',$role)->first());
-            if($role=="hacker")
-            {
+        foreach ($roles as $role) {
+            $this->attachRole(Role::where('name', $role)->first());
+            if ($role == 'hacker') {
                 $app = new Application();
-                $app->user_id=$this->id;
+                $app->user_id = $this->id;
                 $app->save();
             }
         }
         $this->generateUniqueIdentifier();
     }
+
     public function generateUniqueIdentifier()
     {
-        if(!$this->identifier) {
+        if (! $this->identifier) {
             $rand = substr(str_shuffle(str_repeat('0123456789', 9)), 0, 9);
             //appending ID will ensure uniqueness as well as allow for easier visual debugging without
-            $this->identifier =$rand.str_pad($this->id,4,"0",STR_PAD_LEFT);
+            $this->identifier = $rand.str_pad($this->id, 4, '0', STR_PAD_LEFT);
             $this->save();
         }
     }
-    public function slug() {
-        return $this->first_name." ".$this->last_name." (#".$this->id.")";
+
+    public function slug()
+    {
+        return $this->first_name.' '.$this->last_name.' (#'.$this->id.')';
     }
-    public function application() {
+
+    public function application()
+    {
         return $this->hasOne('App\Models\Application');
     }
+
     public function sendPasswordResetEmail()
     {
         $token = md5(Carbon::now().env('APP_KEY'));
@@ -68,21 +73,22 @@ class User extends Authenticatable
         $reset->save();
 
         $n = new Notifier($this);
-        $n->sendEmail("BoilerMake Password Reset!",'password-reset',['token_url'=>getenv('FRONTEND_ADDRESS')."/pwr?tok=".$token]);
+        $n->sendEmail('BoilerMake Password Reset!', 'password-reset', ['token_url'=>getenv('FRONTEND_ADDRESS').'/pwr?tok='.$token]);
     }
-    public function getApplication($exec=false)
-    {
-        if($exec)
-            $application = Application::with('school','team','ratings','notes')->firstOrCreate(['user_id' => $this->id]);
-        else
-            $application = Application::with('school','team','ratings')->firstOrCreate(['user_id' => $this->id]);
 
-        if(!$application->team_id)
-        {
+    public function getApplication($exec = false)
+    {
+        if ($exec) {
+            $application = Application::with('school', 'team', 'ratings', 'notes')->firstOrCreate(['user_id' => $this->id]);
+        } else {
+            $application = Application::with('school', 'team', 'ratings')->firstOrCreate(['user_id' => $this->id]);
+        }
+
+        if (! $application->team_id) {
             //assign them to a team of 1 in lieu of no team
             $team = new Team();
             //adding user ID to the end of a hash guaruntee it to be unique, even if md5 isn't, without doing a DB check
-            $team->code = substr(md5(Carbon::now().getenv("APP_KEY")),0,4).$this->id;
+            $team->code = substr(md5(Carbon::now().getenv('APP_KEY')), 0, 4).$this->id;
             $team->save();
             $application->team_id = $team->id;
         }
@@ -90,6 +96,7 @@ class User extends Authenticatable
         $application->teaminfo = $application->team;
         $application->schoolinfo = $application->school;
         $application->resume_uploaded = (int) $application->resume_uploaded;
+
         return $application;
     }
 }
