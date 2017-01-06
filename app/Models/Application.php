@@ -11,12 +11,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Application extends Model
 {
     use SoftDeletes;
+    const DECISION_EXPIRED = 4;
     const DECISION_ACCEPT = 3;
     const DECISION_WAITLIST = 2;
     const DECISION_REJECT = 1;
     const DECISION_UNDECIDED = 0;
     public $teaminfo = null;
     public $schoolinfo = null;
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'rsvp_deadline'
+    ];
     protected $fillable = ['user_id', 'age', 'gender', 'major', 'grad_year', 'diet', 'diet_restrictions', 'tshirt', 'phone', 'created_at', 'updated_at', 'deleted_at'];
 
     public function user()
