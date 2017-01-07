@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         Commands\JWTKey::class,
         Commands\CalculateApplications::class,
         Commands\ProcessExpiredRSVP::class,
+        Commands\AcceptDrivingHackers::class,
     ];
 
     /**
