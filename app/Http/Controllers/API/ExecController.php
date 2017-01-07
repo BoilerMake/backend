@@ -116,14 +116,17 @@ class ExecController extends Controller
                 return ['status'=>'ok'];
                 break;
             case 'check-in':
-                if(!$user->hasRole('hacker'))
-                    return ['status'=>'error','message'=>'not a hacker'];
-                $application = Application::where('user_id',$user->id)->first();
-                if($application->checked_in_at == null) {
+                if (! $user->hasRole('hacker')) {
+                    return ['status'=>'error', 'message'=>'not a hacker'];
+                }
+                $application = Application::where('user_id', $user->id)->first();
+                if ($application->checked_in_at == null) {
                     $application->checked_in_at = Carbon::now();
                     $application->save();
+
                     return ['status' => 'ok', 'message' => 'ok'];
                 }
+
                 return ['status' => 'error', 'message' => 'already checked in'];
                 break;
         }
