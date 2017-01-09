@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\School;
 use App\Models\Application;
-use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class AcceptDrivingHackers extends Command
 {
@@ -42,9 +42,8 @@ class AcceptDrivingHackers extends Command
     public function handle()
     {
         $emails = [];
-        foreach(Application::whereNull('decision')->get() as $app)
-        {
-            if($app->completed && $app->school->transit_method=="car") {
+        foreach (Application::whereNull('decision')->get() as $app) {
+            if ($app->completed && $app->school->transit_method == 'car') {
                 $emails[] = [$app->user->first_name, $app->user->email];
                 $app->decision = Application::DECISION_ACCEPT;
                 $app->rsvp_deadline = Carbon::now()->addDays(5);
