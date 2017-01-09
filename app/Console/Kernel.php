@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         Commands\CalculateApplications::class,
         Commands\ProcessExpiredRSVP::class,
         Commands\AcceptDrivingHackers::class,
+        Commands\GenerateEmailTodo::class,
     ];
 
     /**
