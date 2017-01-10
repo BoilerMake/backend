@@ -39,7 +39,7 @@ class ProcessExpiredRSVP extends Command
      */
     public function handle()
     {
-        foreach (Application::where('decision', Application::DECISION_ACCEPT)->get() as $app) {
+        foreach (Application::where('decision', Application::DECISION_ACCEPT)->whereNull('rsvp')->get() as $app) {
             $this->info($app->id);
             if (Carbon::parse($app->rsvp_deadline)->lt(Carbon::now())) {
                 $app->decision = Application::DECISION_EXPIRED;
