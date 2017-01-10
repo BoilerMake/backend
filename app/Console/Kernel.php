@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         Commands\ProcessExpiredRSVP::class,
         Commands\AcceptDrivingHackers::class,
         Commands\GenerateEmailTodo::class,
+        Commands\BusRoster::class,
     ];
 
     /**
