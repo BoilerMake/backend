@@ -64,21 +64,31 @@ class GenerateEmailTodo extends Command
         $incomplete = Application::where('completed_calculated',false)->get()->lists('user_id');
 
 
-        if($mode==1)
-            foreach(User::whereIn('id',$toAcceptFromNull)->get() as $u)
-                $this->info($u->email." ".$u->first_name);
-        if($mode==2)
-            foreach(User::whereIn('id',$toWaitlistFromNull)->get() as $u)
-                $this->info($u->email." ".$u->first_name);
-        if($mode==3)
-            foreach(User::whereIn('id',$toAcceptFromWaitlist)->get() as $u)
-                $this->info($u->email." ".$u->first_name);
-        if($mode==4)
-            foreach(User::whereIn('id',$expiredFromAccepted)->get() as $u)
-                $this->info($u->email." ".$u->first_name);
-        if($mode==5)
-            foreach(User::whereIn('id',$incomplete)->get() as $u)
+        if($mode==1) {
+            $this->info(json_encode($toAcceptFromNull));
+            foreach (User::whereIn('id', $toAcceptFromNull)->get() as $u)
+                $this->info($u->email . " " . $u->first_name);
+        }
+        if($mode==2) {
+            $this->info(json_encode($toWaitlistFromNull));
+            foreach (User::whereIn('id', $toWaitlistFromNull)->get() as $u)
+                $this->info($u->email . " " . $u->first_name);
+        }
+        if($mode==3) {
+            $this->info(json_encode($toAcceptFromWaitlist));
+            foreach (User::whereIn('id', $toAcceptFromWaitlist)->get() as $u)
+                $this->info($u->email . " " . $u->first_name);
+        }
+        if($mode==4) {
+            $this->info(json_encode($expiredFromAccepted));
+            foreach (User::whereIn('id', $expiredFromAccepted)->get() as $u)
+                $this->info($u->email . " " . $u->first_name);
+        }
+        if($mode==5) {
+            $this->info(json_encode($incomplete));
+            foreach (User::whereIn('id', $incomplete)->get() as $u)
                 $this->info($u->email);
+        }
 
-    }
+            }
 }
