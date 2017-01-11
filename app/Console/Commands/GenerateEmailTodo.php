@@ -91,7 +91,7 @@ class GenerateEmailTodo extends Command
                 $this->info($u->email);
         }
         if($mode==6) {
-            $rsvpDriving = Application::where('rsvp',false)->where('completed_calculated',true)->get()->lists('user_id');
+            $rsvpDriving = Application::where('rsvp',true)->where('completed_calculated',true)->get()->lists('user_id');
             $this->info(json_encode($rsvpDriving));
             foreach (User::whereIn('id', $rsvpDriving)->with('application', 'application.school')->get() as $user) {
                 if ($user->application->school && $user->application->school->transit_method == "car") {
