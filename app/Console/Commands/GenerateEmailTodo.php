@@ -68,22 +68,22 @@ class GenerateEmailTodo extends Command
         if($mode==1) {
             $this->info(json_encode($toAcceptFromNull->lists('id')));
             foreach (User::whereIn('id', $toAcceptFromNull->lists('user_id'))->get() as $u)
-                $this->info($u->email . " " . $u->first_name);
+                $this->info($u->email . "\t" . $u->first_name);
         }
         if($mode==2) {
             $this->info(json_encode($toWaitlistFromNull->lists('id')));
             foreach (User::whereIn('id', $toWaitlistFromNull->lists('user_id'))->get() as $u)
-                $this->info($u->email . " " . $u->first_name);
+                $this->info($u->email . "\t" . $u->first_name);
         }
         if($mode==3) {
             $this->info(json_encode($toAcceptFromWaitlist->lists('id')));
             foreach (User::whereIn('id', $toAcceptFromWaitlist->lists('user_id'))->get() as $u)
-                $this->info($u->email . " " . $u->first_name);
+                $this->info($u->email . "\t" . $u->first_name);
         }
         if($mode==4) {
             $this->info(json_encode($expiredFromAccepted->lists('id')));
             foreach (User::whereIn('id', $expiredFromAccepted->lists('user_id'))->get() as $u)
-                $this->info($u->email . " " . $u->first_name);
+                $this->info($u->email . "\t" . $u->first_name);
         }
         if($mode==5) {
             $this->info(json_encode($incomplete));
@@ -95,7 +95,7 @@ class GenerateEmailTodo extends Command
             $this->info(json_encode($rsvpDriving));
             foreach (User::whereIn('id', $rsvpDriving)->with('application', 'application.school')->get() as $user) {
                 if ($user->application->school && $user->application->school->transit_method == "car") {
-                    $this->info($user->email);
+                    $this->info($user->email . "\t" . $user->first_name);
                 }
             }
         }
