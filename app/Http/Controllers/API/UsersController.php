@@ -12,9 +12,15 @@ use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use App\Models\PuzzleProgress;
 use App\Http\Controllers\Controller;
+use Imagick;
+use Log;
+use ImagickDraw;
+use ImagickPixel;
 
 class UsersController extends Controller
 {
+    const CARD_TYPE_HACKER = 1;
+    const CARD_TYPE_EXEC = 2;
     public function __construct()
     {
         // Apply the jwt.auth middleware to all methods in this controller
@@ -205,5 +211,117 @@ class UsersController extends Controller
         }
 
         return ['puzzles'=>$ids];
+    }
+    public static function generateAccessCardImage($user_id)
+    {
+        $user = User::with('application', 'application.school')->find($user_id);
+        $schoolName = null;
+        if($user->hasRole('exec')) {
+            $cardType = self::CARD_TYPE_EXEC;
+            $schoolName = "Purdue University";
+        }
+        else if($user->hasRole('hacker')) {
+            $cardType = self::CARD_TYPE_HACKER;
+            $schoolName = $user->application->school
+                ? $user->application->school->name
+                : "";
+        }
+        else
+            return "error";
+
+        $image = new Imagick();
+
+        //globals
+        $whitePixel = new ImagickPixel('#FFFFFF');
+        $bluePixel = new ImagickPixel('#1A4A98');
+        $blackPixel = new ImagickPixel('#000000');
+        $mainFont = resource_path('assets/fonts/Exo2-Regular.ttf');
+
+        /* New image */
+        $fullWidth = 900;//3in @ 300ppi
+        $image->newImage($fullWidth, 1200, $whitePixel);
+
+        /* GENERATE SKILLS ICONS */
+        $skills = json_decode($user->application->skills,true);
+//        Log::info($skills);
+        $skillsYPos = 550;
+
+        if(sizeof($skills)==3) {
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/' . $skills[0] . '.png'), 'rb'));
+            $item1raw->cropThumbnailImage(100, 100);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 250, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/' . $skills[1] . '.png'), 'rb'));
+            $item1raw->cropThumbnailImage(100, 100);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 400, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/' . $skills[2] . '.png'), 'rb'));
+            $item1raw->cropThumbnailImage(100, 100);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 550, $skillsYPos);
+        }
+        if(sizeof($skills)==2) {
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/' . $skills[0] . '.png'), 'rb'));
+            $item1raw->cropThumbnailImage(100, 100);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 320, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/' . $skills[1] . '.png'), 'rb'));
+            $item1raw->cropThumbnailImage(100, 100);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 475, $skillsYPos);
+        }
+        if(sizeof($skills)==1) {
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/' . $skills[0] . '.png'), 'rb'));
+            $item1raw->cropThumbnailImage(100, 100);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 400, $skillsYPos);
+        }
+
+
+        $nameTextLine = new ImagickDraw();
+        $nameTextLine->setFont($mainFont);
+        $nameTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
+        $nameTextLine->setTextKerning(2);
+        $nameTextLine->setFontSize(50);
+        $nameTextLine->setFillColor($bluePixel);
+
+        $image->annotateImage($nameTextLine, $fullWidth/2, 230, 0, $user->first_name.' '.$user->last_name);
+
+        $schoolTextLine = new ImagickDraw();
+        $schoolTextLine->setFont($mainFont);
+        $schoolTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
+        $schoolTextLine->setTextKerning(2);
+        $schoolTextLine->setFontSize(40);
+        $schoolTextLine->setFillColor($blackPixel);
+
+        $image->annotateImage($schoolTextLine, $fullWidth/2, 310, 0, $schoolName);
+
+ 
+        if($cardType==self::CARD_TYPE_EXEC) {
+            //add the ORGANIZER stripe
+            $execStripe = new ImagickDraw();
+            $execStripe->setFillColor($bluePixel);
+            $execStripe->rectangle(0, 800, $fullWidth, 900);
+            $image->drawImage($execStripe);
+
+            $organizerTextLine = new ImagickDraw();
+            $organizerTextLine->setFont($mainFont);
+            $organizerTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
+            $organizerTextLine->setTextKerning(2);
+            $organizerTextLine->setFontSize(50);
+            $organizerTextLine->setFillColor($whitePixel);
+            $image->annotateImage($organizerTextLine, $fullWidth / 2, 870, 0, 'ORGANIZER');
+        }
+
+        $fileName = "cards/card_".$cardType."_".$user_id.".jpg";
+        $path = public_path()."/".$fileName;
+        $user->card_image = $fileName;
+        $user->save();
+        $image->writeImage($path);
+        Log::info("Saved card for user #".$user_id." to: ".$fileName);
+
     }
 }
