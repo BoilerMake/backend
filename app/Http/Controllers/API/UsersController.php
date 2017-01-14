@@ -226,6 +226,9 @@ class UsersController extends Controller
             $schoolName = $user->application->school
                 ? $user->application->school->name
                 : '';
+            $schoolName = $user->application->school && $user->application->school->display_name
+                ? $user->application->school->display_name
+                : $schoolName;
         } else {
             return 'error';
         }
