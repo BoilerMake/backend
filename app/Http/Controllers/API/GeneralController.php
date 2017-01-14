@@ -16,6 +16,10 @@ class GeneralController extends Controller
 {
     public function ping()
     {
+        //        foreach (User::take(10)->get() as $user)
+//            UsersController::generateAccessCardImage($user->id);
+        UsersController::generateAccessCardImage(1);
+
         return ['pong'];
     }
 

@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         Commands\AcceptDrivingHackers::class,
         Commands\GenerateEmailTodo::class,
         Commands\BusRoster::class,
+        Commands\GenerateAccessCards::class,
     ];
 
     /**

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use Log;
 use Auth;
+use Imagick;
 use Validator;
+use ImagickDraw;
+use ImagickPixel;
 use Carbon\Carbon;
 use App\Models\Team;
 use App\Models\User;
@@ -15,6 +19,9 @@ use App\Http\Controllers\Controller;
 
 class UsersController extends Controller
 {
+    const CARD_TYPE_HACKER = 1;
+    const CARD_TYPE_EXEC = 2;
+
     public function __construct()
     {
         // Apply the jwt.auth middleware to all methods in this controller
@@ -205,5 +212,131 @@ class UsersController extends Controller
         }
 
         return ['puzzles'=>$ids];
+    }
+
+    public static function generateAccessCardImage($user_id)
+    {
+        $user = User::with('application', 'application.school')->find($user_id);
+        $schoolName = null;
+        if ($user->hasRole('exec')) {
+            $cardType = self::CARD_TYPE_EXEC;
+            $schoolName = 'Purdue University';
+        } elseif ($user->hasRole('hacker')) {
+            $cardType = self::CARD_TYPE_HACKER;
+            $schoolName = $user->application->school
+                ? $user->application->school->name
+                : '';
+        } else {
+            return 'error';
+        }
+
+        $isExecCard = $cardType == self::CARD_TYPE_EXEC;
+
+        $image = new Imagick();
+
+        //globals
+        $whitePixel = new ImagickPixel('#FFFFFF');
+        $bluePixel = new ImagickPixel('#1A4A98');
+        $greenPixel = new ImagickPixel('#45955E');
+        $blackPixel = new ImagickPixel('#000000');
+        $mainFont = resource_path('assets/fonts/Exo2-Regular.ttf');
+        $headingFont = resource_path('assets/fonts/SanFranciscoText-Regular.otf');
+
+        /* New image */
+        $fullWidth = 900; //3in @ 300ppi
+        $image->newImage($fullWidth, 1200, $whitePixel);
+
+        /* GENERATE SKILLS ICONS */
+        $skills = json_decode($user->application->skills, true);
+//        Log::info($skills);
+        $skillsYPos = 640;
+
+        if (count($skills) == 3) {
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[0].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 250, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[1].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 400, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[2].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 550, $skillsYPos);
+        }
+        if (count($skills) == 2) {
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[0].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 320, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[1].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 475, $skillsYPos);
+        }
+        if (count($skills) == 1) {
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[0].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 400, $skillsYPos);
+        }
+
+        $item1raw = new Imagick();
+        $item1raw->readImageFile(fopen(resource_path('assets/logo_s17.png'), 'rb'));
+        $item1raw->cropThumbnailImage(210, 210);
+        $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 92, 50);
+
+        $BMTextLine = new ImagickDraw();
+        $BMTextLine->setFont($headingFont);
+//        $BMTextLine->setTextAlignment(\Imagick::ALIGN_LEFT);
+//        $BMTextLine->setTextKerning(2);
+        $BMTextLine->setFontSize(80);
+        $BMTextLine->setFillColor($bluePixel);
+
+        $image->annotateImage($BMTextLine, 313, 180, 0, 'BOILERMAKE');
+
+        $nameTextLine = new ImagickDraw();
+        $nameTextLine->setFont($mainFont);
+        $nameTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
+        $nameTextLine->setTextKerning(2);
+        $nameTextLine->setFontSize(62);
+        $nameTextLine->setFillColor($blackPixel);
+
+        $image->annotateImage($nameTextLine, $fullWidth / 2, 440, 0, $user->first_name.' '.$user->last_name);
+
+        $schoolTextLine = new ImagickDraw();
+        $schoolTextLine->setFont($mainFont);
+        $schoolTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
+        $schoolTextLine->setTextKerning(2);
+        $schoolTextLine->setFontSize(45);
+        $schoolTextLine->setFillColor($blackPixel);
+
+        $image->annotateImage($schoolTextLine, $fullWidth / 2, 495, 0, $schoolName);
+
+        //add the stripe
+        $roleStripe = new ImagickDraw();
+        $roleStripe->setFillColor($isExecCard ? $bluePixel : $greenPixel);
+        $roleStripe->rectangle(0, 975, $fullWidth, 1200);
+        $image->drawImage($roleStripe);
+
+        $roleTextLine = new ImagickDraw();
+        $roleTextLine->setFont($mainFont);
+        $roleTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
+        $roleTextLine->setTextKerning(2);
+        $roleTextLine->setFontSize(68);
+        $roleTextLine->setFillColor($whitePixel);
+        $roleText = $isExecCard ? 'ORGANIZER' : 'HACKER';
+        $image->annotateImage($roleTextLine, $fullWidth / 2, 1115, 0, $roleText);
+
+        $fileName = 'cards/card_'.$cardType.'_'.$user_id.'.jpg';
+        $path = public_path().'/'.$fileName;
+        $user->card_image = $fileName;
+        $user->save();
+        $image->writeImage($path);
+        Log::info('Saved card for user #'.$user_id.' to: '.$fileName);
     }
 }
