@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\API\UsersController;
 use App\Models\User;
 use Illuminate\Console\Command;
+use App\Http\Controllers\API\UsersController;
 
 class GenerateAccessCards extends Command
 {
@@ -39,8 +39,9 @@ class GenerateAccessCards extends Command
      */
     public function handle()
     {
-        foreach (User::all() as $user)
+        foreach (User::all() as $user) {
             UsersController::generateAccessCardImage($user->id);
+        }
 //        UsersController::generateAccessCardImage(1);
 //        UsersController::generateAccessCardImage(16);
     }
