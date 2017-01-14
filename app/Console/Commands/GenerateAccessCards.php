@@ -39,9 +39,13 @@ class GenerateAccessCards extends Command
      */
     public function handle()
     {
-        foreach (User::all() as $user) {
-            UsersController::generateAccessCardImage($user->id);
+        foreach (User::with('application')->get() as $user) {
+            if($user->hasRole('exec'))
+                UsersController::generateAccessCardImage($user->id);
+            else if($user->hasRole('hacker') && $user->application->rsvp)
+                UsersController::generateAccessCardImage($user->id);
         }
+        $this->info('done');
 //        UsersController::generateAccessCardImage(1);
 //        UsersController::generateAccessCardImage(16);
     }

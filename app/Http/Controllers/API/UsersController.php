@@ -240,7 +240,7 @@ class UsersController extends Controller
         $greenPixel = new ImagickPixel('#45955E');
         $blackPixel = new ImagickPixel('#000000');
         $mainFont = resource_path('assets/fonts/Exo2-Regular.ttf');
-        $headingFont = resource_path('assets/fonts/SanFranciscoText-Regular.otf');
+        $headingFont = resource_path('assets/fonts/SanFranciscoDisplay-Regular.otf');
 
         /* New image */
         $fullWidth = 900; //3in @ 300ppi
