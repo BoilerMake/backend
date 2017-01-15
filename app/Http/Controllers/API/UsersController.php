@@ -220,8 +220,9 @@ class UsersController extends Controller
 
         $whitePixel = new ImagickPixel('#FFFFFF');
 
-        $combined   =   new Imagick();
+//        $combined   =   new Imagick();
 
+        $x=0;
         foreach($pages as $page) {
             $image = new Imagick();
             $image->newImage(3300, 2550, $whitePixel);
@@ -277,25 +278,28 @@ class UsersController extends Controller
                 $card->destroy();
             }
 
-            $combined->addImage( $image );
+//            $combined->addImage( $image );
+//            $combined->setImageFormat("jpg");
+            $fileName = 'cards/layout-'.$x.'.pdf';
+            $path = public_path().'/'.$fileName;
+            $image->writeImage($path);
+            $x++;
             $image->clear();
             $image->destroy();
 
         }
 
 
-//        $fileName = 'cards/test1.pdf';
-//        $path = public_path().'/'.$fileName;
-//        $image->writeImage($path);
 
-
+//
+//
 //        $combined->addImage( $image );
 //        $combined->addImage( $image );
 //        $combined->addImage( $image );
-
-        $combined->getImageBlob();
-        $combined->setImageFormat("jpg");
-        $combined->writeImages( public_path().'/cards/layout.jpg', true );
+//
+//        $combined->getImageBlob();
+//        $combined->setImageFormat("jpg");
+//        $combined->writeImages( public_path().'/cards/layout.jpg', true );
 
 
     }
@@ -428,6 +432,8 @@ class UsersController extends Controller
         $user->card_image = $fileName;
         $user->save();
         $image->writeImage($path);
+        $image->clear();
+        $image->destroy();
         Log::info('Saved card for user #'.$user_id.' to: '.$fileName);
     }
 }
