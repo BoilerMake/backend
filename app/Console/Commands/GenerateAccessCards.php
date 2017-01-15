@@ -45,7 +45,7 @@ class GenerateAccessCards extends Command
             else if($user->hasRole('hacker') && $user->application->rsvp)
                 UsersController::generateAccessCardImage($user->id);
         }
-
+        $this->info('stitching...');
         UsersController::stitchAccessCards();
 
         $this->info('done');
