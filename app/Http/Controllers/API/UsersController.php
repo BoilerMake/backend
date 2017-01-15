@@ -283,7 +283,7 @@ class UsersController extends Controller
 
 //            $combined->addImage( $image );
 //            $combined->setImageFormat("jpg");
-            $fileName = 'cards/layout-'.$x.'.pdf';
+            $fileName = 'cards-output/layout-'.$x.'.pdf';
             $path = public_path().'/'.$fileName;
             $image->writeImage($path);
             $x++;
