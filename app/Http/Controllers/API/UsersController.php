@@ -213,6 +213,80 @@ class UsersController extends Controller
 
         return ['puzzles'=>$ids];
     }
+    public static function stitchAccessCards() {
+
+        $users = User::whereNotNull('card_image')->get()->lists('card_image')->toArray();
+        $pages = array_chunk($users,6);
+
+        $whitePixel = new ImagickPixel('#FFFFFF');
+
+        $combined   =   new Imagick();
+
+        foreach($pages as $page) {
+            $image = new Imagick();
+            $image->newImage(3300, 2550, $whitePixel);
+            $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+            $image->setImageResolution(300,300);
+            $image->setImageFormat("jpg");
+
+            if(isset($page[0])) {
+                $card = new Imagick();
+                $card->readImageFile(fopen(public_path() . '/' . $page[0], 'rb'));
+                $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 80);
+            }
+
+            if(isset($page[1])) {
+                $card = new Imagick();
+                $card->readImageFile(fopen(public_path() . '/' . $page[1], 'rb'));
+                $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 80);
+            }
+
+            if(isset($page[2])) {
+                $card = new Imagick();
+                $card->readImageFile(fopen(public_path() . '/' . $page[2], 'rb'));
+                $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 80);
+            }
+
+            if(isset($page[3])) {
+                $card = new Imagick();
+                $card->readImageFile(fopen(public_path() . '/' . $page[3], 'rb'));
+                $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 1279);
+            }
+
+            if(isset($page[4])) {
+                $card = new Imagick();
+                $card->readImageFile(fopen(public_path() . '/' . $page[4], 'rb'));
+                $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 1279);
+            }
+
+            if(isset($page[5])) {
+                $card = new Imagick();
+                $card->readImageFile(fopen(public_path() . '/' . $page[5], 'rb'));
+                $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 1279);
+            }
+
+            $combined->addImage( $image );
+            $image->clear();
+            $image->destroy();
+
+        }
+
+
+//        $fileName = 'cards/test1.pdf';
+//        $path = public_path().'/'.$fileName;
+//        $image->writeImage($path);
+
+
+//        $combined->addImage( $image );
+//        $combined->addImage( $image );
+//        $combined->addImage( $image );
+
+        $combined->getImageBlob();
+        $combined->setImageFormat("jpg");
+        $combined->writeImages( public_path().'/cards/layout.jpg', true );
+
+
+    }
 
     public static function generateAccessCardImage($user_id)
     {
@@ -235,7 +309,6 @@ class UsersController extends Controller
 
         $isExecCard = $cardType == self::CARD_TYPE_EXEC;
 
-        $image = new Imagick();
 
         //globals
         $whitePixel = new ImagickPixel('#FFFFFF');
@@ -247,7 +320,10 @@ class UsersController extends Controller
 
         /* New image */
         $fullWidth = 900; //3in @ 300ppi
+        $image = new Imagick();
         $image->newImage($fullWidth, 1200, $whitePixel);
+        $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+        $image->setImageResolution(300,300);
 
         /* GENERATE SKILLS ICONS */
         $skills = json_decode($user->application->skills, true);
