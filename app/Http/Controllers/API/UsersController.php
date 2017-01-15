@@ -233,6 +233,7 @@ class UsersController extends Controller
             if(isset($page[0])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[0], 'rb'));
+                $card->rotateimage($whitePixel,180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 80);
                 $card->clear();
                 $card->destroy();
@@ -241,6 +242,7 @@ class UsersController extends Controller
             if(isset($page[1])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[1], 'rb'));
+                $card->rotateimage($whitePixel,180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 80);
                 $card->clear();
                 $card->destroy();
@@ -249,6 +251,7 @@ class UsersController extends Controller
             if(isset($page[2])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[2], 'rb'));
+                $card->rotateimage($whitePixel,180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 80);
                 $card->clear();
                 $card->destroy();
