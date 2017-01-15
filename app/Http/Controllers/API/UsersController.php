@@ -233,36 +233,48 @@ class UsersController extends Controller
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[0], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 80);
+                $card->clear();
+                $card->destroy();
             }
 
             if(isset($page[1])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[1], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 80);
+                $card->clear();
+                $card->destroy();
             }
 
             if(isset($page[2])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[2], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 80);
+                $card->clear();
+                $card->destroy();
             }
 
             if(isset($page[3])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[3], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 1279);
+                $card->clear();
+                $card->destroy();
             }
 
             if(isset($page[4])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[4], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 1279);
+                $card->clear();
+                $card->destroy();
             }
 
             if(isset($page[5])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path() . '/' . $page[5], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 1279);
+                $card->clear();
+                $card->destroy();
             }
 
             $combined->addImage( $image );
