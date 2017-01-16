@@ -43,6 +43,7 @@ class BusRoster extends Command
         $this->info('1: complete applications');
         $this->info('2: accepted hackers (subset of 1) ');
         $this->info('3: where RSVP = yes (subset of 2)');
+        $this->info('4: magic jess thing, basically compelted applications)');
         $mode = $this->ask('mode?');
         $this->info('mode: '.$mode);
 
@@ -50,7 +51,7 @@ class BusRoster extends Command
             $appIDs = Application::where('completed_calculated', true)->get()->lists('id')->toArray();
         } elseif ($mode == 2) {
             $appIDs = Application::where('decision', Application::DECISION_ACCEPT)->get()->lists('id')->toArray();
-        } elseif ($mode == 3) {
+        } elseif ($mode == 3 || $mode==4) {
             $appIDs = Application::where('rsvp', true)->get()->lists('id')->toArray();
         } else {
             return;
@@ -69,7 +70,11 @@ class BusRoster extends Command
                             $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
                         }
                     } else {
-                        $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
+                        if($mode==4)
+                            $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']."\taccepted: ".($user->application->decision==2 ? "yes":"no")."\trsvp: ".($user->application->rsvp ? "yes":"no"));
+                        else
+                            $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
+
                     }
                 }
             }
