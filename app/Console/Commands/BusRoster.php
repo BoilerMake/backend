@@ -71,7 +71,7 @@ class BusRoster extends Command
                         }
                     } else {
                         if($mode==4)
-                            $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']."\taccepted: ".($user->application->decision==2 ? "yes":"no")."\trsvp: ".($user->application->rsvp ? "yes":"no"));
+                            $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']."\texpired: ".($user->application->decision==4 ? "yes":"no")."\twaitlisted: ".($user->application->decision==2 ? "yes":"no")."\taccepted: ".($user->application->decision==3 ? "yes":"no")."\trsvp: ".($user->application->rsvp ? "yes":"no"));
                         else
                             $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
 
