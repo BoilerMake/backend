@@ -23,6 +23,7 @@ class Kernel extends ConsoleKernel
         Commands\GenerateEmailTodo::class,
         Commands\BusRoster::class,
         Commands\GenerateAccessCards::class,
+        Commands\GenerateMagicLink::class,
     ];
 
     /**
