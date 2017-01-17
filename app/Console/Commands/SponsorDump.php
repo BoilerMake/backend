@@ -57,7 +57,7 @@ class SponsorDump extends Command
                 $tmpPDF = sys_get_temp_dir()."/resumes/".$userId.".pdf";
                 try {
                     copy($resumeURL, $tmpPDF);
-                    $this->info($app->user->first_name.",".$app->user->last_name.",".$app->user->email.",".$app->github.",".$app->linkedin.",".$app->gender.",".$app->major.",".$app->grad_year.",".$app->school->name.",".$app->id.".pdf");
+                    $this->info($app->user->first_name."\t".$app->user->last_name."\t".$app->user->email."\t".$app->github."\t".$app->linkedin."\t".$app->gender."\t".$app->major."\t".$app->grad_year."\t".$app->school->name."\t".$userId.".pdf");
                 }
                 catch (\ErrorException $e)
                 {
