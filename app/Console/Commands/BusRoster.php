@@ -73,12 +73,22 @@ class BusRoster extends Command
                         $rsvptext = "";
                         if($user->application->rsvp==true)
                             $rsvptext = "said yes";
-                        else if ($user->application->rsvp==false)
+                        if ($user->application->rsvp==false)
                             $rsvptext = "said no";
-                        else if($user->application->rsvp==null)
+                        if($user->application->rsvp==null)
                             $rsvptext = "did not respond";
-                        if($mode==4)
-                            $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']."\texpired: ".($user->application->decision==4 ? "yes":"no")."\twaitlisted: ".($user->application->decision==2 ? "yes":"no")."\taccepted: ".($user->application->decision==3 ? "yes":"no")."\trsvp: ".$rsvptext);
+
+
+                        if($mode==4) {
+                            $this->info($user->application->school->name . "\t"
+                                . $user['email'] . "\t"
+                                . $user['first_name'] . "\t"
+                                . $user['last_name'] . "\t"
+                                . "expired: " . ($user->application->decision == 4 ? "yes" : "no")
+                                . "\twaitlisted: " . ($user->application->decision == 2 ? "yes" : "no")
+                                . "\taccepted: " . ($user->application->decision == 3 ? "yes" : "no")
+                                . "\trsvp: " . $rsvptext);
+                        }
                         else
                             $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
 
