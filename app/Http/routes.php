@@ -33,8 +33,10 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     Route::get('calendar', 'ExecController@generateCalendar');
     Route::get('sponsor/info', 'SponsorController@info');
 
-    // Analytics
     Route::get('events', 'GeneralController@getEvents');
+    Route::get('announcements', 'GeneralController@getAnnouncements');
+
+    // Analytics
     Route::put('analytics/event', 'AnalyticsController@event');
 
     Route::post('users/reset/send', 'UsersController@sendPasswordReset');

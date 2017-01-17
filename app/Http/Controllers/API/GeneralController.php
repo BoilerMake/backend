@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Announcement;
 use AWS;
 use Log;
 use App\Models\User;
@@ -90,5 +91,10 @@ class GeneralController extends Controller
     public function getEvents()
     {
         return Event::orderBy('begin')->get(['id', 'title', 'description', 'begin', 'end']);
+    }
+
+    public function getAnnouncements()
+    {
+        return Announcement::orderBy('created_at')->get();
     }
 }
