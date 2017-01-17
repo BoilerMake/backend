@@ -24,6 +24,7 @@ class Kernel extends ConsoleKernel
         Commands\BusRoster::class,
         Commands\GenerateAccessCards::class,
         Commands\GenerateMagicLink::class,
+        Commands\SponsorDump::class,
     ];
 
     /**
