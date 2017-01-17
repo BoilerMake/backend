@@ -71,11 +71,11 @@ class BusRoster extends Command
                         }
                     } else {
                         $rsvptext = "";
-                        if($user->application->rsvp==true)
+                        if($user->application->rsvp===true)
                             $rsvptext = "said yes";
-                        if ($user->application->rsvp==false)
+                        if ($user->application->rsvp===false)
                             $rsvptext = "said no";
-                        if($user->application->rsvp==null)
+                        if($user->application->rsvp===null)
                             $rsvptext = "did not respond";
 
 
