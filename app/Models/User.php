@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Services\Notifier;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use JWTAuth;
 
 class User extends Authenticatable
 {
@@ -98,5 +99,9 @@ class User extends Authenticatable
         $application->resume_uploaded = (int) $application->resume_uploaded;
 
         return $application;
+    }
+    public function getToken() {
+        $roles = $this->roles()->get()->lists('name');
+        return JWTAuth::fromUser($this, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$this->slug(), 'user_id'=>$this->id]);
     }
 }

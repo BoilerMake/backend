@@ -30,9 +30,7 @@ class AuthController extends Controller
             return $validator->errors()->all();
         } else {
             if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
-                $roles = Auth::user()->roles()->get()->lists('name');
-                $token = JWTAuth::fromUser(Auth::user(), ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>Auth::user()->slug(), 'user_id'=>Auth::user()->id]);
-
+                $token = Auth::user()->getToken();
                 return compact('token');
             }
         }
