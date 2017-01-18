@@ -63,14 +63,14 @@ class PodController extends Controller
         if ($request->code == null || ! isset($request->code)) {
             //todo: robustness in case this doesnt exist
             $scan->success = false;
-            $scan->message = 'somehting wrong with the code!';
+            $scan->message = 'something wrong with the code!';
             $scan->save();
 
             return $scan;
         }
         $scan->input = $request->code;
 
-        $user = User::where('identifier', $request->code)->first();
+        $user = User::where('card_code', $request->code)->first();
         if (! $user) {
             //this would really only happen if someone is trying to hack us!
             //can't find a user behind the code
@@ -141,7 +141,10 @@ class PodController extends Controller
         if (! $pod) {
             return ['success'=> false, 'message'=> 'could not find pod'];
         }
-        $pod->touch();
+
+        $pod->ip = $request->ip_addr;
+        $pod->save();
+
         //TODO: Change this return value on pod status so we can control scanning execution
         return ['success'=> true, 'message'=> 'heartbeat received '.$pod->updated_at];
     }
