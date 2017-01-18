@@ -283,7 +283,7 @@ class UsersController extends Controller
 
 //            $combined->addImage( $image );
 //            $combined->setImageFormat("jpg");
-            $fileName = 'cards-output/layout-'.$x.'.png';
+            $fileName = 'cards-output/layout-'.$x.'.pdf';
             $path = public_path().'/'.$fileName;
             $image->writeImage($path);
             $x++;
@@ -332,6 +332,8 @@ class UsersController extends Controller
         //globals
         $whitePixel = new ImagickPixel('#FFFFFF');
         $bluePixel = new ImagickPixel('#1A4A98');
+        $allergen1 = new ImagickPixel('#59436A');
+        $allergenYellow = new ImagickPixel('#F6CF56');
         $greenPixel = new ImagickPixel('#45955E');
         $blackPixel = new ImagickPixel('#000000');
         $mainFont = resource_path('assets/fonts/Exo2-Regular.ttf');
@@ -420,6 +422,31 @@ class UsersController extends Controller
         $roleStripe->setFillColor($isExecCard ? $bluePixel : $greenPixel);
         $roleStripe->rectangle(0, 975, $fullWidth, 1200);
         $image->drawImage($roleStripe);
+
+
+        //vegetarian/vegan strip
+        if($user->application->diet==1 || $user->application->diet==3) {
+            $dietStripe = new ImagickDraw();
+            $dietStripe->setFillColor($allergenYellow);
+            $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth, 1200);
+            $image->drawImage($dietStripe);
+        }
+
+        //allergen strip
+        if($user->application->diet==3) {
+            $dietStripe = new ImagickDraw();
+            $dietStripe->setFillColor($allergen1);
+            $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth - 32, 1200);
+            $image->drawImage($dietStripe);
+        }
+
+        //alergent strip wihtout veg+vegan
+        if($user->application->diet==2) {
+            $dietStripe = new ImagickDraw();
+            $dietStripe->setFillColor($allergen1);
+            $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth, 1200);
+            $image->drawImage($dietStripe);
+        }
 
         $roleTextLine = new ImagickDraw();
         $roleTextLine->setFont($mainFont);
