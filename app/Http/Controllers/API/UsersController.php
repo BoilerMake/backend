@@ -292,19 +292,6 @@ class UsersController extends Controller
 
         }
 
-
-
-//
-//
-//        $combined->addImage( $image );
-//        $combined->addImage( $image );
-//        $combined->addImage( $image );
-//
-//        $combined->getImageBlob();
-//        $combined->setImageFormat("jpg");
-//        $combined->writeImages( public_path().'/cards/layout.jpg', true );
-
-
     }
 
     public static function generateAccessCardImage($user_id)
