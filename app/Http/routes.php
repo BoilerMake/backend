@@ -29,7 +29,7 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     Route::get('debug', 'AuthController@debug');
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup', 'GeneralController@interestSignup');
-    Route::get('interest', 'ExecController@getInterestData');
+    Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);;
     Route::get('calendar', 'ExecController@generateCalendar');
     Route::get('sponsor/info', 'SponsorController@info');
 
