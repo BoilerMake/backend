@@ -40,12 +40,13 @@ class GenerateAccessCards extends Command
     public function handle()
     {
         foreach (User::with('application')->get() as $user) {
-            $user->card_image = NULL;
+            $user->card_image = null;
             $user->save();
-            if($user->hasRole('exec'))
+            if ($user->hasRole('exec')) {
                 UsersController::generateAccessCardImage($user->id);
-            else if($user->hasRole('hacker') && $user->application->rsvp)
+            } elseif ($user->hasRole('hacker') && $user->application->rsvp) {
                 UsersController::generateAccessCardImage($user->id);
+            }
         }
         $this->info('stitching...');
         UsersController::stitchAccessCards();

@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\API\GeneralController;
-use App\Models\Application;
 use App\Models\User;
+use App\Models\Application;
 use Illuminate\Console\Command;
-use Mockery\CountValidator\Exception;
-use Psy\Exception\ErrorException;
+use App\Http\Controllers\API\GeneralController;
 
 class SponsorDump extends Command
 {
@@ -42,25 +40,24 @@ class SponsorDump extends Command
      */
     public function handle()
     {
-        if(!is_dir(sys_get_temp_dir()."/resumes/"))
-            mkdir(sys_get_temp_dir()."/resumes/");
+        if (! is_dir(sys_get_temp_dir().'/resumes/')) {
+            mkdir(sys_get_temp_dir().'/resumes/');
+        }
 
-        $this->info("saving to: ".sys_get_temp_dir()."/resumes/");
+        $this->info('saving to: '.sys_get_temp_dir().'/resumes/');
         $apps = Application::with('user')->get();
         foreach ($apps as $app) {
-            if($app->rsvp && $app->resume_uploaded) {
+            if ($app->rsvp && $app->resume_uploaded) {
                 $userId = $app->user->id;
 //                $this->info($userId);
-                $resumeURL = GeneralController::resumeUrl($userId,'get');
+                $resumeURL = GeneralController::resumeUrl($userId, 'get');
 //                $this->info($resumeURL);
 
-                $tmpPDF = sys_get_temp_dir()."/resumes/".$userId.".pdf";
+                $tmpPDF = sys_get_temp_dir().'/resumes/'.$userId.'.pdf';
                 try {
                     copy($resumeURL, $tmpPDF);
-                    $this->info($app->user->first_name."\t".$app->user->last_name."\t".$app->user->email."\t".$app->github."\t".$app->linkedin."\t".$app->gender."\t".$app->major."\t".$app->grad_year."\t".$app->school->name."\t".$userId.".pdf");
-                }
-                catch (\ErrorException $e)
-                {
+                    $this->info($app->user->first_name."\t".$app->user->last_name."\t".$app->user->email."\t".$app->github."\t".$app->linkedin."\t".$app->gender."\t".$app->major."\t".$app->grad_year."\t".$app->school->name."\t".$userId.'.pdf');
+                } catch (\ErrorException $e) {
                     //$this->info('oops');
                 }
             }

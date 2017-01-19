@@ -213,69 +213,70 @@ class UsersController extends Controller
 
         return ['puzzles'=>$ids];
     }
-    public static function stitchAccessCards() {
 
+    public static function stitchAccessCards()
+    {
         $users = User::whereNotNull('card_image')->get()->lists('card_image')->toArray();
-        $pages = array_chunk($users,6);
+        $pages = array_chunk($users, 6);
 
         $whitePixel = new ImagickPixel('#FFFFFF');
 
 //        $combined   =   new Imagick();
 
-        $x=0;
-        foreach($pages as $page) {
+        $x = 0;
+        foreach ($pages as $page) {
             $image = new Imagick();
             $image->newImage(3300, 2550, $whitePixel);
             $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
-            $image->setImageResolution(300,300);
-            $image->setImageFormat("jpg");
+            $image->setImageResolution(300, 300);
+            $image->setImageFormat('jpg');
 
-            if(isset($page[0])) {
+            if (isset($page[0])) {
                 $card = new Imagick();
-                $card->readImageFile(fopen(public_path() . '/' . $page[0], 'rb'));
-                $card->rotateimage($whitePixel,180);
+                $card->readImageFile(fopen(public_path().'/'.$page[0], 'rb'));
+                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 80);
                 $card->clear();
                 $card->destroy();
             }
 
-            if(isset($page[1])) {
+            if (isset($page[1])) {
                 $card = new Imagick();
-                $card->readImageFile(fopen(public_path() . '/' . $page[1], 'rb'));
-                $card->rotateimage($whitePixel,180);
+                $card->readImageFile(fopen(public_path().'/'.$page[1], 'rb'));
+                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 80);
                 $card->clear();
                 $card->destroy();
             }
 
-            if(isset($page[2])) {
+            if (isset($page[2])) {
                 $card = new Imagick();
-                $card->readImageFile(fopen(public_path() . '/' . $page[2], 'rb'));
-                $card->rotateimage($whitePixel,180);
+                $card->readImageFile(fopen(public_path().'/'.$page[2], 'rb'));
+                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 80);
                 $card->clear();
                 $card->destroy();
             }
 
-            if(isset($page[3])) {
+            if (isset($page[3])) {
                 $card = new Imagick();
-                $card->readImageFile(fopen(public_path() . '/' . $page[3], 'rb'));
+                $card->readImageFile(fopen(public_path().'/'.$page[3], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 1279);
                 $card->clear();
                 $card->destroy();
             }
 
-            if(isset($page[4])) {
+            if (isset($page[4])) {
                 $card = new Imagick();
-                $card->readImageFile(fopen(public_path() . '/' . $page[4], 'rb'));
+                $card->readImageFile(fopen(public_path().'/'.$page[4], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 1279);
                 $card->clear();
                 $card->destroy();
             }
 
-            if(isset($page[5])) {
+            if (isset($page[5])) {
                 $card = new Imagick();
-                $card->readImageFile(fopen(public_path() . '/' . $page[5], 'rb'));
+                $card->readImageFile(fopen(public_path().'/'.$page[5], 'rb'));
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 1279);
                 $card->clear();
                 $card->destroy();
@@ -289,9 +290,7 @@ class UsersController extends Controller
             $x++;
             $image->clear();
             $image->destroy();
-
         }
-
     }
 
     public static function generateAccessCardImage($user_id)
@@ -315,7 +314,6 @@ class UsersController extends Controller
 
         $isExecCard = $cardType == self::CARD_TYPE_EXEC;
 
-
         //globals
         $whitePixel = new ImagickPixel('#FFFFFF');
         $bluePixel = new ImagickPixel('#1A4A98');
@@ -331,7 +329,7 @@ class UsersController extends Controller
         $image = new Imagick();
         $image->newImage($fullWidth, 1200, $whitePixel);
         $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
-        $image->setImageResolution(300,300);
+        $image->setImageResolution(300, 300);
 
         /* GENERATE SKILLS ICONS */
         $skills = json_decode($user->application->skills, true);
@@ -410,9 +408,8 @@ class UsersController extends Controller
         $roleStripe->rectangle(0, 975, $fullWidth, 1200);
         $image->drawImage($roleStripe);
 
-
         //vegetarian/vegan strip
-        if($user->application->diet==1 || $user->application->diet==3) {
+        if ($user->application->diet == 1 || $user->application->diet == 3) {
             $dietStripe = new ImagickDraw();
             $dietStripe->setFillColor($allergenYellow);
             $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth, 1200);
@@ -420,7 +417,7 @@ class UsersController extends Controller
         }
 
         //allergen strip
-        if($user->application->diet==3) {
+        if ($user->application->diet == 3) {
             $dietStripe = new ImagickDraw();
             $dietStripe->setFillColor($allergen1);
             $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth - 32, 1200);
@@ -428,7 +425,7 @@ class UsersController extends Controller
         }
 
         //alergent strip wihtout veg+vegan
-        if($user->application->diet==2) {
+        if ($user->application->diet == 2) {
             $dietStripe = new ImagickDraw();
             $dietStripe->setFillColor($allergen1);
             $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth, 1200);

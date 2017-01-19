@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Announcement;
-use App\Models\GithubEvent;
-use App\Models\PodScan;
 use AWS;
-use Carbon\Carbon;
 use Log;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\School;
+use App\Models\PodScan;
+use App\Models\GithubEvent;
+use App\Models\Announcement;
 use Illuminate\Http\Request;
 use App\Models\InboundMessage;
 use App\Models\InterestSignup;
@@ -98,30 +97,30 @@ class GeneralController extends Controller
 
     public function getAnnouncements()
     {
-        return Announcement::orderBy('created_at','DESC')->get();
+        return Announcement::orderBy('created_at', 'DESC')->get();
     }
-    public function getActivity() {
-        $pushes = GithubEvent::where('type','PushEvent')->with('user')->orderBy('timestamp','DESC')->get();
+
+    public function getActivity()
+    {
+        $pushes = GithubEvent::where('type', 'PushEvent')->with('user')->orderBy('timestamp', 'DESC')->get();
         $github = [];
         foreach ($pushes as $push) {
-            $github[]=[
+            $github[] = [
                 'id'=>$push->id,
                 'message'=>$push->user->name.' pushed to '.$push->repo,
-                'timestamp'=>$push->timestamp];
+                'timestamp'=>$push->timestamp, ];
         }
 
         $podScans = [];
-        foreach (PodScan::with('user','pod')->orderBy('created_at','DESC')->get() as $scan) {
-            if($scan->user && $scan->pod)
-            {
-                $podScans[]=[
+        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
+            if ($scan->user && $scan->pod) {
+                $podScans[] = [
                     'id'=>$scan->id,
                     'message'=>$scan->user->name.' scanned at pod '.$scan->pod->name,
-                    'timestamp'=>$scan->created_at->toDateTimeString()];
+                    'timestamp'=>$scan->created_at->toDateTimeString(), ];
             }
         }
 
-        return ['github'=>$github,'pods'=>$podScans];
-
+        return ['github'=>$github, 'pods'=>$podScans];
     }
 }
