@@ -20,7 +20,7 @@ class CreateGithubEventsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('github_event_id');
             $table->string('repo');
-            $table->timestamp('timestamp')->nullable()->default(NULL);
+            $table->timestamp('timestamp')->nullable()->default(null);
             $table->text('json');
             $table->timestamps();
         });

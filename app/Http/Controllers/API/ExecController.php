@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Announcement;
 use DB;
-use Log;
 use Auth;
 use Validator;
 use Carbon\Carbon;
@@ -14,6 +12,7 @@ use App\Models\User;
 use App\Models\Event;
 use App\Services\Notifier;
 use App\Models\Application;
+use App\Models\Announcement;
 use App\Models\GroupMessage;
 use Illuminate\Http\Request;
 use App\Models\AnalyticsEvent;
@@ -133,7 +132,9 @@ class ExecController extends Controller
                 break;
         }
     }
-    public function addAnnouncement(Request $request) {
+
+    public function addAnnouncement(Request $request)
+    {
         $a = new Announcement();
         $a->body = $request->message;
         $a->sms = $request->sms || false;
@@ -142,6 +143,7 @@ class ExecController extends Controller
         $a->important = $request->important || false;
         $a->save();
         $a->send();
+
         return ['ok'];
     }
 

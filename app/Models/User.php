@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use JWTAuth;
 use Carbon\Carbon;
 use App\Services\Notifier;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use JWTAuth;
 
 class User extends Authenticatable
 {
@@ -29,16 +29,18 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    protected $appends = ['launch','name'];
+    protected $appends = ['launch', 'name'];
 
     public function getLaunchAttribute()
     {
-        return $this->id."".substr($this->first_name,0,1);
+        return $this->id.''.substr($this->first_name, 0, 1);
     }
+
     public function getNameAttribute()
     {
-        return $this->first_name." ".$this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
+
     /**
      * makes a user a hacker by default and gives them an application.
      */
@@ -110,8 +112,11 @@ class User extends Authenticatable
 
         return $application;
     }
-    public function getToken() {
+
+    public function getToken()
+    {
         $roles = $this->roles()->get()->lists('name');
+
         return JWTAuth::fromUser($this, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$this->slug(), 'user_id'=>$this->id]);
     }
 }
