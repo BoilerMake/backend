@@ -95,6 +95,6 @@ class GeneralController extends Controller
 
     public function getAnnouncements()
     {
-        return Announcement::orderBy('created_at')->get();
+        return Announcement::orderBy('created_at','DESC')->get();
     }
 }

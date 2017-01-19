@@ -70,9 +70,12 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         Route::put('applications/{id}/rate', 'ExecController@rateApplication');
         Route::post('applications/{id}/notes', 'ExecController@addApplicationNote');
         Route::get('teams', 'ExecController@getTeams');
+        Route::post('announcements/add', 'ExecController@addAnnouncement');
         Route::post('events/create', 'ExecController@createEvent');
         Route::post('events/{event}/update', 'ExecController@editEvent');
         Route::post('events/{event}/delete', 'ExecController@deleteEvent');
+
+
     });
 
     Route::group(['prefix' => 'pods'], function () {

@@ -25,8 +25,8 @@ class Notifier
         $user = $this->user;
         $data['email_template_name'] = $template_name;
         Mail::queue('emails.'.$template_name, ['user' => $user, 'data'=>$data], function ($m) use ($user, $subject, $data, $template_name) {
-            $m->from('hello@boilermake.org', 'BoilerMake');
-            $m->to($user->email, $user->preferred_name)->subject($subject);
+            $m->from('team@boilermake.org', 'BoilerMake');
+            $m->to($user->email, $user->first_name)->subject($subject);
         });
         $this->logNotification('email', $template_name, $data);
     }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Announcement;
 use DB;
+use Log;
 use Auth;
 use Validator;
 use Carbon\Carbon;
@@ -130,6 +132,17 @@ class ExecController extends Controller
                 return ['status' => 'error', 'message' => 'already checked in'];
                 break;
         }
+    }
+    public function addAnnouncement(Request $request) {
+        $a = new Announcement();
+        $a->body = $request->message;
+        $a->sms = $request->sms || false;
+        $a->slack = $request->slack || false;
+        $a->email = $request->email || false;
+        $a->important = $request->important || false;
+        $a->save();
+        $a->send();
+        return ['ok'];
     }
 
     public function getGroupMessages()
