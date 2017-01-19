@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Services\Notifier;
 use Log;
 use Illuminate\Database\Eloquent\Model;
-
+use Slack;
 class Announcement extends Model
 {
     //
@@ -22,7 +22,7 @@ class Announcement extends Model
         if($this->slack)
         {
             Log::info("sending annoucement to slack");
-            //TODO: slack webhook, make sure to put tokens in .env
+            Slack::send('@channel ' . $this->body);
         }
         if($this->email)
         {

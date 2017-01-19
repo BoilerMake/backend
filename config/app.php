@@ -163,6 +163,7 @@ return [
         'Spatie\Tail\TailServiceProvider',
 
         Aws\Laravel\AwsServiceProvider::class,
+        Maknz\Slack\Laravel\ServiceProvider::class,
 
     ],
 
@@ -216,6 +217,7 @@ return [
         'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
         'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
         'AWS' => Aws\Laravel\AwsFacade::class,
+        'Slack' => Maknz\Slack\Laravel\Facade::class,
 
     ],
 
