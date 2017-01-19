@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
         Commands\GenerateAccessCards::class,
         Commands\GenerateMagicLink::class,
         Commands\SponsorDump::class,
+        Commands\GetGithubActivity::class,
     ];
 
     /**
@@ -37,6 +38,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('inspire')->hourly();
         $schedule->command('applications:calculate')->everyFiveMinutes();
+        $schedule->command('users:github')->everyFiveMinutes();
         $schedule->command('applications:expiredrsvp')->hourly();
     }
 }

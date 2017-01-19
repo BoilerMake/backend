@@ -29,11 +29,15 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    protected $appends = ['launch'];
+    protected $appends = ['launch','name'];
 
     public function getLaunchAttribute()
     {
         return $this->id."".substr($this->first_name,0,1);
+    }
+    public function getNameAttribute()
+    {
+        return $this->first_name." ".$this->last_name;
     }
     /**
      * makes a user a hacker by default and gives them an application.

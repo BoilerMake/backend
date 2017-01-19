@@ -35,6 +35,7 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
 
     Route::get('events', 'GeneralController@getEvents');
     Route::get('announcements', 'GeneralController@getAnnouncements');
+    Route::get('activity', 'GeneralController@getActivity');
 
     // Analytics
     Route::put('analytics/event', 'AnalyticsController@event');
