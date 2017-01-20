@@ -66,7 +66,7 @@ class GenerateAccessCards extends Command
             }
         }
         $this->info('stitching...');
-        UsersController::stitchAccessCards();
+        UsersController::stitchAccessCards($toGenerate);
 
         $this->info('done');
 //        UsersController::generateAccessCardImage(1);

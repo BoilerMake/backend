@@ -337,10 +337,36 @@ class UsersController extends Controller
 
         /* GENERATE SKILLS ICONS */
         $skills = json_decode($user->application->skills, true);
+
+        $puzzleUsers = PuzzleProgress::where('puzzle_id',5)->get()->lists('user_id')->toArray();
+        if(in_array($user->id,$puzzleUsers))
+            $skills[]='puzzle';
 //        Log::info($skills);
         $skillsYPos = 640;
         if($isExecCard)
             $skillsYPos+=100;
+
+        if (count($skills) == 4) {
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[0].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 165, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[1].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 320, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[2].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 475, $skillsYPos);
+
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[3].'.png'), 'rb'));
+            $item1raw->cropThumbnailImage(130, 130);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 630, $skillsYPos);
+        }
 
         if (count($skills) == 3) {
             $item1raw = new Imagick();
@@ -407,7 +433,7 @@ class UsersController extends Controller
         $nameTextLine->setFont($mainFont);
         $nameTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $nameTextLine->setTextKerning(2);
-        $nameTextLine->setFontSize(62);
+        $nameTextLine->setFontSize($isExecCard ? 80 : 62);
         $nameTextLine->setFillColor($blackPixel);
 
         $image->annotateImage($nameTextLine, $fullWidth / 2, $namePosition, 0, $user->first_name.' '.$user->last_name);
