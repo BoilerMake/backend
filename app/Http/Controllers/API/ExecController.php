@@ -438,6 +438,7 @@ class ExecController extends Controller
 
     public function generateCalendar(Request $request)
     {
+        date_default_timezone_set('America/New_York');
         $vCalendar = new Calendar('www.boilermake.org');
         $events = Event::where('hidden', 0)->get();
         // Iterate through all events
