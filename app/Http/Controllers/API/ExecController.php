@@ -439,14 +439,14 @@ class ExecController extends Controller
     public function generateCalendar(Request $request)
     {
         $vCalendar = new Calendar('www.boilermake.org');
-        $events = Event::all();
+        $events = Event::where('hidden', 0)->get();
         // Iterate through all events
         foreach ($events as $event) {
             $vEvent = new \Eluceo\iCal\Component\Event();
             $vEvent
                 ->setDtStart(new \DateTime($event->begin))
                 ->setDtEnd(new \DateTime($event->end))
-                ->setNoTime(true)
+                ->setNoTime(false)
                 ->setSummary($event->title);
             $vCalendar->addComponent($vEvent);
         }
