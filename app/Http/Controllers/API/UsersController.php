@@ -214,9 +214,13 @@ class UsersController extends Controller
         return ['puzzles'=>$ids];
     }
 
-    public static function stitchAccessCards()
+    public static function stitchAccessCards($user_ids = null)
     {
-        $users = User::whereNotNull('card_image')->get()->lists('card_image')->toArray();
+        if($user_ids) {
+            $users = User::whereIn('id',$user_ids)->get()->lists('card_image')->toArray();
+        }
+        else
+            $users = User::whereNotNull('card_image')->get()->lists('card_image')->toArray();
         $pages = array_chunk($users, 6);
 
         $whitePixel = new ImagickPixel('#FFFFFF');
@@ -335,6 +339,8 @@ class UsersController extends Controller
         $skills = json_decode($user->application->skills, true);
 //        Log::info($skills);
         $skillsYPos = 640;
+        if($isExecCard)
+            $skillsYPos+=100;
 
         if (count($skills) == 3) {
             $item1raw = new Imagick();
@@ -370,19 +376,32 @@ class UsersController extends Controller
             $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 400, $skillsYPos);
         }
 
-        $item1raw = new Imagick();
-        $item1raw->readImageFile(fopen(resource_path('assets/logo_s17.png'), 'rb'));
-        $item1raw->cropThumbnailImage(210, 210);
-        $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 92, 50);
+       if(!$isExecCard) {
+           $item1raw = new Imagick();
+           $item1raw->readImageFile(fopen(resource_path('assets/logo_s17.png'), 'rb'));
+           $item1raw->cropThumbnailImage(210, 210);
+           $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 92, 50);
 
-        $BMTextLine = new ImagickDraw();
-        $BMTextLine->setFont($headingFont);
-//        $BMTextLine->setTextAlignment(\Imagick::ALIGN_LEFT);
-//        $BMTextLine->setTextKerning(2);
-        $BMTextLine->setFontSize(80);
-        $BMTextLine->setFillColor($bluePixel);
+           $BMTextLine = new ImagickDraw();
+           $BMTextLine->setFont($headingFont);
+           $BMTextLine->setFontSize(80);
+           $BMTextLine->setFillColor($bluePixel);
 
-        $image->annotateImage($BMTextLine, 313, 180, 0, 'BOILERMAKE');
+           $image->annotateImage($BMTextLine, 313, 180, 0, 'BOILERMAKE');
+       }
+       else
+       {
+           $item1raw = new Imagick();
+           $item1raw->readImageFile(fopen(resource_path('assets/logo_s17@3x.png'), 'rb'));
+           $item1raw->cropThumbnailImage(600, 600);
+           $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 150, 0);
+
+       }
+
+
+        $namePosition = 440;
+        if($isExecCard)
+            $namePosition+=180;
 
         $nameTextLine = new ImagickDraw();
         $nameTextLine->setFont($mainFont);
@@ -391,7 +410,7 @@ class UsersController extends Controller
         $nameTextLine->setFontSize(62);
         $nameTextLine->setFillColor($blackPixel);
 
-        $image->annotateImage($nameTextLine, $fullWidth / 2, 440, 0, $user->first_name.' '.$user->last_name);
+        $image->annotateImage($nameTextLine, $fullWidth / 2, $namePosition, 0, $user->first_name.' '.$user->last_name);
 
         $schoolTextLine = new ImagickDraw();
         $schoolTextLine->setFont($mainFont);
@@ -400,7 +419,7 @@ class UsersController extends Controller
         $schoolTextLine->setFontSize(45);
         $schoolTextLine->setFillColor($blackPixel);
 
-        $image->annotateImage($schoolTextLine, $fullWidth / 2, 495, 0, $schoolName);
+        $image->annotateImage($schoolTextLine, $fullWidth / 2, $namePosition+55, 0, $schoolName);
 
         //add the stripe
         $roleStripe = new ImagickDraw();
@@ -436,7 +455,7 @@ class UsersController extends Controller
         $roleTextLine->setFont($mainFont);
         $roleTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $roleTextLine->setTextKerning(2);
-        $roleTextLine->setFontSize(68);
+        $roleTextLine->setFontSize($isExecCard ? 82 : 68);
         $roleTextLine->setFillColor($whitePixel);
         $roleText = $isExecCard ? 'ORGANIZER' : 'HACKER';
         $image->annotateImage($roleTextLine, $fullWidth / 2, 1115, 0, $roleText);

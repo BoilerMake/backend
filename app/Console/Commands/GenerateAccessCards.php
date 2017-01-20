@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use Log;
+use App\Models\PuzzleProgress;
 use App\Models\User;
 use Illuminate\Console\Command;
 use App\Http\Controllers\API\UsersController;
@@ -39,6 +41,21 @@ class GenerateAccessCards extends Command
      */
     public function handle()
     {
+        //todo again:
+        //puzzle
+        $puzzleUsers = PuzzleProgress::where('puzzle_id',5)->get()->lists('user_id')->toArray();
+        //exec
+        $execs = User::whereHas('roles', function ($q) {
+            $q->where('name', 'exec');
+        })->lists('id')->toArray();
+        $toGenerate = array_merge($puzzleUsers, $execs);
+        //newly added
+        $newlyAdded = [72381];
+        $toGenerate = array_merge($toGenerate,$newlyAdded);
+
+        Log::info($toGenerate);
+
+
         foreach (User::with('application')->get() as $user) {
             $user->card_image = null;
             $user->save();

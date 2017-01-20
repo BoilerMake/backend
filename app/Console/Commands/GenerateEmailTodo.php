@@ -46,6 +46,7 @@ class GenerateEmailTodo extends Command
         $this->info('4: accept -> expired');
         $this->info('5: incomplete apps');
         $this->info('6: rsvp=yes, non bus, non purdue, i.e. driving');
+        $this->info('7: rsvp=yes, with schools');
         $mode = $this->ask('mode?');
         $this->info('mode: '.$mode);
 
@@ -101,6 +102,13 @@ class GenerateEmailTodo extends Command
                 if ($user->application->school && $user->application->school->transit_method == 'car') {
                     $this->info($user->email."\t".$user->first_name);
                 }
+            }
+        }
+        if ($mode == 7) {
+            $rsvp = Application::where('rsvp', true)->where('completed_calculated', true)->get()->lists('user_id');
+            $this->info(json_encode($rsvp));
+            foreach (User::whereIn('id', $rsvp)->with('application', 'application.school')->get() as $user) {
+                    $this->info($user->id."\t".$user->application->id."\t".$user->email."\t".$user->first_name."\t".$user->last_name."\t".($user->application->school ? $user->application->school->name : "oops"));
             }
         }
     }
