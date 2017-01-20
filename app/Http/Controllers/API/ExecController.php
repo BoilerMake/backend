@@ -444,6 +444,7 @@ class ExecController extends Controller
         // Iterate through all events
         foreach ($events as $event) {
             $vEvent = new \Eluceo\iCal\Component\Event();
+            $vEvent->setUseTimezone(true);
             $vEvent
                 ->setDtStart(new \DateTime($event->begin))
                 ->setDtEnd(new \DateTime($event->end))
