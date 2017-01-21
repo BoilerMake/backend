@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('inspire')->hourly();
         $schedule->command('applications:calculate')->everyFiveMinutes();
-        $schedule->command('users:github')->everyFiveMinutes();
+//        $schedule->command('users:github')->everyFiveMinutes();
         $schedule->command('applications:expiredrsvp')->hourly();
     }
 }

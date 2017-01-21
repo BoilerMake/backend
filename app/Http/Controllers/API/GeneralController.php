@@ -104,22 +104,22 @@ class GeneralController extends Controller
     {
         $pushes = GithubEvent::where('type', 'PushEvent')->with('user')->orderBy('timestamp', 'DESC')->get();
         $github = [];
-        foreach ($pushes as $push) {
-            $github[] = [
-                'id'=>$push->id,
-                'message'=>$push->user->name.' pushed to '.$push->repo,
-                'timestamp'=>$push->timestamp, ];
-        }
+//        foreach ($pushes as $push) {
+//            $github[] = [
+//                'id'=>$push->id,
+//                'message'=>$push->user->name.' pushed to '.$push->repo,
+//                'timestamp'=>$push->timestamp, ];
+//        }
 
         $podScans = [];
-        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
-            if ($scan->user && $scan->pod) {
-                $podScans[] = [
-                    'id'=>$scan->id,
-                    'message'=>$scan->user->name.' scanned at pod '.$scan->pod->name,
-                    'timestamp'=>$scan->created_at->toDateTimeString(), ];
-            }
-        }
+//        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
+//            if ($scan->user && $scan->pod) {
+//                $podScans[] = [
+//                    'id'=>$scan->id,
+//                    'message'=>$scan->user->name.' scanned at pod '.$scan->pod->name,
+//                    'timestamp'=>$scan->created_at->toDateTimeString(), ];
+//            }
+//        }
 
         return ['github'=>$github, 'pods'=>$podScans];
     }
