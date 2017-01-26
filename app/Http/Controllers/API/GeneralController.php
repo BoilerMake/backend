@@ -85,7 +85,7 @@ class GeneralController extends Controller
                 ]);
                 break;
         }
-        $request = $s3->createPresignedRequest($cmd, '+1 day');
+        $request = $s3->createPresignedRequest($cmd, '+7 days');
 
         return (string) $request->getUri();
     }
