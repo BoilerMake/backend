@@ -47,16 +47,17 @@ class SponsorDump extends Command
         $this->info('saving to: '.sys_get_temp_dir().'/resumes/');
         $apps = Application::with('user')->get();
         foreach ($apps as $app) {
-            if ($app->rsvp && $app->resume_uploaded) {
+            if ($app->checked_in_at && $app->resume_uploaded) {
                 $userId = $app->user->id;
 //                $this->info($userId);
                 $resumeURL = GeneralController::resumeUrl($userId, 'get');
 //                $this->info($resumeURL);
 
-                $tmpPDF = sys_get_temp_dir().'/resumes/'.$userId.'.pdf';
+                $resumeFilename = $app->user->first_name."_".$app->user->last_name."_".$app->user->id;
+                $tmpPDF = sys_get_temp_dir().'/resumes/'.$resumeFilename.'.pdf';
                 try {
                     copy($resumeURL, $tmpPDF);
-                    $this->info($app->user->first_name."\t".$app->user->last_name."\t".$app->user->email."\t".$app->github."\t".$app->linkedin."\t".$app->gender."\t".$app->major."\t".$app->grad_year."\t".$app->school->name."\t".$userId.'.pdf');
+                    $this->info($app->user->first_name."\t".$app->user->last_name."\t".$app->user->email."\t".$app->github."\t".$app->linkedin."\t".$app->gender."\t".$app->major."\t".$app->grad_year."\t".$app->school->name."\t".$resumeFilename.'.pdf');
                 } catch (\ErrorException $e) {
                     //$this->info('oops');
                 }
