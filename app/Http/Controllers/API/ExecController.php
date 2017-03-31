@@ -78,7 +78,7 @@ class ExecController extends Controller
     {
         $users = User::all();
         foreach ($users as $eachUser) {
-            $eachUser->roles = $eachUser->roles()->lists('name');
+            $eachUser->roles = $eachUser->roles()->pluck('name');
         }
 
         return $users;
@@ -95,7 +95,7 @@ class ExecController extends Controller
         return [
             'user'=>$user,
             'application'=>$application,
-            'roles'=>$user->roles()->lists('name'),
+            'roles'=>$user->roles()->pluck('name'),
             'isHacker'=>$user->hasRole('hacker'),
             ];
     }

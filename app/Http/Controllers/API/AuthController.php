@@ -68,7 +68,7 @@ class AuthController extends Controller
 
             $user->postSignupActions(); // Attach roles
 
-            $roles = $user->roles()->get()->lists('name');
+            $roles = $user->roles()->get()->pluck('name');
             $token = JWTAuth::fromUser($user, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
 
             $link = env('FRONTEND_ADDRESS').'/confirm?tok='.$code;

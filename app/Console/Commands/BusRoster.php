@@ -48,11 +48,11 @@ class BusRoster extends Command
         $this->info('mode: '.$mode);
 
         if ($mode == 1 || $mode == 4) {
-            $appIDs = Application::where('completed_calculated', true)->get()->lists('id')->toArray();
+            $appIDs = Application::where('completed_calculated', true)->get()->pluck('id')->toArray();
         } elseif ($mode == 2) {
-            $appIDs = Application::where('decision', Application::DECISION_ACCEPT)->get()->lists('id')->toArray();
+            $appIDs = Application::where('decision', Application::DECISION_ACCEPT)->get()->pluck('id')->toArray();
         } elseif ($mode == 3) {
-            $appIDs = Application::where('rsvp', true)->get()->lists('id')->toArray();
+            $appIDs = Application::where('rsvp', true)->get()->pluck('id')->toArray();
         } else {
             return;
         }
