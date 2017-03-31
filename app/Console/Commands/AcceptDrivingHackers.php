@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
-use App\Models\User;
-use App\Models\School;
 use App\Models\Application;
 use Illuminate\Console\Command;
 
