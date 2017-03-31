@@ -43,11 +43,11 @@ class GenerateAccessCards extends Command
     {
         //todo again:
         //puzzle
-        $puzzleUsers = PuzzleProgress::where('puzzle_id', 5)->get()->lists('user_id')->toArray();
+        $puzzleUsers = PuzzleProgress::where('puzzle_id', 5)->get()->pluck('user_id')->toArray();
         //exec
         $execs = User::whereHas('roles', function ($q) {
             $q->where('name', 'exec');
-        })->lists('id')->toArray();
+        })->pluck('id')->toArray();
         $toGenerate = array_merge($puzzleUsers, $execs);
         //newly added
         $newlyAdded = [72381];

@@ -115,7 +115,7 @@ class User extends Authenticatable
 
     public function getToken()
     {
-        $roles = $this->roles()->get()->lists('name');
+        $roles = $this->roles()->get()->pluck('name');
 
         return JWTAuth::fromUser($this, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$this->slug(), 'user_id'=>$this->id]);
     }

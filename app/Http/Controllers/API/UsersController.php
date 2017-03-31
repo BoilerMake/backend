@@ -217,9 +217,9 @@ class UsersController extends Controller
     public static function stitchAccessCards($user_ids = null)
     {
         if ($user_ids) {
-            $users = User::whereIn('id', $user_ids)->get()->lists('card_image')->toArray();
+            $users = User::whereIn('id', $user_ids)->get()->pluck('card_image')->toArray();
         } else {
-            $users = User::whereNotNull('card_image')->get()->lists('card_image')->toArray();
+            $users = User::whereNotNull('card_image')->get()->pluck('card_image')->toArray();
         }
         $pages = array_chunk($users, 6);
 
@@ -338,7 +338,7 @@ class UsersController extends Controller
         /* GENERATE SKILLS ICONS */
         $skills = json_decode($user->application->skills, true);
 
-        $puzzleUsers = PuzzleProgress::where('puzzle_id', 5)->get()->lists('user_id')->toArray();
+        $puzzleUsers = PuzzleProgress::where('puzzle_id', 5)->get()->pluck('user_id')->toArray();
         if (in_array($user->id, $puzzleUsers)) {
             $skills[] = 'puzzle';
         }

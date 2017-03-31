@@ -63,29 +63,29 @@ class GenerateEmailTodo extends Command
                     ->where('decision', Application::DECISION_EXPIRED)
                     ->get();
 
-        $incomplete = Application::where('completed_calculated', false)->get()->lists('user_id');
+        $incomplete = Application::where('completed_calculated', false)->get()->pluck('user_id');
 
         if ($mode == 1) {
-            $this->info(json_encode($toAcceptFromNull->lists('id')));
-            foreach (User::whereIn('id', $toAcceptFromNull->lists('user_id'))->get() as $u) {
+            $this->info(json_encode($toAcceptFromNull->pluck('id')));
+            foreach (User::whereIn('id', $toAcceptFromNull->pluck('user_id'))->get() as $u) {
                 $this->info($u->email."\t".$u->first_name);
             }
         }
         if ($mode == 2) {
-            $this->info(json_encode($toWaitlistFromNull->lists('id')));
-            foreach (User::whereIn('id', $toWaitlistFromNull->lists('user_id'))->get() as $u) {
+            $this->info(json_encode($toWaitlistFromNull->pluck('id')));
+            foreach (User::whereIn('id', $toWaitlistFromNull->pluck('user_id'))->get() as $u) {
                 $this->info($u->email."\t".$u->first_name);
             }
         }
         if ($mode == 3) {
-            $this->info(json_encode($toAcceptFromWaitlist->lists('id')));
-            foreach (User::whereIn('id', $toAcceptFromWaitlist->lists('user_id'))->get() as $u) {
+            $this->info(json_encode($toAcceptFromWaitlist->pluck('id')));
+            foreach (User::whereIn('id', $toAcceptFromWaitlist->pluck('user_id'))->get() as $u) {
                 $this->info($u->email."\t".$u->first_name);
             }
         }
         if ($mode == 4) {
-            $this->info(json_encode($expiredFromAccepted->lists('id')));
-            foreach (User::whereIn('id', $expiredFromAccepted->lists('user_id'))->get() as $u) {
+            $this->info(json_encode($expiredFromAccepted->pluck('id')));
+            foreach (User::whereIn('id', $expiredFromAccepted->pluck('user_id'))->get() as $u) {
                 $this->info($u->email."\t".$u->first_name);
             }
         }
@@ -96,7 +96,7 @@ class GenerateEmailTodo extends Command
             }
         }
         if ($mode == 6) {
-            $rsvpDriving = Application::where('rsvp', true)->where('completed_calculated', true)->get()->lists('user_id');
+            $rsvpDriving = Application::where('rsvp', true)->where('completed_calculated', true)->get()->pluck('user_id');
             $this->info(json_encode($rsvpDriving));
             foreach (User::whereIn('id', $rsvpDriving)->with('application', 'application.school')->get() as $user) {
                 if ($user->application->school && $user->application->school->transit_method == 'car') {
@@ -105,7 +105,7 @@ class GenerateEmailTodo extends Command
             }
         }
         if ($mode == 7) {
-            $rsvp = Application::where('rsvp', true)->where('completed_calculated', true)->get()->lists('user_id');
+            $rsvp = Application::where('rsvp', true)->where('completed_calculated', true)->get()->pluck('user_id');
             $this->info(json_encode($rsvp));
             foreach (User::whereIn('id', $rsvp)->with('application', 'application.school')->get() as $user) {
                 $this->info($user->id."\t".$user->application->id."\t".$user->email."\t".$user->first_name."\t".$user->last_name."\t".($user->application->school ? $user->application->school->name : 'oops'));

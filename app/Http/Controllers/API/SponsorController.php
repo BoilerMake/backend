@@ -16,7 +16,7 @@ class SponsorController extends Controller
 
     public function info()
     {
-        Log::info(Auth::user()->roles()->get()->lists('name'));
+        Log::info(Auth::user()->roles()->get()->pluck('name'));
         if (! Auth::user()->hasRole('sponsor')) {//TODO middleware perhaps?
             return;
         }

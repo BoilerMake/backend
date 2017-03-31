@@ -12,10 +12,10 @@ class Announcement extends Model
     //
     public function send()
     {
-        $checkInHackerUserIds = Application::whereNotNull('checked_in_at')->lists('user_id')->toArray();
+        $checkInHackerUserIds = Application::whereNotNull('checked_in_at')->pluck('user_id')->toArray();
         $execs = User::whereHas('roles', function ($q) {
             $q->where('name', 'exec');
-        })->lists('id')->toArray();
+        })->pluck('id')->toArray();
         $toSendTo = array_merge($checkInHackerUserIds, $execs);
         $users = User::whereIn('id', $toSendTo)->get();
 

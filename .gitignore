@@ -6,3 +6,6 @@ Homestead.json
 coverage
 coverage.xml
 .DS_Store
+
+.phpstorm.meta.php
+_ide_helper.php
