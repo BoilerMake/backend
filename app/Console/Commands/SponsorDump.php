@@ -53,7 +53,7 @@ class SponsorDump extends Command
                 $resumeURL = GeneralController::resumeUrl($userId, 'get');
 //                $this->info($resumeURL);
 
-                $resumeFilename = $app->user->first_name."_".$app->user->last_name."_".$app->user->id;
+                $resumeFilename = $app->user->first_name.'_'.$app->user->last_name.'_'.$app->user->id;
                 $tmpPDF = sys_get_temp_dir().'/resumes/'.$resumeFilename.'.pdf';
                 try {
                     copy($resumeURL, $tmpPDF);
