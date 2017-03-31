@@ -17,7 +17,8 @@
         "symfony/psr-http-message-bridge": "0.2",
         "twilio/sdk": "^4.10",
         "eluceo/ical": "^0.9.0",
-        "maknz/slack-laravel": "^1.0"
+        "maknz/slack-laravel": "^1.0",
+        "barryvdh/laravel-ide-helper": "^2.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -55,6 +56,9 @@
             "php artisan clear-compiled"
         ],
         "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta",
             "php artisan optimize"
         ]
     },
