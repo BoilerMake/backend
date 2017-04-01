@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Mail\UserRegistration;
 use Auth;
 use Hash;
 use Mail;
@@ -72,11 +73,7 @@ class AuthController extends Controller
             $token = JWTAuth::fromUser($user, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
 
             $link = env('FRONTEND_ADDRESS').'/confirm?tok='.$code;
-            Mail::queue('emails.welcome', ['user' => $user, 'link'=>$link], function ($message) use ($user, $link) {
-                $message->from('hello@boilermake.org', 'BoilerMake');
-                $message->to($user->email)->subject('Welcome to BoilerMake!');
-            });
-
+            Mail::to($user->email)->send(new UserRegistration($user, $link));
             return compact('token');
         }
     }
