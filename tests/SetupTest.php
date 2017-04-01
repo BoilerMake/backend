@@ -10,7 +10,9 @@ class SetupTest extends TestCase
      */
     public function testInstall()
     {
-        $this->visit('/')->see('BoilerMake');
+        $response = $this->get('/');
+        $response->assertStatus(200);
+        $response->assertSee('BoilerMake');
     }
 
     /**
@@ -20,6 +22,8 @@ class SetupTest extends TestCase
      */
     public function testAPICalls()
     {
-        $this->visit('/v1/ping')->see('pong');
+        $response = $this->call('GET', '/v1/ping');
+        $response->assertStatus(200);
+        $response->assertSee('pong');
     }
 }
