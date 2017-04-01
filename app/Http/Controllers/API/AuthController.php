@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Mail\UserRegistration;
 use Auth;
 use Hash;
 use Mail;
@@ -10,6 +9,7 @@ use JWTAuth;
 use Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Mail\UserRegistration;
 use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
@@ -74,6 +74,7 @@ class AuthController extends Controller
 
             $link = env('FRONTEND_ADDRESS').'/confirm?tok='.$code;
             Mail::to($user->email)->send(new UserRegistration($user, $link));
+
             return compact('token');
         }
     }
