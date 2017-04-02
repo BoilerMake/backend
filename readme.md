@@ -1,7 +1,7 @@
-#BoilerMake Website [backend]
+# BoilerMake Website [backend]
 
-##Info
-This API is currently being actively developed for use in BoilerMake 4, ~October 2016. If you are interested in using some/all of the components with your hackathon, please email dev@boilermake.org. We are planning on releasing a complete stable beta by the begining of May. [featureset + more information here!](http://2016.boilermake.org/about)
+## Info
+This API is currently being actively developed for use in BoilerMake V. If you are interested in using some/all of the components with your hackathon, please email dev@boilermake.org. [featureset + more information here!](http://2016.boilermake.org/about)
 
 ### Prerequisites
 * Have PHP, MySQL, and Composer installed.
@@ -13,7 +13,7 @@ This API is currently being actively developed for use in BoilerMake 4, ~October
 	* Also remember to start the service if you're in Linux
   * Composer: [instructions here](https://getcomposer.org/doc/00-intro.md)
 
-###Installation
+### Installation
 * Run `composer install`
 * Copy `.env.example` to `.env` and configure your MySQL credentials (and create a new database if you haven't already)
   * Create the database. Type the following in your Terminal
@@ -28,7 +28,7 @@ This API is currently being actively developed for use in BoilerMake 4, ~October
 * If you're using Apache, read this:
 	* https://github.com/tymondesigns/jwt-auth/wiki/Authentication
 
-####Phases:
+#### Phases:
 These refer to the 3 phases a system can be in
 
 1. Interest signups
