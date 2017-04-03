@@ -26,7 +26,6 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     Route::post('interest/signup', 'GeneralController@interestSignup');
     Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);
     Route::get('calendar', 'ExecController@generateCalendar');
-    Route::get('sponsor/info', 'SponsorController@info');
 
     Route::get('events', 'GeneralController@getEvents');
     Route::get('announcements', 'GeneralController@getAnnouncements');
