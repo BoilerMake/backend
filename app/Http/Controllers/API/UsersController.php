@@ -30,7 +30,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Gets the currently logged in User
+     * Gets the currently logged in User.
      * @return User|null
      */
     public function getMe()
@@ -219,7 +219,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Stitches user access cards together into a PDF
+     * Stitches user access cards together into a PDF.
      * @param array|null $user_ids
      */
     public static function stitchAccessCards($user_ids = null)
@@ -306,7 +306,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Generates an access card image for a given user
+     * Generates an access card image for a given user.
      * @param user $user_id the user's id
      * @return string file URI
      */

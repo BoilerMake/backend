@@ -13,15 +13,12 @@ use App\Mail\UserRegistration;
 use App\Http\Controllers\Controller;
 
 /**
- * Class AuthController
- * @package App\Http\Controllers\API
- *
- * Used for signup, signin, account confirmation
+ * Class AuthController.
  */
 class AuthController extends Controller
 {
     /**
-     * Authenticate a user, given username and password, returning a JWT token
+     * Authenticate a user, given username and password, returning a JWT token.
      *
      * @param  Request  $request
      * @return Response

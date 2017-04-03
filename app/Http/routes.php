@@ -11,10 +11,10 @@
 |
 */
 Route::get('/', function () {
-    return ["name"=>"BoilerMake API", "frontend"=>env("FRONTEND_ADDRESS"), "info"=>"http://github.com/BoilerMake","docs"=>env("APP_URL")."/docs"];
+    return ['name'=>'BoilerMake API', 'frontend'=>env('FRONTEND_ADDRESS'), 'info'=>'http://github.com/BoilerMake', 'docs'=>env('APP_URL').'/docs'];
 });
 
-/**
+/*
  * API ROUTES
  */
 Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {

@@ -18,7 +18,7 @@ use App\Http\Controllers\Controller;
 class GeneralController extends Controller
 {
     /**
-     * Heartbeat endpoint
+     * Heartbeat endpoint.
      * @return array
      */
     public function ping()
@@ -39,7 +39,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * Handles an incoming SMS from twillio
+     * Handles an incoming SMS from twillio.
      */
     public function inboundSMS()
     {
@@ -75,7 +75,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * Pre signs an S3 URL pointing to a given user id
+     * Pre signs an S3 URL pointing to a given user id.
      * @param $id user ID
      * @param string $method GET or PUT
      * @return string the signed
