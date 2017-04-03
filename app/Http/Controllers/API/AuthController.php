@@ -12,10 +12,16 @@ use Illuminate\Http\Request;
 use App\Mail\UserRegistration;
 use App\Http\Controllers\Controller;
 
+/**
+ * Class AuthController
+ * @package App\Http\Controllers\API
+ *
+ * Used for signup, signin, account confirmation
+ */
 class AuthController extends Controller
 {
     /**
-     * Authenticate a user.
+     * Authenticate a user, given username and password, returning a JWT token
      *
      * @param  Request  $request
      * @return Response

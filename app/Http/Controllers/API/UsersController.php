@@ -29,6 +29,10 @@ class UsersController extends Controller
        $this->middleware('jwt.auth', ['except' => ['sendPasswordReset', 'performPasswordReset']]);
     }
 
+    /**
+     * Gets the currently logged in User
+     * @return User|null
+     */
     public function getMe()
     {
         return Auth::user();
@@ -214,6 +218,10 @@ class UsersController extends Controller
         return ['puzzles'=>$ids];
     }
 
+    /**
+     * Stitches user access cards together into a PDF
+     * @param array|null $user_ids
+     */
     public static function stitchAccessCards($user_ids = null)
     {
         if ($user_ids) {
@@ -297,6 +305,11 @@ class UsersController extends Controller
         }
     }
 
+    /**
+     * Generates an access card image for a given user
+     * @param user $user_id the user's id
+     * @return string file URI
+     */
     public static function generateAccessCardImage($user_id)
     {
         $user = User::with('application', 'application.school')->find($user_id);

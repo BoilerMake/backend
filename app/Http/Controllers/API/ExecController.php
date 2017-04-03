@@ -22,18 +22,25 @@ use App\Models\ApplicationRating;
 use Eluceo\iCal\Component\Calendar;
 use App\Http\Controllers\Controller;
 
+/**
+ * Class ExecController
+ * @package App\Http\Controllers\API
+ *
+ * API endpoints that handles exec UI
+ */
 class ExecController extends Controller
 {
-    public function __construct()
-    {
-        // $this->middleware('jwt.auth', ['except' => ['generateCalendar']]);
-    }
-
+    /**
+     * @return array of the interest signup data
+     */
     public function getInterestData()
     {
         return InterestSignup::all();
     }
 
+    /**
+     * @return array ofhackers
+     */
     public function getHackers()
     {
         $users = User::whereHas('roles', function ($q) {
@@ -74,6 +81,9 @@ class ExecController extends Controller
         return $users;
     }
 
+    /**
+     * Gets all the users, for the exec UI
+     */
     public function getUsers()
     {
         $users = User::all();
@@ -84,6 +94,11 @@ class ExecController extends Controller
         return $users;
     }
 
+    /**
+     * Gets the data of a user with exec info
+     * @param int $id
+     * @return array for User with info
+     */
     public function getUser($id)
     {
         $user = User::find($id);
@@ -100,11 +115,14 @@ class ExecController extends Controller
             ];
     }
 
+    /**
+     * Gets the Analytics data for a  given user
+     * @param int User $id
+     * @return array of events
+     */
     public function getUserAnalytics($id)
     {
-        $events = AnalyticsEvent::where('user_id', $id)->get();
-
-        return $events;
+        return AnalyticsEvent::where('user_id', $id)->get();
     }
 
     public function doAction(Request $request, $id)
@@ -133,6 +151,11 @@ class ExecController extends Controller
         }
     }
 
+    /**
+     * Adds an announcement
+     * @param Request $request
+     * @return array status
+     */
     public function addAnnouncement(Request $request)
     {
         $a = new Announcement();
@@ -147,9 +170,13 @@ class ExecController extends Controller
         return ['ok'];
     }
 
+    /**
+     * Gets all announcements
+     * @return GroupMessage []
+     */
     public function getGroupMessages()
     {
-        return GroupMessage::all();
+        return GroupMessage::all()->toArray();
     }
 
     public function sendGroupMessage(Request $request)
@@ -226,6 +253,11 @@ class ExecController extends Controller
         return ['next'=>self::getNextApplicationID()];
     }
 
+    /**
+     * @param Request $request
+     * @param $application_id
+     * @return string success
+     */
     public function addApplicationNote(Request $request, $application_id)
     {
         $note = new ApplicationNote();
@@ -271,6 +303,11 @@ class ExecController extends Controller
         return $teams;
     }
 
+    /**
+     * POst to create an event
+     * @param Request $request
+     * @return array
+     */
     public function createEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -300,7 +337,12 @@ class ExecController extends Controller
 
         return ['message' => 'success'];
     }
-
+    /**
+     * PUT an event to update
+     * @param Request $request
+     * @param Event $event
+     * @return array success
+     */
     public function editEvent(Request $request, Event $event)
     {
         $validator = Validator::make($request->all(), [
@@ -329,6 +371,12 @@ class ExecController extends Controller
         return ['message' => 'success'];
     }
 
+    /**
+     * DELETE an event
+     * @param Request $request
+     * @param Event $event
+     * @return array success
+     */
     public function deleteEvent(Request $request, Event $event)
     {
         if (Pod::where('current_event_id', $event->id)->exists()) {
@@ -339,6 +387,10 @@ class ExecController extends Controller
         return ['message' => 'success'];
     }
 
+    /**
+     * Generates an ical calendar
+     * @param Request $request
+     */
     public function generateCalendar(Request $request)
     {
         date_default_timezone_set('America/New_York');
