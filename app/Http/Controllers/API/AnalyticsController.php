@@ -34,7 +34,7 @@ class AnalyticsController extends Controller
         if (isset($request->meta['ip'])) {//override grabbing ip from request
             $meta['ip'] = $request->meta['ip'];
         }
-        self::log($user_id, $request->name, $request->params, $meta, $url);
+        return self::log($user_id, $request->name, $request->params, $meta, $url);
     }
 
     /**
@@ -71,6 +71,6 @@ class AnalyticsController extends Controller
         $e->params = json_encode($params);
         $e->save();
 
-        return 'ok';
+        return ['ok'];
     }
 }
