@@ -23,10 +23,7 @@ use Eluceo\iCal\Component\Calendar;
 use App\Http\Controllers\Controller;
 
 /**
- * Class ExecController
- * @package App\Http\Controllers\API
- *
- * API endpoints that handles exec UI
+ * Class ExecController.
  */
 class ExecController extends Controller
 {
@@ -82,7 +79,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets all the users, for the exec UI
+     * Gets all the users, for the exec UI.
      */
     public function getUsers()
     {
@@ -95,7 +92,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets the data of a user with exec info
+     * Gets the data of a user with exec info.
      * @param int $id
      * @return array for User with info
      */
@@ -116,7 +113,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets the Analytics data for a  given user
+     * Gets the Analytics data for a  given user.
      * @param int User $id
      * @return array of events
      */
@@ -152,7 +149,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Adds an announcement
+     * Adds an announcement.
      * @param Request $request
      * @return array status
      */
@@ -171,7 +168,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets all announcements
+     * Gets all announcements.
      * @return GroupMessage []
      */
     public function getGroupMessages()
@@ -304,7 +301,7 @@ class ExecController extends Controller
     }
 
     /**
-     * POst to create an event
+     * POst to create an event.
      * @param Request $request
      * @return array
      */
@@ -337,8 +334,9 @@ class ExecController extends Controller
 
         return ['message' => 'success'];
     }
+
     /**
-     * PUT an event to update
+     * PUT an event to update.
      * @param Request $request
      * @param Event $event
      * @return array success
@@ -372,7 +370,7 @@ class ExecController extends Controller
     }
 
     /**
-     * DELETE an event
+     * DELETE an event.
      * @param Request $request
      * @param Event $event
      * @return array success
@@ -388,7 +386,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Generates an ical calendar
+     * Generates an ical calendar.
      * @param Request $request
      */
     public function generateCalendar(Request $request)

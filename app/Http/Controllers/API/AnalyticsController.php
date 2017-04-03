@@ -9,15 +9,12 @@ use App\Models\AnalyticsEvent;
 use App\Http\Controllers\Controller;
 
 /**
- * Class AnalyticsController
- * @package App\Http\Controllers\API
- *
- * Used for user analytics, mostly of logged in users
+ * Class AnalyticsController.
  */
 class AnalyticsController extends Controller
 {
     /**
-     * Tries to log an event for a user
+     * Tries to log an event for a user.
      * @param Request $request
      */
     public function event(Request $request)
@@ -34,11 +31,12 @@ class AnalyticsController extends Controller
         if (isset($request->meta['ip'])) {//override grabbing ip from request
             $meta['ip'] = $request->meta['ip'];
         }
+
         return self::log($user_id, $request->name, $request->params, $meta, $url);
     }
 
     /**
-     * Logs an analytics event
+     * Logs an analytics event.
      * @param int $user_id user id
      * @param string $event name
      * @param array|null $params

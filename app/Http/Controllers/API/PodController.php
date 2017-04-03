@@ -11,7 +11,6 @@ use App\Models\Event;
 use App\Models\PodScan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\API\AnalyticsController;
 
 class PodController extends Controller
 {
