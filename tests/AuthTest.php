@@ -17,11 +17,11 @@ class AuthTest extends TestCase
         $password = $faker->password;
         $email = $faker->email;
         $this->post('/v1/users', ['email' => $email])
-            ->see('["The password field is required."]');
+            ->assertSee('["The password field is required."]');
         $this->post('/v1/users', ['password' => $password])
-            ->see('["The email field is required."]');
+            ->assertSee('["The email field is required."]');
         $this->post('/v1/users', ['password' => $password, 'email' => $email])
-            ->seeJsonStructure([
+            ->assertJsonStructure([
                  'token',
             ]);
     }
@@ -39,7 +39,7 @@ class AuthTest extends TestCase
         $response = $this->call('POST', '/v1/users', ['password' => $password, 'email' => $email]);
         $token = json_decode($response->getContent(), true)['token'];
         $response = $this->call('GET', '/v1/users/me?token='.$token, [], [], [], []);
-        $this->seeJsonStructure([
+        $response->assertJsonStructure([
             'id',
             'email',
             'phone',
@@ -48,7 +48,7 @@ class AuthTest extends TestCase
             'identifier',
         ], json_decode($response->getContent(), true));
         $response = $this->call('GET', '/v1/debug', [], [], [], ['HTTP_Authorization' => 'Bearer: '.$token]);
-        $this->seeJsonStructure([
+        $response->assertJsonStructure([
             'id',
             'first_name',
             'last_name',
@@ -74,11 +74,11 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $this->call('POST', '/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
         $this->post('/v1/auth', ['email' => $email, 'password' => $password])
-            ->seeJsonStructure(['token']);
+            ->assertJsonStructure(['token']);
         $this->post('/v1/auth', [])
-            ->see('["The email field is required.","The password field is required."]');
+            ->assertSee('["The email field is required.","The password field is required."]');
         $this->post('/v1/auth', ['email' => $email, 'password' => $password.'#'])
-            ->seeJsonEquals([
+            ->assertJson([
                  'error' => 'invalid_credentials',
              ]);
     }
@@ -92,7 +92,7 @@ class AuthTest extends TestCase
         $password = $faker->password;
         $email = $faker->email;
         $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
-            ->seeJsonEquals([
+            ->assertJsonFragment([
                  'error' => 'applications are not open',
              ]);
         config(['app.phase' => 3]);
@@ -102,7 +102,7 @@ class AuthTest extends TestCase
         $password = $faker->password;
         $email = $faker->email;
         $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
-            ->seeJsonStructure(['token']);
+            ->assertJsonStructure(['token']);
     }
 
     public function testConfirmationCode()
@@ -112,21 +112,21 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $this->post('/v1/users', ['password' => $password, 'email' => $email]);
         $user = User::where('email', $email)->first();
-        $this->seeInDatabase('users', ['email' => $email, 'confirmed' => 0, 'confirmation_code' => $user->confirmation_code]);
+        $this->assertDatabaseHas('users', ['email' => $email, 'confirmed' => 0, 'confirmation_code' => $user->confirmation_code]);
         $this->get('/v1/users/verify/'.$user->confirmation_code)
-            ->seeJsonEquals([
+            ->assertJsonFragment([
                  'success' => 'Email Confirmed',
              ]);
         $this->get('/v1/users/verify/'.$user->confirmation_code)
-            ->seeJsonEquals([
+            ->assertJsonFragment([
                  'success' => 'Email Confirmed',
              ]);
         $this->get('/v1/users/verify/'.$faker->uuid)
-            ->seeJsonEquals([
+            ->assertJsonFragment([
                 'error' => 'Invalid Code',
             ]);
         $this->get('/v1/users/verify/')
-            ->seeJsonEquals([
+            ->assertJsonFragment([
                 'error' => 'Code Required',
             ]);
     }

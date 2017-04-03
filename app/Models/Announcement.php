@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Log;
-use Slack;
 use App\Services\Notifier;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,7 +20,6 @@ class Announcement extends Model
 
         if ($this->slack) {
             Log::info('sending annoucement to slack');
-            Slack::send('@channel '.$this->body);
         }
         if ($this->email) {
             Log::info('sending annoucement to EMAIL');
