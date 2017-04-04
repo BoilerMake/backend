@@ -9,3 +9,6 @@ coverage.xml
 
 .phpstorm.meta.php
 _ide_helper.php
+
+sami-cache/*
+public/docs/*

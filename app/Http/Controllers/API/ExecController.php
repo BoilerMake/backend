@@ -22,18 +22,25 @@ use App\Models\ApplicationRating;
 use Eluceo\iCal\Component\Calendar;
 use App\Http\Controllers\Controller;
 
+/**
+ * Class ExecController
+ * @package App\Http\Controllers\API
+ *
+ * API endpoints that handles exec UI
+ */
 class ExecController extends Controller
 {
-    public function __construct()
-    {
-        // $this->middleware('jwt.auth', ['except' => ['generateCalendar']]);
-    }
-
+    /**
+     * @return array of the interest signup data
+     */
     public function getInterestData()
     {
         return InterestSignup::all();
     }
 
+    /**
+     * @return array ofhackers
+     */
     public function getHackers()
     {
         $users = User::whereHas('roles', function ($q) {
@@ -74,6 +81,9 @@ class ExecController extends Controller
         return $users;
     }
 
+    /**
+     * Gets all the users, for the exec UI
+     */
     public function getUsers()
     {
         $users = User::all();
@@ -84,6 +94,11 @@ class ExecController extends Controller
         return $users;
     }
 
+    /**
+     * Gets the data of a user with exec info
+     * @param int $id
+     * @return array for User with info
+     */
     public function getUser($id)
     {
         $user = User::find($id);
@@ -100,11 +115,14 @@ class ExecController extends Controller
             ];
     }
 
+    /**
+     * Gets the Analytics data for a  given user
+     * @param int User $id
+     * @return array of events
+     */
     public function getUserAnalytics($id)
     {
-        $events = AnalyticsEvent::where('user_id', $id)->get();
-
-        return $events;
+        return AnalyticsEvent::where('user_id', $id)->get();
     }
 
     public function doAction(Request $request, $id)
@@ -133,6 +151,11 @@ class ExecController extends Controller
         }
     }
 
+    /**
+     * Adds an announcement
+     * @param Request $request
+     * @return array status
+     */
     public function addAnnouncement(Request $request)
     {
         $a = new Announcement();
@@ -147,9 +170,13 @@ class ExecController extends Controller
         return ['ok'];
     }
 
+    /**
+     * Gets all announcements
+     * @return GroupMessage []
+     */
     public function getGroupMessages()
     {
-        return GroupMessage::all();
+        return GroupMessage::all()->toArray();
     }
 
     public function sendGroupMessage(Request $request)
@@ -226,6 +253,11 @@ class ExecController extends Controller
         return ['next'=>self::getNextApplicationID()];
     }
 
+    /**
+     * @param Request $request
+     * @param $application_id
+     * @return string success
+     */
     public function addApplicationNote(Request $request, $application_id)
     {
         $note = new ApplicationNote();
@@ -271,103 +303,11 @@ class ExecController extends Controller
         return $teams;
     }
 
-    public function getAllStats()
-    {
-        $users = User::whereHas('roles', function ($q) {
-            $q->where('name', 'hacker');
-        })->with('application', 'application.school')->get();
-        $gender = [];
-        $race = [];
-        $major = [];
-        $grad_year = [];
-        $school = [];
-        $travel = [];
-        $firstHackathon = [];
-        $completed = ['yes'=>0, 'no'=>0];
-        foreach ($users as $user) {
-            if ($user->application->completed) {
-                //travel
-                if (! isset($travel[$user->application->needsTravelReimbursement])) {
-                    $travel[$user->application->needsTravelReimbursement] = 1;
-                } else {
-                    $travel[$user->application->needsTravelReimbursement]++;
-                }
-
-                //first hackathon
-                if (! isset($firstHackathon[$user->application->isFirstHackathon])) {
-                    $firstHackathon[$user->application->isFirstHackathon] = 1;
-                } else {
-                    $firstHackathon[$user->application->isFirstHackathon]++;
-                }
-
-                //gender
-                if (! isset($gender[$user->application->gender])) {
-                    $gender[$user->application->gender] = 1;
-                } else {
-                    $gender[$user->application->gender]++;
-                }
-
-                //race
-                if (! isset($race[$user->application->race])) {
-                    $race[$user->application->race] = 1;
-                } else {
-                    $race[$user->application->race]++;
-                }
-
-                //grad year
-                if (! isset($grad_year[$user->application->grad_year])) {
-                    $grad_year[$user->application->grad_year] = 1;
-                } else {
-                    $grad_year[$user->application->grad_year]++;
-                }
-
-                //major
-                if (! isset($major[$user->application->major])) {
-                    $major[$user->application->major] = 1;
-                } else {
-                    $major[$user->application->major]++;
-                }
-
-                if (! isset($school[$user->application->school->id]['counts']['complete'])) {
-                    $school[$user->application->school->id]['counts']['complete'] = 1;
-                    $school[$user->application->school->id]['school'] = $user->application->school->name;
-                } else {
-                    $school[$user->application->school->id]['counts']['complete'] += 1;
-                }
-                $completed['yes']++;
-            } else {
-                if (isset($user->application->school)) {
-                    if (! isset($school[$user->application->school->id]['counts']['incomplete'])) {
-                        $school[$user->application->school->id]['counts']['incomplete'] = 1;
-                        $school[$user->application->school->id]['school'] = $user->application->school->name;
-                    } else {
-                        $school[$user->application->school->id]['counts']['incomplete'] += 1;
-                    }
-                } else {
-                    if (! isset($school['none']['counts']['incomplete'])) {
-                        $school['none']['counts']['incomplete'] = 1;
-                        $school['none']['school'] = 'none';
-                    } else {
-                        $school['none']['counts']['incomplete'] += 1;
-                    }
-                }
-                $completed['no']++;
-            }
-        }
-
-        return [
-             'first_hackathon'=>$firstHackathon,
-             'travel'=>$travel,
-             'by_school'=>$school,
-             'gender'=>$gender,
-             'major'=>$major,
-             'race'=>$race,
-             'grad_year'=>$grad_year,
-             'total'=>$completed,
-             'num_schools'=>count($school),
-         ];
-    }
-
+    /**
+     * POst to create an event
+     * @param Request $request
+     * @return array
+     */
     public function createEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -397,7 +337,12 @@ class ExecController extends Controller
 
         return ['message' => 'success'];
     }
-
+    /**
+     * PUT an event to update
+     * @param Request $request
+     * @param Event $event
+     * @return array success
+     */
     public function editEvent(Request $request, Event $event)
     {
         $validator = Validator::make($request->all(), [
@@ -426,6 +371,12 @@ class ExecController extends Controller
         return ['message' => 'success'];
     }
 
+    /**
+     * DELETE an event
+     * @param Request $request
+     * @param Event $event
+     * @return array success
+     */
     public function deleteEvent(Request $request, Event $event)
     {
         if (Pod::where('current_event_id', $event->id)->exists()) {
@@ -436,6 +387,10 @@ class ExecController extends Controller
         return ['message' => 'success'];
     }
 
+    /**
+     * Generates an ical calendar
+     * @param Request $request
+     */
     public function generateCalendar(Request $request)
     {
         date_default_timezone_set('America/New_York');

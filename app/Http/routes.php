@@ -10,19 +10,14 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
 Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/fe', function () {
-    return env('FRONTEND_ADDRESS');
+    return ["name"=>"BoilerMake API", "frontend"=>env("FRONTEND_ADDRESS"), "info"=>"http://github.com/BoilerMake","docs"=>env("APP_URL")."/docs"];
 });
 
-/*
+/**
  * API ROUTES
  */
 Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
-    //splash page signups
     Route::get('ping', 'GeneralController@ping');
     Route::post('auth', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
@@ -31,7 +26,6 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     Route::post('interest/signup', 'GeneralController@interestSignup');
     Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);
     Route::get('calendar', 'ExecController@generateCalendar');
-    Route::get('sponsor/info', 'SponsorController@info');
 
     Route::get('events', 'GeneralController@getEvents');
     Route::get('announcements', 'GeneralController@getAnnouncements');
@@ -65,7 +59,6 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         Route::post('users/{id}/action', 'ExecController@doAction');
         Route::get('messaging/group', 'ExecController@getGroupMessages');
         Route::post('messaging/group', 'ExecController@sendGroupMessage');
-        Route::get('allstats', 'ExecController@getAllStats');
         Route::get('applications/next', 'ExecController@getNextApplicationID');
         Route::get('applications/{id}/view', 'ExecController@getApplication');
         Route::put('applications/{id}/rate', 'ExecController@rateApplication');
@@ -83,5 +76,9 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         Route::get('events', 'PodController@listEvents');
         Route::get('scans', 'PodController@listScans');
         Route::post('heartbeat', 'PodController@heartbeat');
+    });
+
+    Route::get('/', function () {
+        return ['ok'];
     });
 });

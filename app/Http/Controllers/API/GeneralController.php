@@ -17,6 +17,10 @@ use App\Http\Controllers\Controller;
 
 class GeneralController extends Controller
 {
+    /**
+     * Heartbeat endpoint
+     * @return array
+     */
     public function ping()
     {
         return ['pong'];
@@ -34,6 +38,9 @@ class GeneralController extends Controller
         return $locs;
     }
 
+    /**
+     * Handles an incoming SMS from twillio
+     */
     public function inboundSMS()
     {
         $input = Input::all();
@@ -67,6 +74,12 @@ class GeneralController extends Controller
         return['status'=>'fail', 'message'=>'you were already signed up!'];
     }
 
+    /**
+     * Pre signs an S3 URL pointing to a given user id
+     * @param $id user ID
+     * @param string $method GET or PUT
+     * @return string the signed
+     */
     public static function resumeUrl($id, $method)
     {
         $s3 = AWS::createClient('s3');

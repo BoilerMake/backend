@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Controllers\API;
+namespace App\Http\Controllers\API;
 
 use Log;
 use JWTAuth;
@@ -8,8 +8,18 @@ use Illuminate\Http\Request;
 use App\Models\AnalyticsEvent;
 use App\Http\Controllers\Controller;
 
+/**
+ * Class AnalyticsController
+ * @package App\Http\Controllers\API
+ *
+ * Used for user analytics, mostly of logged in users
+ */
 class AnalyticsController extends Controller
 {
+    /**
+     * Tries to log an event for a user
+     * @param Request $request
+     */
     public function event(Request $request)
     {
         try {
@@ -24,9 +34,18 @@ class AnalyticsController extends Controller
         if (isset($request->meta['ip'])) {//override grabbing ip from request
             $meta['ip'] = $request->meta['ip'];
         }
-        self::log($user_id, $request->name, $request->params, $meta, $url);
+        return self::log($user_id, $request->name, $request->params, $meta, $url);
     }
 
+    /**
+     * Logs an analytics event
+     * @param int $user_id user id
+     * @param string $event name
+     * @param array|null $params
+     * @param array|null $meta ip, client, url, ua
+     * @param string|null $url
+     * @return string
+     */
     public static function log($user_id, $event, $params = null, $meta = null, $url = null)
     {
         $e = new AnalyticsEvent();
@@ -52,6 +71,6 @@ class AnalyticsController extends Controller
         $e->params = json_encode($params);
         $e->save();
 
-        return 'ok';
+        return ['ok'];
     }
 }
