@@ -10,10 +10,11 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('/', function () {
-    return ['name'=>'BoilerMake API', 'frontend'=>env('FRONTEND_ADDRESS'), 'info'=>'http://github.com/BoilerMake', 'docs'=>env('APP_URL').'/docs'];
-});
+Route::any('/','API\GeneralController@info');
 
+Route::get('/docs', function () {
+    return File::get(public_path() . '/docs/index.html');
+});
 /*
  * API ROUTES
  */

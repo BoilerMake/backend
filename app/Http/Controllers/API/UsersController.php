@@ -35,7 +35,7 @@ class UsersController extends Controller
      */
     public function getMe()
     {
-        return Auth::user();
+        return response()->success(Auth::user());
     }
 
     public function updateMe(Request $request)
