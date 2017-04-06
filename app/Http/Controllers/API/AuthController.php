@@ -106,8 +106,6 @@ class AuthController extends Controller
 
     public function debug()
     {
-        $user = JWTAuth::parseToken()->authenticate();
-
-        return $user;
+        return response()->success(JWTAuth::parseToken()->authenticate());
     }
 }
