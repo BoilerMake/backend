@@ -10,10 +10,8 @@ use App\Models\Pod;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Event;
-use App\Services\Notifier;
 use App\Models\Application;
 use App\Models\Announcement;
-use App\Models\GroupMessage;
 use Illuminate\Http\Request;
 use App\Models\AnalyticsEvent;
 use App\Models\InterestSignup;
@@ -165,48 +163,6 @@ class ExecController extends Controller
         $a->send();
 
         return ['ok'];
-    }
-
-    /**
-     * Gets all announcements.
-     * @return GroupMessage []
-     */
-    public function getGroupMessages()
-    {
-        return GroupMessage::all()->toArray();
-    }
-
-    public function sendGroupMessage(Request $request)
-    {
-        switch ($request->group) {
-            case 'all':
-                $roles = ['exec', 'hacker', 'sponsor'];
-                break;
-            case 'hackers':
-                $roles = ['exec', 'hacker'];
-                break;
-            case 'sponsors':
-                $roles = ['exec', 'sponsor'];
-                break;
-            case 'exec':
-                $roles = ['exec'];
-                break;
-        }
-        $users = User::whereHas('roles', function ($q) use ($roles) {
-            $q->whereIn('name', $roles);
-        })->get();
-
-        foreach ($users as $u) {
-            $n = new Notifier($u);
-            $n->sendSMS($request->message, 'group-message');
-        }
-        $log = new GroupMessage();
-        $log->group = $request->group;
-        $log->message = $request->message;
-        $log->num_recipients = $users->count();
-        $log->save();
-
-        return ['status'=>'ok', 'message'=>'message sent to'.$users->count().'users'];
     }
 
     public function getNextApplicationID()
