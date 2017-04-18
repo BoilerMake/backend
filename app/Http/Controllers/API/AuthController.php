@@ -49,7 +49,7 @@ class AuthController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function signUp(Request $request)
+    public function register(Request $request)
     {
         if (intval(config('app.phase')) < 2) {
             return ['error'=>'applications are not open'];

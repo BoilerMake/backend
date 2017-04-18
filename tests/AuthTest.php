@@ -16,11 +16,11 @@ class AuthTest extends TestCase
         $last_name = $faker->lastName;
         $password = $faker->password;
         $email = $faker->email;
-        $this->post('/v1/users', ['email' => $email])
+        $this->post('/v1/users/register', ['email' => $email])
             ->assertSee('["The password field is required."]');
-        $this->post('/v1/users', ['password' => $password])
+        $this->post('/v1/users/register', ['password' => $password])
             ->assertSee('["The email field is required."]');
-        $this->post('/v1/users', ['password' => $password, 'email' => $email])
+        $this->post('/v1/users/register', ['password' => $password, 'email' => $email])
             ->assertJsonStructure([
                  'token',
             ]);
@@ -36,7 +36,7 @@ class AuthTest extends TestCase
         $faker = Faker\Factory::create();
         $password = $faker->password;
         $email = $faker->email;
-        $response = $this->call('POST', '/v1/users', ['password' => $password, 'email' => $email]);
+        $response = $this->call('POST', '/v1/users/register', ['password' => $password, 'email' => $email]);
         $token = json_decode($response->getContent(), true)['token'];
         $response = $this->call('GET', '/v1/users/me?token='.$token, [], [], [], []);
         $response->assertJsonStructure(['data'=>[
@@ -70,12 +70,12 @@ class AuthTest extends TestCase
         $last_name = $faker->lastName;
         $password = $faker->password;
         $email = $faker->email;
-        $this->call('POST', '/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
-        $this->post('/v1/auth', ['email' => $email, 'password' => $password])
+        $this->call('POST', '/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
+        $this->post('/v1/users/login', ['email' => $email, 'password' => $password])
             ->assertJsonStructure(['token']);
-        $this->post('/v1/auth', [])
+        $this->post('/v1/users/login', [])
             ->assertSee('["The email field is required.","The password field is required."]');
-        $this->post('/v1/auth', ['email' => $email, 'password' => $password.'#'])
+        $this->post('/v1/users/login', ['email' => $email, 'password' => $password.'#'])
             ->assertJson([
                  'error' => 'invalid_credentials',
              ]);
@@ -89,7 +89,7 @@ class AuthTest extends TestCase
         $last_name = $faker->lastName;
         $password = $faker->password;
         $email = $faker->email;
-        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
+        $this->post('/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
             ->assertJsonFragment([
                  'error' => 'applications are not open',
              ]);
@@ -99,7 +99,7 @@ class AuthTest extends TestCase
         $last_name = $faker->lastName;
         $password = $faker->password;
         $email = $faker->email;
-        $this->post('/v1/users', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
+        $this->post('/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
             ->assertJsonStructure(['token']);
     }
 
@@ -108,7 +108,7 @@ class AuthTest extends TestCase
         $faker = Faker\Factory::create();
         $password = $faker->password;
         $email = $faker->email;
-        $this->post('/v1/users', ['password' => $password, 'email' => $email]);
+        $this->post('/v1/users/register', ['password' => $password, 'email' => $email]);
         $user = User::where('email', $email)->first();
         $this->assertDatabaseHas('users', ['email' => $email, 'confirmed' => 0, 'confirmation_code' => $user->confirmation_code]);
         $this->get('/v1/users/verify/'.$user->confirmation_code)
