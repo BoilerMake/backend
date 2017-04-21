@@ -31,16 +31,16 @@ class AuthController extends Controller
             'password'   => 'required',
         ]);
         if ($validator->fails()) {
-            return $validator->errors()->all();
+            return response()->error($validator->errors()->all());
         } else {
             if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
                 $token = Auth::user()->getToken();
 
-                return compact('token');
+                return response()->success(compact('token'));
             }
         }
         // Probably a better way to do this
-        return response()->json(['error' => 'invalid_credentials'], 401);
+        return response()->error('Invalid email or password');
     }
 
     /**
@@ -52,7 +52,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         if (intval(config('app.phase')) < 2) {
-            return ['error'=>'applications are not open'];
+            return response()->error('applications are not open');
         }
 
         $validator = Validator::make($request->all(), [
@@ -61,7 +61,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $validator->errors()->all();
+            return response()->error($validator->errors()->all());
         } else {
             $code = str_random(24);
             $user = new User;
@@ -75,10 +75,11 @@ class AuthController extends Controller
             $roles = $user->roles()->get()->pluck('name');
             $token = JWTAuth::fromUser($user, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$user->slug(), 'user_id'=>$user->id]);
 
+            //todo: clean up this email building
             $link = env('FRONTEND_ADDRESS').'/confirm?tok='.$code;
             Mail::to($user->email)->send(new UserRegistration($user, $link));
 
-            return compact('token');
+            return response()->success(compact('token'));
         }
     }
 

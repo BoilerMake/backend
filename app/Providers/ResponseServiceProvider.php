@@ -29,9 +29,9 @@ class ResponseServiceProvider extends ServiceProvider
                 'success' => true,
                 'data' => $data,
                 'debug' => $debugInfo
-            ],200,['hi'=>'ih']);
+            ],200,['headerkey'=>'headerval']);
         });
-        Response::macro('error', function ($data, $message=null) {
+        Response::macro('error', function ($message, $data=null) {
             return Response::json([
                 'success' => false,
                 'message' => $message,

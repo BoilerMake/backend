@@ -21,9 +21,7 @@ class AuthTest extends TestCase
         $this->post('/v1/users/register', ['password' => $password])
             ->assertSee('["The email field is required."]');
         $this->post('/v1/users/register', ['password' => $password, 'email' => $email])
-            ->assertJsonStructure([
-                 'token',
-            ]);
+            ->assertJsonStructure(['data'=>['token']]);
     }
 
     /**
@@ -37,7 +35,7 @@ class AuthTest extends TestCase
         $password = $faker->password;
         $email = $faker->email;
         $response = $this->call('POST', '/v1/users/register', ['password' => $password, 'email' => $email]);
-        $token = json_decode($response->getContent(), true)['token'];
+        $token = json_decode($response->getContent(), true)['data']['token'];
         $response = $this->call('GET', '/v1/users/me?token='.$token, [], [], [], []);
         $response->assertJsonStructure(['data'=>[
             'id',
@@ -72,13 +70,14 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $this->call('POST', '/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
         $this->post('/v1/users/login', ['email' => $email, 'password' => $password])
-            ->assertJsonStructure(['token']);
+            ->assertJsonStructure(['data'=>['token']]);
         $this->post('/v1/users/login', [])
             ->assertSee('["The email field is required.","The password field is required."]');
         $this->post('/v1/users/login', ['email' => $email, 'password' => $password.'#'])
             ->assertJson([
-                 'error' => 'invalid_credentials',
-             ]);
+                "data"=>null,
+//                "message"=>"applications are not open",
+                "success"=>false]);
     }
 
     public function testAppPhaseSignups()
@@ -91,8 +90,9 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $this->post('/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
             ->assertJsonFragment([
-                 'error' => 'applications are not open',
-             ]);
+                "data"=>null,
+                "message"=>"applications are not open",
+                "success"=>false]);
         config(['app.phase' => 3]);
         $faker = Faker\Factory::create();
         $first_name = $faker->firstName;
@@ -100,7 +100,7 @@ class AuthTest extends TestCase
         $password = $faker->password;
         $email = $faker->email;
         $this->post('/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
-            ->assertJsonStructure(['token']);
+            ->assertJsonStructure(['data'=>['token']]);
     }
 
     public function testConfirmationCode()

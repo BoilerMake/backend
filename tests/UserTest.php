@@ -12,7 +12,7 @@ class UserTest extends TestCase
         $email = $faker->email;
         $response = $this->call('POST', '/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
 
-        return json_decode($response->getContent(), true)['token'];
+        return json_decode($response->getContent(), true)['data']['token'];
     }
 
     /**
