@@ -97,16 +97,7 @@ class User extends Authenticatable
             $application = Application::with('school', 'team', 'ratings')->firstOrCreate(['user_id' => $this->id]);
         }
 
-        if (! $application->team_id) {
-            //assign them to a team of 1 in lieu of no team
-            $team = new Team();
-            //adding user ID to the end of a hash guaruntee it to be unique, even if md5 isn't, without doing a DB check
-            $team->code = substr(md5(Carbon::now().getenv('APP_KEY')), 0, 4).$this->id;
-            $team->save();
-            $application->team_id = $team->id;
-        }
         $application->save();
-        $application->teaminfo = $application->team;
         $application->schoolinfo = $application->school;
         $application->resume_uploaded = (int) $application->resume_uploaded;
 

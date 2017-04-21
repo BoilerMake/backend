@@ -7,7 +7,6 @@ use Auth;
 use Validator;
 use Carbon\Carbon;
 use App\Models\Pod;
-use App\Models\Team;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\Application;
@@ -220,40 +219,6 @@ class ExecController extends Controller
         $note->save();
 
         return 'ok';
-    }
-
-    public function getTeams()
-    {
-        $teams = Team::all();
-        foreach ($teams as $team) {
-            $team['hackers_detail'] = $team->getHackersWithRating();
-            $hackerRatings = [];
-            $ratingSum = 0;
-            $ratingCount = 0;
-            foreach ($team['hackers_detail'] as $eachHackerDetail) {
-                $eachHackerRating = $eachHackerDetail['application']['ratinginfo']['average'];
-                $hackerRatings[] = $eachHackerRating;
-                $ratingCount += $eachHackerDetail['application']['ratinginfo']['count'];
-                $ratingSum += $eachHackerRating;
-            }
-            $min = 0;
-            $max = 0;
-            $avg = 0;
-            if ($ratingCount != 0) {
-                $avg = $ratingSum / $ratingCount;
-                $min = min($hackerRatings);
-                $max = max($hackerRatings);
-            }
-            $team['overall_ratings'] = [
-            'count'=>$ratingCount,
-            'min'=>$min,
-            'max'=>$max,
-            // "ratings"=>$ratings,
-            'average'=>$avg,
-        ];
-        }
-
-        return $teams;
     }
 
     /**

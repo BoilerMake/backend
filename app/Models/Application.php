@@ -16,7 +16,6 @@ class Application extends Model
     const DECISION_WAITLIST = 2;
     const DECISION_REJECT = 1;
     const DECISION_UNDECIDED = 0;
-    public $teaminfo = null;
     public $schoolinfo = null;
     protected $dates = [
         'created_at',
@@ -33,11 +32,6 @@ class Application extends Model
     public function school()
     {
         return $this->belongsTo('App\Models\School');
-    }
-
-    public function team()
-    {
-        return $this->belongsTo('App\Models\Team');
     }
 
     public function ratings()

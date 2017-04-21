@@ -9,7 +9,6 @@ use Validator;
 use ImagickDraw;
 use ImagickPixel;
 use Carbon\Carbon;
-use App\Models\Team;
 use App\Models\User;
 use App\Models\Application;
 use Illuminate\Http\Request;
@@ -69,12 +68,6 @@ class UsersController extends Controller
                 if ($key == 'skills') {
                     $application->skills = json_encode($value);
                 }
-                if ($key == 'team_code') {
-                    $team = Team::where('code', $value)->get()->first();
-                    if ($team) {//todo return status of this
-                        $application->team_id = $team->id;
-                    }
-                }
                 if ($key == 'school') {
                     if (isset($value['id'])) {
                         $application->school_id = $value['id'];
@@ -126,19 +119,6 @@ class UsersController extends Controller
         $user = Auth::user();
 
         return GeneralController::resumeUrl($user->id, 'put');
-    }
-
-    public function leaveCurrentTeam()
-    {
-        $app = self::getApplication()['application'];
-        $old_team_id = $app->team_id;
-        $app->team_id = null;
-        $app->save();
-        if (Application::where('team_id', $old_team_id)->get()->count() == 0) {//we don't want empty teams
-            Team::find($old_team_id)->delete();
-        }
-
-        return ['ok'];
     }
 
     public function sendPasswordReset(Request $request)

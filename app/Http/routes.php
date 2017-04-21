@@ -47,8 +47,6 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         //get update me
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
-        //leave a team
-        Route::put('leaveteam', 'UsersController@leaveCurrentTeam');
         //returns URL to PUT upload resume pdf to
         Route::get('resumePUT', 'UsersController@getResumePutUrl');
         //user application
@@ -78,8 +76,6 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         Route::get('applications/{id}/view', 'ExecController@getApplication');
         Route::put('applications/{id}/rate', 'ExecController@rateApplication');
         Route::post('applications/{id}/notes', 'ExecController@addApplicationNote');
-        //team listing
-        Route::get('teams', 'ExecController@getTeams');
         //day-of annoucements
         Route::post('announcements/add', 'ExecController@addAnnouncement');
         //calendar events
