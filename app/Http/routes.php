@@ -13,8 +13,6 @@ Route::get('/docs', function () {
 Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     //heartbeat
     Route::get('ping', 'GeneralController@ping');
-    //jwt debug
-    Route::get('debug', 'AuthController@debug');
     //signup form
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup', 'GeneralController@interestSignup');
@@ -38,7 +36,7 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     //password reset + account confirmation
     Route::post('users/reset/send', 'UsersController@sendPasswordReset');
     Route::post('users/reset/perform', 'UsersController@performPasswordReset');
-    Route::get('users/verify/{code?}', 'AuthController@confirm');
+    Route::get('users/verify/{code?}', 'AuthController@confirmEmail');
     /**
      * User routes
      */

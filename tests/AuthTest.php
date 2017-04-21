@@ -44,16 +44,6 @@ class AuthTest extends TestCase
             'updated_at',
             'identifier',
         ]], json_decode($response->getContent(), true));
-        $response = $this->call('GET', '/v1/debug', [], [], [], ['HTTP_Authorization' => 'Bearer: '.$token]);
-        $response->assertJsonStructure(['data'=>[
-            'id',
-            'first_name',
-            'last_name',
-            'email',
-            'created_at',
-            'updated_at',
-            'identifier',
-        ]], json_decode($response->getContent(), true));
     }
 
     /**

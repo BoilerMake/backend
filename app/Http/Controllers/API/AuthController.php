@@ -84,12 +84,12 @@ class AuthController extends Controller
     }
 
     /**
-     * Confirm a user.
+     * Verify a user's email.
      *
      * @param  Request  $request
      * @return Response
      */
-    public function confirm(Request $request)
+    public function confirmEmail(Request $request)
     {
         if (! isset($request->code)) {
             return response()->json(['error' => 'Code Required'], 200);
@@ -103,10 +103,5 @@ class AuthController extends Controller
         }
 
         return response()->json(['error' => 'Invalid Code'], 200);
-    }
-
-    public function debug()
-    {
-        return response()->success(JWTAuth::parseToken()->authenticate());
     }
 }
