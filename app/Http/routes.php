@@ -34,13 +34,13 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     Route::post('users/register', 'AuthController@register');
 
     //password reset + account confirmation
-    Route::post('users/reset/send', 'UsersController@sendPasswordReset');
-    Route::post('users/reset/perform', 'UsersController@performPasswordReset');
+    Route::post('users/reset/send', 'AuthController@sendPasswordReset');
+    Route::post('users/reset/perform', 'AuthController@performPasswordReset');
     Route::get('users/verify/{code?}', 'AuthController@confirmEmail');
     /**
      * User routes
      */
-    Route::group(['prefix' => 'users/me'], function () {
+    Route::group(['middleware'=>['jwt.auth'],'prefix' => 'users/me'], function () {
 
         //get update me
         Route::get('/', 'UsersController@getMe');
