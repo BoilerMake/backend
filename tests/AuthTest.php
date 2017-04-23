@@ -65,9 +65,9 @@ class AuthTest extends TestCase
             ->assertSee('["The email field is required.","The password field is required."]');
         $this->post('/v1/users/login', ['email' => $email, 'password' => $password.'#'])
             ->assertJson([
-                "data"=>null,
+                'data'=>null,
 //                "message"=>"applications are not open",
-                "success"=>false]);
+                'success'=>false, ]);
     }
 
     public function testAppPhaseSignups()
@@ -80,9 +80,9 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $this->post('/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
             ->assertJsonFragment([
-                "data"=>null,
-                "message"=>"applications are not open",
-                "success"=>false]);
+                'data'=>null,
+                'message'=>'applications are not open',
+                'success'=>false, ]);
         config(['app.phase' => 3]);
         $faker = Faker\Factory::create();
         $first_name = $faker->firstName;

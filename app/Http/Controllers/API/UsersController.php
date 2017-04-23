@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use Auth;
-use Validator;
-use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Application;
 use Illuminate\Http\Request;
-use App\Models\PasswordReset;
 use App\Models\PuzzleProgress;
 use App\Http\Controllers\Controller;
 
@@ -89,6 +86,7 @@ class UsersController extends Controller
         if ($phase < 3) { //don't reveal decisions early
             $application->setHidden(['decision']);
         }
+
         return [
             'application'=>$application,
             'validation'=>$application->validationDetails(),

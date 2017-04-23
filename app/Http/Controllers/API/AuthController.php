@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\PasswordReset;
 use Auth;
-use Carbon\Carbon;
 use Hash;
 use Mail;
 use JWTAuth;
 use Validator;
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\PasswordReset;
 use App\Mail\UserRegistration;
 use App\Http\Controllers\Controller;
 
@@ -98,6 +98,7 @@ class AuthController extends Controller
         if ($user) {
             $user->confirmed = 1;
             $user->save();
+
             return response()->success('Email confirmed!');
         }
 
@@ -105,7 +106,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Triggers generation + emailing of a password reset link
+     * Triggers generation + emailing of a password reset link.
      * @param Request $request: email
      * @return string status message
      */
@@ -124,7 +125,7 @@ class AuthController extends Controller
     }
 
     /**
-     * If the token is valid, it updates the user's password
+     * If the token is valid, it updates the user's password.
      * @param Request $request: password, token
      * @return string status message
      */

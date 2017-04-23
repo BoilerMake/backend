@@ -25,13 +25,14 @@ class GeneralController extends Controller
     {
         return ['pong'];
     }
+
     public function info()
     {
         return response()->success([
             'name'=>'BoilerMake API',
             'frontend'=>env('FRONTEND_ADDRESS'),
             'info'=>'http://github.com/BoilerMake',
-            'docs'=>env('APP_URL').'/docs'
+            'docs'=>env('APP_URL').'/docs',
         ]);
     }
 

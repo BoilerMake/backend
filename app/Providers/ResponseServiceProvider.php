@@ -4,39 +4,38 @@ namespace App\Providers;
 
 use Request;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Response;;
+use Illuminate\Support\Facades\Response;
 
 class ResponseServiceProvider extends ServiceProvider
 {
     /**
      * Register the application's response macros.
      * success: for API success
-     * error: for API error
+     * error: for API error.
      * @return void
      */
     public function boot()
     {
-
         Response::macro('success', function ($data) {
             $debugInfo = [
                 'url'=>Request::fullUrl(),
 //                'all'=>Request::all(),
                 'ip'=>Request::ip(),
 //                'headers'=>Request::header(),
-                'user'=>\Auth::user()];
+                'user'=>\Auth::user(), ];
 
             return Response::json([
                 'success' => true,
                 'data' => $data,
-                'debug' => $debugInfo
-            ],200,['headerkey'=>'headerval']);
+                'debug' => $debugInfo,
+            ], 200, ['headerkey'=>'headerval']);
         });
-        Response::macro('error', function ($message, $data=null) {
+        Response::macro('error', function ($message, $data = null) {
             return Response::json([
                 'success' => false,
                 'message' => $message,
-                'data' => $data
-            ],500);
+                'data' => $data,
+            ], 500);
         });
     }
 }

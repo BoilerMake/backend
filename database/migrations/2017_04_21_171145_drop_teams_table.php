@@ -17,7 +17,6 @@ class DropTeamsTable extends Migration
             $table->dropColumn('team_id');
         });
         Schema::drop('teams');
-
     }
 
     /**
