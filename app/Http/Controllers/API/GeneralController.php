@@ -18,12 +18,22 @@ use App\Http\Controllers\Controller;
 class GeneralController extends Controller
 {
     /**
-     * Heartbeat endpoint
+     * Heartbeat endpoint.
      * @return array
      */
     public function ping()
     {
         return ['pong'];
+    }
+
+    public function info()
+    {
+        return response()->success([
+            'name'=>'BoilerMake API',
+            'frontend'=>env('FRONTEND_ADDRESS'),
+            'info'=>'http://github.com/BoilerMake',
+            'docs'=>env('APP_URL').'/docs',
+        ]);
     }
 
     public function getSchools(Request $request)
@@ -39,7 +49,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * Handles an incoming SMS from twillio
+     * Handles an incoming SMS from twillio.
      */
     public function inboundSMS()
     {
@@ -75,7 +85,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * Pre signs an S3 URL pointing to a given user id
+     * Pre signs an S3 URL pointing to a given user id.
      * @param $id user ID
      * @param string $method GET or PUT
      * @return string the signed

@@ -7,13 +7,10 @@ use Auth;
 use Validator;
 use Carbon\Carbon;
 use App\Models\Pod;
-use App\Models\Team;
 use App\Models\User;
 use App\Models\Event;
-use App\Services\Notifier;
 use App\Models\Application;
 use App\Models\Announcement;
-use App\Models\GroupMessage;
 use Illuminate\Http\Request;
 use App\Models\AnalyticsEvent;
 use App\Models\InterestSignup;
@@ -23,10 +20,7 @@ use Eluceo\iCal\Component\Calendar;
 use App\Http\Controllers\Controller;
 
 /**
- * Class ExecController
- * @package App\Http\Controllers\API
- *
- * API endpoints that handles exec UI
+ * Class ExecController.
  */
 class ExecController extends Controller
 {
@@ -82,7 +76,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets all the users, for the exec UI
+     * Gets all the users, for the exec UI.
      */
     public function getUsers()
     {
@@ -95,7 +89,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets the data of a user with exec info
+     * Gets the data of a user with exec info.
      * @param int $id
      * @return array for User with info
      */
@@ -116,7 +110,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets the Analytics data for a  given user
+     * Gets the Analytics data for a  given user.
      * @param int User $id
      * @return array of events
      */
@@ -152,7 +146,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Adds an announcement
+     * Adds an announcement.
      * @param Request $request
      * @return array status
      */
@@ -168,48 +162,6 @@ class ExecController extends Controller
         $a->send();
 
         return ['ok'];
-    }
-
-    /**
-     * Gets all announcements
-     * @return GroupMessage []
-     */
-    public function getGroupMessages()
-    {
-        return GroupMessage::all()->toArray();
-    }
-
-    public function sendGroupMessage(Request $request)
-    {
-        switch ($request->group) {
-            case 'all':
-                $roles = ['exec', 'hacker', 'sponsor'];
-                break;
-            case 'hackers':
-                $roles = ['exec', 'hacker'];
-                break;
-            case 'sponsors':
-                $roles = ['exec', 'sponsor'];
-                break;
-            case 'exec':
-                $roles = ['exec'];
-                break;
-        }
-        $users = User::whereHas('roles', function ($q) use ($roles) {
-            $q->whereIn('name', $roles);
-        })->get();
-
-        foreach ($users as $u) {
-            $n = new Notifier($u);
-            $n->sendSMS($request->message, 'group-message');
-        }
-        $log = new GroupMessage();
-        $log->group = $request->group;
-        $log->message = $request->message;
-        $log->num_recipients = $users->count();
-        $log->save();
-
-        return ['status'=>'ok', 'message'=>'message sent to'.$users->count().'users'];
     }
 
     public function getNextApplicationID()
@@ -269,42 +221,8 @@ class ExecController extends Controller
         return 'ok';
     }
 
-    public function getTeams()
-    {
-        $teams = Team::all();
-        foreach ($teams as $team) {
-            $team['hackers_detail'] = $team->getHackersWithRating();
-            $hackerRatings = [];
-            $ratingSum = 0;
-            $ratingCount = 0;
-            foreach ($team['hackers_detail'] as $eachHackerDetail) {
-                $eachHackerRating = $eachHackerDetail['application']['ratinginfo']['average'];
-                $hackerRatings[] = $eachHackerRating;
-                $ratingCount += $eachHackerDetail['application']['ratinginfo']['count'];
-                $ratingSum += $eachHackerRating;
-            }
-            $min = 0;
-            $max = 0;
-            $avg = 0;
-            if ($ratingCount != 0) {
-                $avg = $ratingSum / $ratingCount;
-                $min = min($hackerRatings);
-                $max = max($hackerRatings);
-            }
-            $team['overall_ratings'] = [
-            'count'=>$ratingCount,
-            'min'=>$min,
-            'max'=>$max,
-            // "ratings"=>$ratings,
-            'average'=>$avg,
-        ];
-        }
-
-        return $teams;
-    }
-
     /**
-     * POst to create an event
+     * POst to create an event.
      * @param Request $request
      * @return array
      */
@@ -337,8 +255,9 @@ class ExecController extends Controller
 
         return ['message' => 'success'];
     }
+
     /**
-     * PUT an event to update
+     * PUT an event to update.
      * @param Request $request
      * @param Event $event
      * @return array success
@@ -372,7 +291,7 @@ class ExecController extends Controller
     }
 
     /**
-     * DELETE an event
+     * DELETE an event.
      * @param Request $request
      * @param Event $event
      * @return array success
@@ -388,7 +307,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Generates an ical calendar
+     * Generates an ical calendar.
      * @param Request $request
      */
     public function generateCalendar(Request $request)

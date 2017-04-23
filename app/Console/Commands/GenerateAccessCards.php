@@ -6,7 +6,7 @@ use Log;
 use App\Models\User;
 use App\Models\PuzzleProgress;
 use Illuminate\Console\Command;
-use App\Http\Controllers\API\UsersController;
+use App\Http\Controllers\API\CardController;
 
 class GenerateAccessCards extends Command
 {
@@ -59,17 +59,17 @@ class GenerateAccessCards extends Command
             $user->card_image = null;
             $user->save();
             if ($user->hasRole('exec')) {
-                UsersController::generateAccessCardImage($user->id);
+                CardController::generateAccessCardImage($user->id);
             } elseif ($user->hasRole('hacker') && $user->application->rsvp) {
-                UsersController::generateAccessCardImage($user->id);
+                CardController::generateAccessCardImage($user->id);
             }
         }
         $this->info('stitching...');
-//        UsersController::stitchAccessCards($toGenerate);
-        UsersController::stitchAccessCards();
+//        CardController::stitchAccessCards($toGenerate);
+        CardController::stitchAccessCards();
 
         $this->info('done');
-//        UsersController::generateAccessCardImage(1);
-//        UsersController::generateAccessCardImage(16);
+//        CardController::generateAccessCardImage(1);
+//        CardController::generateAccessCardImage(16);
     }
 }

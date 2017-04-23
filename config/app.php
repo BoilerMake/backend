@@ -165,6 +165,7 @@ return [
         'Spatie\Tail\TailServiceProvider',
 
         Aws\Laravel\AwsServiceProvider::class,
+        App\Providers\ResponseServiceProvider::class,
 
     ],
 
