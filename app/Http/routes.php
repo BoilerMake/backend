@@ -1,11 +1,12 @@
 <?php
+
 //route route
-Route::any('/','API\GeneralController@info');
-/**
+Route::any('/', 'API\GeneralController@info');
+/*
  * PHPdocs
  */
 Route::get('/docs', function () {
-    return File::get(public_path() . '/docs/index.html');
+    return File::get(public_path().'/docs/index.html');
 });
 /*
  * API ROUTES
@@ -37,10 +38,10 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     Route::post('users/reset/send', 'AuthController@sendPasswordReset');
     Route::post('users/reset/perform', 'AuthController@performPasswordReset');
     Route::get('users/verify/{code?}', 'AuthController@confirmEmail');
-    /**
+    /*
      * User routes
      */
-    Route::group(['middleware'=>['jwt.auth'],'prefix' => 'users/me'], function () {
+    Route::group(['middleware'=>['jwt.auth'], 'prefix' => 'users/me'], function () {
 
         //get update me
         Route::get('/', 'UsersController@getMe');
@@ -54,7 +55,7 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         Route::post('puzzles', 'UsersController@completePuzzle');
         Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
     });
-    /**
+    /*
      * Exec routes
      */
     Route::group(['middleware' => ['jwt.auth', 'role:exec'], 'prefix' => 'execs'], function () {
@@ -82,7 +83,7 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         Route::post('events/{event}/delete', 'ExecController@deleteEvent');
     });
 
-    /**
+    /*
      * PODPOD
      */
     Route::group(['prefix' => 'pods'], function () {
