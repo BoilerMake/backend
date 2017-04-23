@@ -92,7 +92,7 @@ class AuthController extends Controller
     public function confirmEmail(Request $request)
     {
         if (! isset($request->code)) {
-            return response()->error('Code Required');
+            return response()->error('Code is required');
         }
         $user = User::where('confirmation_code', $request->code)->first();
         if ($user) {
@@ -102,7 +102,7 @@ class AuthController extends Controller
             return response()->success('Email confirmed!');
         }
 
-        return response()->error('Code invalid');
+        return response()->error('Code is invalid');
     }
 
     /**

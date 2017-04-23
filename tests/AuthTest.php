@@ -103,19 +103,23 @@ class AuthTest extends TestCase
         $this->assertDatabaseHas('users', ['email' => $email, 'confirmed' => 0, 'confirmation_code' => $user->confirmation_code]);
         $this->get('/v1/users/verify/'.$user->confirmation_code)
             ->assertJsonFragment([
-                 'success' => 'Email Confirmed',
+                 'success' => true,
+                 'data'=>'Email confirmed!',
              ]);
         $this->get('/v1/users/verify/'.$user->confirmation_code)
             ->assertJsonFragment([
-                 'success' => 'Email Confirmed',
+                 'success' => true,
+                 'data'=>'Email confirmed!',
              ]);
         $this->get('/v1/users/verify/'.$faker->uuid)
             ->assertJsonFragment([
-                'error' => 'Invalid Code',
+                'success' => false,
+                'message' => 'Code is invalid'
             ]);
         $this->get('/v1/users/verify/')
             ->assertJsonFragment([
-                'error' => 'Code Required',
+                'success' => false,
+                'message' => 'Code is required'
             ]);
     }
 }
