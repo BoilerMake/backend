@@ -114,12 +114,12 @@ class AuthTest extends TestCase
         $this->get('/v1/users/verify/'.$faker->uuid)
             ->assertJsonFragment([
                 'success' => false,
-                'message' => 'Code is invalid'
+                'message' => 'Code is invalid',
             ]);
         $this->get('/v1/users/verify/')
             ->assertJsonFragment([
                 'success' => false,
-                'message' => 'Code is required'
+                'message' => 'Code is required',
             ]);
     }
 }
