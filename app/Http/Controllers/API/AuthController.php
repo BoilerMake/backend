@@ -20,10 +20,8 @@ use App\Http\Controllers\Controller;
 class AuthController extends Controller
 {
     /**
-     * Authenticate a user, given username and password, returning a JWT token.
-     *
-     * @param  Request  $request
-     * @return Response
+     * @param  Request $request: email, password
+     * @return string status message
      */
     public function login(Request $request)
     {
@@ -48,8 +46,8 @@ class AuthController extends Controller
     /**
      * Register a user.
      *
-     * @param  Request  $request
-     * @return Response
+     * @param  Request $request: email, password
+     * @return string status message
      */
     public function register(Request $request)
     {
@@ -88,39 +86,48 @@ class AuthController extends Controller
     /**
      * Verify a user's email.
      *
-     * @param  Request  $request
-     * @return Response
+     * @param  Request $request: code
+     * @return string status message
      */
     public function confirmEmail(Request $request)
     {
         if (! isset($request->code)) {
-            return response()->json(['error' => 'Code Required'], 200);
+            return response()->error('Code Required');
         }
         $user = User::where('confirmation_code', $request->code)->first();
         if ($user) {
             $user->confirmed = 1;
             $user->save();
-
-            return response()->json(['success' => 'Email Confirmed'], 200);
+            return response()->success('Email confirmed!');
         }
 
-        return response()->json(['error' => 'Invalid Code'], 200);
+        return response()->error('Code invalid');
     }
 
+    /**
+     * Triggers generation + emailing of a password reset link
+     * @param Request $request: email
+     * @return string status message
+     */
     public function sendPasswordReset(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
         ]);
         if ($validator->fails()) {
-            return ['message' => 'error', 'errors' => $validator->errors()->all()];
+            return response()->error($validator->errors()->all());
         }
         $user = User::where('email', $request->email)->first();
         $user->sendPasswordResetEmail();
 
-        return ['message' => 'success'];
+        return response()->success('Success! please check your email for a link');
     }
 
+    /**
+     * If the token is valid, it updates the user's password
+     * @param Request $request: password, token
+     * @return string status message
+     */
     public function performPasswordReset(Request $request)
     {
         $token = $request->token;
@@ -128,13 +135,13 @@ class AuthController extends Controller
 
         $reset = PasswordReset::where('token', $token)->first();
         if (! $reset) {
-            return 'oops';
+            return response()->error('invalid reset link');
         }
         if (Carbon::parse($reset->created_at)->addHour(48)->lte(Carbon::now())) {
-            return 'expired';
+            return response()->error('link expired');
         }
         if ($reset->is_used) {
-            return 'already used';
+            return response()->error('link already used');
         }
         $user = User::find($reset->user_id);
         $user->password = bcrypt($password);
@@ -143,6 +150,6 @@ class AuthController extends Controller
         $reset->is_used = true;
         $reset->save();
 
-        return 'ok';
+        return response()->success('Success! password updated for '.$user->email);
     }
 }
