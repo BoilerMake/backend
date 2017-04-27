@@ -91,6 +91,7 @@ class User extends Authenticatable
 
     public function getApplication($exec = false)
     {
+        //TODO: make sure user is a hacker
         if ($exec) {
             $application = Application::with('school', 'team', 'ratings', 'notes')->firstOrCreate(['user_id' => $this->id]);
         } else {

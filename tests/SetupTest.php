@@ -26,4 +26,10 @@ class SetupTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('pong');
     }
+
+    public function testSamiDocs()
+    {
+        $response = $this->call('GET', '/docs');
+//        Log::info(exec('composer run-script docs'));
+    }
 }

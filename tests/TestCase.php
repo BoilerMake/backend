@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 class TestCase extends Illuminate\Foundation\Testing\TestCase
 {
     /**
@@ -21,5 +23,13 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;
+    }
+    public function getNewUser() {
+        $faker = Faker\Factory::create();
+        $password = $faker->password;
+        $email = $faker->email;
+        $this->post('/v1/users/register', ['password' => $password, 'email' => $email]);
+        $user = User::where('email', $email)->first();
+        return $user;
     }
 }

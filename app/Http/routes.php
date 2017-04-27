@@ -93,9 +93,4 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         Route::get('scans', 'PodController@listScans');
         Route::post('heartbeat', 'PodController@heartbeat');
     });
-
-    //fallthrough
-    Route::get('/', function () {
-        return ['ok'];
-    });
 });
