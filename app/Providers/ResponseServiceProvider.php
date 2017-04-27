@@ -5,7 +5,7 @@ namespace App\Providers;
 use Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Response;
-
+use Log;
 class ResponseServiceProvider extends ServiceProvider
 {
     /**
@@ -16,13 +16,18 @@ class ResponseServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Response::macro('success', function ($data) {
-            $debugInfo = [
-                'url'=>Request::fullUrl(),
-//                'all'=>Request::all(),
-                'ip'=>Request::ip(),
-//                'headers'=>Request::header(),
-                'user'=>\Auth::user(), ];
+        $debugInfo = [
+            'request_url'=>Request::fullUrl(),
+            'request_path'=>Request::path(),
+            'request_all_params'=>Request::all(),
+            'request_client_ip'=>Request::ip(),
+            'request_headers'=>Request::header(),
+            'request_user'=>\Auth::user() ];
+
+        Response::macro('success', function ($data) use ($debugInfo) {
+            $debugInfo['request_success']=true;
+            $debugInfo['request_response_code']=200;
+            Log::info('api_request',$debugInfo);
 
             return Response::json([
                 'success' => true,
@@ -30,12 +35,17 @@ class ResponseServiceProvider extends ServiceProvider
                 'debug' => $debugInfo,
             ], 200, ['headerkey'=>'headerval']);
         });
-        Response::macro('error', function ($message, $data = null) {
+        Response::macro('error', function ($message, $data = null, $response_code=500)  use ($debugInfo) {
+            $debugInfo['request_success']=false;
+            $debugInfo['request_response_code']=$response_code;
+            Log::info('api_request',$debugInfo);
+
             return Response::json([
                 'success' => false,
-                'message' => $message,
+                'message' => $message,//todo: refactor to error_message?
                 'data' => $data,
-            ], 500);
+                'debug' => $debugInfo,
+            ], $response_code);
         });
     }
 }

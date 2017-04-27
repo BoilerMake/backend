@@ -18,7 +18,8 @@
         "twilio/sdk": "^5.7.1",
         "eluceo/ical": "^0.11.0",
         "barryvdh/laravel-ide-helper": "^2.3",
-        "sami/sami": "dev-master"
+        "sami/sami": "dev-master",
+        "graylog2/gelf-php": "^1.5"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
