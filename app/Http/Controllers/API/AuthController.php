@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use Auth;
 use Hash;
 use Mail;
-use JWTAuth;
 use Validator;
 use Carbon\Carbon;
 use App\Models\User;

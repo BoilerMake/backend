@@ -1,7 +1,7 @@
 <?php
 
-use \App\Models\User;
 use Carbon\Carbon;
+use \App\Models\User;
 
 class AuthTest extends TestCase
 {
@@ -124,12 +124,13 @@ class AuthTest extends TestCase
                 'message' => 'Code is required',
             ]);
     }
-    public function testPasswordReset() {
+
+    public function testPasswordReset()
+    {
 
         //requesting a reset for a nonexistent user should fail
         $response = $this->call('POST', '/v1/users/reset/send', ['email' => Faker\Factory::create()->email]);
         $response->assertJsonFragment(['success'=>false]);
-
 
         $user = self::getNewUser();
 
@@ -137,11 +138,9 @@ class AuthTest extends TestCase
         $response = $this->call('POST', '/v1/users/reset/send', ['email' => $user->email]);
         $response->assertJsonFragment(['success'=>true]);
 
-
-
-        $this->assertDatabaseHas('password_resets',['user_id'=>$user->id]);
-        $resetToken = \App\Models\PasswordReset::where('user_id',$user->id)->first()->token;
-        $newPassword = "newpass";
+        $this->assertDatabaseHas('password_resets', ['user_id'=>$user->id]);
+        $resetToken = \App\Models\PasswordReset::where('user_id', $user->id)->first()->token;
+        $newPassword = 'newpass';
 
         //should be able to reset password with token
         $response = $this->call('POST', '/v1/users/reset/perform', ['token' => $resetToken, 'password'=>$newPassword]);
@@ -149,28 +148,21 @@ class AuthTest extends TestCase
 
         //but only once...
         $response = $this->call('POST', '/v1/users/reset/perform', ['token' => $resetToken, 'password'=>$newPassword]);
-        $response->assertJsonFragment(['success'=>false,'message'=>'link already used']);
+        $response->assertJsonFragment(['success'=>false, 'message'=>'link already used']);
 
         //and must be a valid token/link
         $response = $this->call('POST', '/v1/users/reset/perform', ['token' => $resetToken.'123', 'password'=>$newPassword]);
-        $response->assertJsonFragment(['success'=>false,'message'=>'invalid reset link']);
+        $response->assertJsonFragment(['success'=>false, 'message'=>'invalid reset link']);
 
         Carbon::setTestNow(Carbon::now()->addHours(50));
         //and can't be too old
         $response = $this->call('POST', '/v1/users/reset/perform', ['token' => $resetToken, 'password'=>$newPassword]);
-        $response->assertJsonFragment(['success'=>false,'message'=>'link expired']);
-
+        $response->assertJsonFragment(['success'=>false, 'message'=>'link expired']);
 
         //and we should be able to login with new password
         $this->post('/v1/users/login', ['email' => $user->email, 'password' => $newPassword])
             ->assertJsonStructure(['data'=>['token']]);
 
-
-
-
-
-
 //        $token = json_decode($response->getContent(), true)['data']['token'];
-
     }
 }
