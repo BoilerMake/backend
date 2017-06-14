@@ -1,5 +1,10 @@
 # BoilerMake Website [backend]
 
+[![Build Status](https://travis-ci.org/BoilerMake/backend.svg?branch=master)](https://travis-ci.org/BoilerMake/backend)
+[![codecov](https://codecov.io/gh/BoilerMake/backend/branch/master/graph/badge.svg)](https://codecov.io/gh/BoilerMake/backend)
+[![StyleCI](https://styleci.io/repos/48928914/shield?branch=cleaning)](https://styleci.io/repos/48928914)
+
+
 ## Info
 This API is currently being actively developed for use in BoilerMake V. If you are interested in using some/all of the components with your hackathon, please email dev@boilermake.org. [featureset + more information here!](http://2016.boilermake.org/about)
 
