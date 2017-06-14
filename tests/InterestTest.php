@@ -14,8 +14,8 @@ class InterestTest extends TestCase
         $email = $faker->email;
         $this->post('/v1/interest/signup', ['email' => $email])
             ->assertJsonFragment([
-                 'status' => 'ok',
-                 'message' => 'all signed up!',
+                 'success' => true,
+                 'data' => 'all signed up!',
              ]);
         $this->assertDatabaseHas('interest_signups', ['email' => $email]);
     }
@@ -31,13 +31,13 @@ class InterestTest extends TestCase
         $email = $faker->email;
         $this->post('/v1/interest/signup', ['email' => $email])
             ->assertJsonFragment([
-                 'status' => 'ok',
-                 'message' => 'all signed up!',
+                 'success' => true,
+                 'data' => 'all signed up!',
              ]);
         $this->assertDatabaseHas('interest_signups', ['email' => $email]);
         $this->post('/v1/interest/signup', ['email' => $email])
             ->assertJsonFragment([
-                 'status' => 'fail',
+                 'success' =>  false,
                  'message' => 'you were already signed up!',
              ]);
     }
@@ -51,22 +51,22 @@ class InterestTest extends TestCase
     {
         $this->post('/v1/interest/signup', ['email' => 'Abc.example.com'])
             ->assertJsonFragment([
-                 'status' => 'fail',
+                 'success' => false,
                  'message' => 'email is not valid!',
              ]);
         $this->post('/v1/interest/signup', ['email' => 'A@b@c@example.com'])
             ->assertJsonFragment([
-                 'status' => 'fail',
+                 'success' => false,
                  'message' => 'email is not valid!',
              ]);
         $this->post('/v1/interest/signup', ['email' => 'a"b(c)d,e:f;gi[j\k]l@example.com'])
             ->assertJsonFragment([
-                 'status' => 'fail',
+                 'success' => false,
                  'message' => 'email is not valid!',
              ]);
         $this->post('/v1/interest/signup', ['email' => 'this is"not\allowed@example.com'])
             ->assertJsonFragment([
-                 'status' => 'fail',
+                 'success' => false,
                  'message' => 'email is not valid!',
              ]);
     }

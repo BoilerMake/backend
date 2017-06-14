@@ -74,14 +74,14 @@ class GeneralController extends Controller
     {
         $email = $request->input('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return ['status'=>'fail', 'message'=>'email is not valid!'];
+            return response()->error('email is not valid!');
         }
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if ($signup->wasRecentlyCreated) {
-            return ['status'=>'ok', 'message'=>'all signed up!'];
+            return response()->success('all signed up!');
         }
 
-        return['status'=>'fail', 'message'=>'you were already signed up!'];
+        return response()->error('you were already signed up!');
     }
 
     /**

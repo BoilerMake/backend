@@ -35,7 +35,7 @@ class ResponseServiceProvider extends ServiceProvider
                 'debug' => $debugInfo,
             ], 200, ['headerkey'=>'headerval']);
         });
-        Response::macro('error', function ($message, $data = null, $response_code=500)  use ($debugInfo) {
+        Response::macro('error', function ($message, $data = null, $response_code=400)  use ($debugInfo) {
             $debugInfo['request_success']=false;
             $debugInfo['request_user']=\Auth::user();
             $debugInfo['request_response_code']=$response_code;
