@@ -2,13 +2,10 @@
 
 namespace App\Jobs;
 
-
 use Log;
 use App\Models\User;
 use Services_Twilio;
 use App\Services\Notifier;
-
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
