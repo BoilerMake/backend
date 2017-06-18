@@ -12,7 +12,6 @@ use App\Models\Event;
 use App\Models\Application;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
-use App\Models\AnalyticsEvent;
 use App\Models\InterestSignup;
 use App\Models\ApplicationNote;
 use App\Models\ApplicationRating;
@@ -107,16 +106,6 @@ class ExecController extends Controller
             'roles'=>$user->roles()->pluck('name'),
             'isHacker'=>$user->hasRole('hacker'),
             ];
-    }
-
-    /**
-     * Gets the Analytics data for a  given user.
-     * @param int User $id
-     * @return array of events
-     */
-    public function getUserAnalytics($id)
-    {
-        return AnalyticsEvent::where('user_id', $id)->get();
     }
 
     public function doAction(Request $request, $id)

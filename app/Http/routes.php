@@ -27,9 +27,6 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     Route::get('announcements', 'GeneralController@getAnnouncements');
     Route::get('activity', 'GeneralController@getActivity');
 
-    // Analytics todo: refactor
-    Route::put('analytics/event', 'AnalyticsController@event');
-
     //auth
     Route::post('users/login', 'AuthController@login');
     Route::post('users/register', 'AuthController@register');
@@ -65,10 +62,9 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
         //old routes?
         Route::post('hackers/bulk', 'ExecController@getHackersBulk');
         Route::put('hackers/bulk', 'ExecController@putHackersBulk');
-        //get users list/overview by ID/analytics by ID/perform action by ID
+        //get users list/overview by ID/perform action by ID
         Route::get('users', 'ExecController@getUsers');
         Route::get('users/{id}/view', 'ExecController@getUser');
-        Route::get('users/{id}/analytics', 'ExecController@getUserAnalytics');
         Route::post('users/{id}/action', 'ExecController@doAction');
         //application review
         Route::get('applications/next', 'ExecController@getNextApplicationID');

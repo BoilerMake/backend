@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Jobs\TwillioSMS;
 use App\Models\OutgoingMessage;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use App\Http\Controllers\API\AnalyticsController;
 
 class Notifier
 {
@@ -46,7 +45,7 @@ class Notifier
         $l->name = $name;
         $l->data = json_encode($data);
         $l->save();
-        AnalyticsController::log($this->user->id, 'outgoing-'.$type, $data);
+        //todo: UserStats log
         Log::info('[NOTIFIER] '.$type.' sent to id#'.$this->user->id.'. data: '.json_encode($data));
     }
 }
