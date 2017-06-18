@@ -1,6 +1,9 @@
 <?php
 
-namespace Tests;
+namespace Tests\Feature;
+
+use Tests\TestCase;
+
 class InterestTest extends TestCase
 {
     /**

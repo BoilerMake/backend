@@ -1,7 +1,10 @@
 <?php
-namespace Tests;
+
+namespace Tests\Feature;
+
 use Carbon\Carbon;
-use \App\Models\User;
+use Tests\TestCase;
+use App\Models\User;
 
 class AuthTest extends TestCase
 {
@@ -132,7 +135,7 @@ class AuthTest extends TestCase
         $response = $this->call('POST', '/v1/users/reset/send', ['email' => \Faker\Factory::create()->email]);
         $response->assertJsonFragment(['success'=>false]);
 
-        $user = self::getNewUser();
+        $user = factory(User::class)->create();
 
         //should be able to request a reset for a valid user
         $response = $this->call('POST', '/v1/users/reset/send', ['email' => $user->email]);
