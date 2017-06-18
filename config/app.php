@@ -166,6 +166,7 @@ return [
 
         Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
+        Laravel\Tinker\TinkerServiceProvider::class
 
     ],
 

@@ -1,11 +1,11 @@
 <?php
 
-
+namespace Tests;
 class UserTest extends TestCase
 {
     public function getToken()
     {
-        $faker = Faker\Factory::create();
+        $faker = \Faker\Factory::create();
         $first_name = $faker->firstName;
         $last_name = $faker->lastName;
         $password = $faker->password;

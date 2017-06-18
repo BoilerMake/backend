@@ -12,17 +12,18 @@
         "tymon/jwt-auth": "dev-master",
         "barryvdh/laravel-cors": "0.9.x",
         "zizaco/entrust": "dev-master",
-        "guzzlehttp/guzzle": "~5.3|~6.2",
+        "guzzlehttp/guzzle": "^6.2",
         "aws/aws-sdk-php-laravel": "^3.1",
         "symfony/psr-http-message-bridge": "1.0.*",
         "twilio/sdk": "^5.7.1",
         "eluceo/ical": "^0.11.0",
         "barryvdh/laravel-ide-helper": "^2.3",
         "sami/sami": "dev-master",
-        "graylog2/gelf-php": "^1.5"
+        "graylog2/gelf-php": "^1.5",
+        "laravel/tinker": "^1.0"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4",
+        "fzaninotto/faker": "dev-master",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~4.0",
         "symfony/css-selector": "3.1.*",
@@ -38,9 +39,9 @@
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
         "post-root-package-install": [

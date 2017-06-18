@@ -1,6 +1,6 @@
 <?php
 
-
+namespace Tests;
 class SetupTest extends TestCase
 {
     /**

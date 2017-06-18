@@ -40,7 +40,7 @@ class ResponseServiceProvider extends ServiceProvider
             $debugInfo['request_success'] = false;
             $debugInfo['request_user'] = \Auth::user();
             $debugInfo['request_response_code'] = $response_code;
-            Log::info('api_request', $debugInfo);
+//            Log::info('api_request', $debugInfo);
 
             return Response::json([
                 'success' => false,
