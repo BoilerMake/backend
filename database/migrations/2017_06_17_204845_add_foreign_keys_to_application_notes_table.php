@@ -1,37 +1,33 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class AddForeignKeysToApplicationNotesTable extends Migration {
+class AddForeignKeysToApplicationNotesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('application_notes', function (Blueprint $table) {
+            $table->foreign('application_id')->references('id')->on('applications')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::table('application_notes', function(Blueprint $table)
-		{
-			$table->foreign('application_id')->references('id')->on('applications')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-			$table->foreign('user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::table('application_notes', function(Blueprint $table)
-		{
-			$table->dropForeign('application_notes_application_id_foreign');
-			$table->dropForeign('application_notes_user_id_foreign');
-		});
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('application_notes', function (Blueprint $table) {
+            $table->dropForeign('application_notes_application_id_foreign');
+            $table->dropForeign('application_notes_user_id_foreign');
+        });
+    }
 }

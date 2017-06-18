@@ -16,7 +16,6 @@ return [
     'podpod' => env('PODPOD_KEY'),
     'phase' => env('APP_PHASE'),
 
-
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -186,7 +185,7 @@ return [
 
         Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
-        Laravel\Tinker\TinkerServiceProvider::class
+        Laravel\Tinker\TinkerServiceProvider::class,
 
     ],
 
