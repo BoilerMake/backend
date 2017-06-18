@@ -17,11 +17,11 @@ class CreateSchoolsTable extends Migration {
 			$table->increments('id');
 			$table->string('name');
 			$table->string('zip')->nullable();
-			$table->char('state', 4);
+			$table->char('state', 4)->default('USA');
 			$table->decimal('lat', 9, 6)->nullable();
 			$table->decimal('lon', 9, 6)->nullable();
 			$table->timestamps();
-			$table->string('facebook_event_id');
+			$table->string('facebook_event_id')->nullable();
 			$table->string('transit_method')->default('car');
 			$table->string('display_name')->nullable();
 		});
