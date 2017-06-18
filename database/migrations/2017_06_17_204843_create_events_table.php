@@ -18,7 +18,7 @@ class CreateEventsTable extends Migration {
 			$table->string('title');
 			$table->string('description');
 			$table->timestamp('begin')->default(DB::raw('CURRENT_TIMESTAMP'));
-			$table->dateTime('end')->default('0000-00-00 00:00:00');
+			$table->dateTime('end')->nullable()->default(null);
 			$table->timestamps();
 			$table->boolean('hidden')->default(0);
 		});

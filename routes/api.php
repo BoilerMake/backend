@@ -1,5 +1,17 @@
 <?php
 
+use Illuminate\Http\Request;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
 //route route
 Route::any('/', 'API\GeneralController@info');
 /*
@@ -11,7 +23,7 @@ Route::get('/docs', function () {
 /*
  * API ROUTES
  */
-Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
+Route::prefix('v1')->namespace('API')->group(function () {
     //heartbeat
     Route::get('ping', 'GeneralController@ping');
     //signup form
@@ -38,7 +50,7 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     /*
      * User routes
      */
-    Route::group(['middleware'=>['jwt.auth'], 'prefix' => 'users/me'], function () {
+    Route::middleware(['jwt.auth'])->prefix('users/me')->group(function () {
 
         //get update me
         Route::get('/', 'UsersController@getMe');
@@ -55,8 +67,7 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     /*
      * Exec routes
      */
-    Route::group(['middleware' => ['jwt.auth', 'role:exec'], 'prefix' => 'execs'], function () {
-
+    Route::middleware(['jwt.auth', 'role:exec'])->prefix('execs')->group(function () {
         //list hackers
         Route::get('hackers', 'ExecController@getHackers');
         //old routes?
@@ -82,7 +93,8 @@ Route::group(['prefix' => 'v1', 'namespace'=>'API'], function () {
     /*
      * PODPOD
      */
-    Route::group(['prefix' => 'pods'], function () {
+
+    Route::prefix('pods')->group(function () {
         Route::post('scan', 'PodController@scan');
         Route::get('list', 'PodController@listPods');
         Route::get('events', 'PodController@listEvents');

@@ -1,5 +1,11 @@
 <?php
-namespace Tests;
+
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Carbon\Carbon;
 use \App\Models\User;
 
@@ -132,7 +138,7 @@ class AuthTest extends TestCase
         $response = $this->call('POST', '/v1/users/reset/send', ['email' => \Faker\Factory::create()->email]);
         $response->assertJsonFragment(['success'=>false]);
 
-        $user = self::getNewUser();
+        $user = factory(User::class)->create();
 
         //should be able to request a reset for a valid user
         $response = $this->call('POST', '/v1/users/reset/send', ['email' => $user->email]);

@@ -1,6 +1,11 @@
 <?php
 
-namespace Tests;
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 class UserTest extends TestCase
 {
     public function getToken()
@@ -20,8 +25,11 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultApplication()
+    public function testGetUser()
     {
-        $response = $this->call('GET', '/v1/users/me/application', [], [], [], ['HTTP_Authorization' => 'Bearer: '.$this->getToken()]);
+        $response = $this->json('GET', '/v1/users/me', [], ['HTTP_Authorization' => 'Bearer '.$this->getToken()]);
+        $response
+            ->assertStatus(200)
+            ->assertJson(['success' => true]);
     }
 }

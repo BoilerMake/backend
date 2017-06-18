@@ -22,9 +22,7 @@ class CreateApplicationsTable extends Migration {
 			$table->string('major')->nullable();
 			$table->smallInteger('grad_year')->nullable();
 			$table->string('diet')->nullable();
-			$table->text('diet_restrictions', 65535)->nullable();
-			$table->softDeletes();
-			$table->timestamps();
+			$table->text('diet_restrictions')->nullable();
 			$table->string('github')->nullable();
 			$table->string('linkedin')->nullable();
 			$table->string('resume_filename')->nullable();
@@ -35,12 +33,14 @@ class CreateApplicationsTable extends Migration {
 			$table->string('race')->nullable();
 			$table->boolean('has_no_github')->default(0);
 			$table->boolean('completed_calculated')->default(0);
-			$table->text('skills', 65535);
+			$table->text('skills')->nullable();
 			$table->dateTime('rsvp_deadline')->nullable();
 			$table->boolean('has_no_linkedin')->default(0);
 			$table->boolean('emailed_decision')->nullable();
 			$table->dateTime('checked_in_at')->nullable();
 			$table->string('github_etag')->nullable();
+            $table->softDeletes();
+            $table->timestamps();
 		});
 	}
 
