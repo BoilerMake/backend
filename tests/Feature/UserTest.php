@@ -1,11 +1,14 @@
 <?php
 
+namespace Tests\Feature;
+
+use Tests\TestCase;
 
 class UserTest extends TestCase
 {
     public function getToken()
     {
-        $faker = Faker\Factory::create();
+        $faker = \Faker\Factory::create();
         $first_name = $faker->firstName;
         $last_name = $faker->lastName;
         $password = $faker->password;
@@ -20,8 +23,11 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultApplication()
+    public function testGetUser()
     {
-        $response = $this->call('GET', '/v1/users/me/application', [], [], [], ['HTTP_Authorization' => 'Bearer: '.$this->getToken()]);
+        $response = $this->json('GET', '/v1/users/me', [], ['HTTP_Authorization' => 'Bearer '.$this->getToken()]);
+        $response
+            ->assertStatus(200)
+            ->assertJson(['success' => true]);
     }
 }

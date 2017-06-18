@@ -1,18 +1,19 @@
 language: php
-
 php:
-  - 7.0
-
+- 7.0
 before_script:
-  - cp .env.travis .env
-  - mysql -e 'create database homestead_test;'
-  - composer self-update
-  - composer install --no-interaction
-  - php artisan key:generate
-  - php artisan jwtkey:generate
-  - php artisan migrate --env=testing --no-interaction -vvv
-  - php artisan db:seed --env=testing --no-interaction -vvv
+- cp .env.travis .env
+- mysql -e 'create database homestead_test;'
+- composer self-update
+- composer install --no-interaction
+- php artisan key:generate
+- php artisan jwtkey:generate
+- php artisan migrate --env=testing --no-interaction -vvv
+- php artisan db:seed --env=testing --no-interaction -vvv
 script:
-  - vendor/bin/phpunit --verbose --coverage-text --coverage-clover=coverage.xml
+- vendor/bin/phpunit --verbose --coverage-text --coverage-clover=coverage.xml
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
+notifications:
+  slack:
+    secure: JMv0zeovUcsR98P3FEIgCsfMVU5w6Ov212QY668HRhee44uaw8fnpAU3a4kT6pgomEjP4sWNg+b3lxFZdhkrsNg4H/gtmHGlrqcjPgbz2/uvdPnFsDZ1vXDxoD7757O2aXfJBQMf2JHuOHk0l0BNaK6Nlsrf+EkWZ1jk1iQNmi9YM9WludfrrBCW2JW9wdk90IrPfJ1kKqTPf/myqEs2noDp/VeokTLx8lsXwjubtftQeWfK6pjabMK3IMm0Mv8/tBn/kOJPLl/CV6BzjOiuWnOCAV/WL1l3qpsJuOT9kar48oFw59QTtTK5ewuu842Cr514AueK/s5pFWkekfkmFvBuKNQh77LOoJWj/W40oj8fxRNjE2DGE4Y0yztNsJ6j+8aE1ZLgF49ecvkN8lEsKROdocpI7JMiTD1Verlue0sBvYW8ZDmbRFNNp7yLx+ZAGuf98n48maMJFf+9t9jWEFsUrB3v3hcjmNriZXD50FetfkRw/bNWv5jy7dVVh5hsGElNjovJuLqoqr2fdolIfTCI9cg4dywucuadqNcXDW3+gTh0slGCmIRUGdy297vavIRJy4pE0WZwXgToj39QzLtmVjYtFQF1j5FyHpytxGOWJhPQwLI2SAVKAXTR+DOKlp2a6eqCHiYsv8fW6jjVhRjTZfmr656INfeO2RgaWM4=

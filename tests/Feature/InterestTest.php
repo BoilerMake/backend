@@ -1,5 +1,8 @@
 <?php
 
+namespace Tests\Feature;
+
+use Tests\TestCase;
 
 class InterestTest extends TestCase
 {
@@ -10,7 +13,7 @@ class InterestTest extends TestCase
      */
     public function testInterestSignup()
     {
-        $faker = Faker\Factory::create();
+        $faker = \Faker\Factory::create();
         $email = $faker->email;
         $this->post('/v1/interest/signup', ['email' => $email])
             ->assertJsonFragment([
@@ -27,7 +30,7 @@ class InterestTest extends TestCase
      */
     public function testDoubleInterestSignup()
     {
-        $faker = Faker\Factory::create();
+        $faker = \Faker\Factory::create();
         $email = $faker->email;
         $this->post('/v1/interest/signup', ['email' => $email])
             ->assertJsonFragment([
