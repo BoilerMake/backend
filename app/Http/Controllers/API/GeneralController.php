@@ -39,10 +39,11 @@ class GeneralController extends Controller
     }
 
     /**
-     * Logs a user stat event
+     * Logs a user stat event.
      * @return \Response
      */
-    public function recordStat() {
+    public function recordStat()
+    {
         try {
             $user_id = JWTAuth::parseToken()->toUser()->id;
         } catch (\Exception $e) {
