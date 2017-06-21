@@ -4,13 +4,15 @@ namespace App\Http\Controllers\API;
 
 use AWS;
 use Log;
+use JWTAuth;
+use Request;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\School;
 use App\Models\PodScan;
+use App\Models\UserStat;
 use App\Models\GithubEvent;
 use App\Models\Announcement;
-use Illuminate\Http\Request;
 use App\Models\InboundMessage;
 use App\Models\InterestSignup;
 use App\Http\Controllers\Controller;
@@ -34,6 +36,33 @@ class GeneralController extends Controller
             'info'=>'http://github.com/BoilerMake',
             'docs'=>env('APP_URL').'/docs',
         ]);
+    }
+
+    /**
+     * Logs a user stat event.
+     * @return \Response
+     */
+    public function recordStat()
+    {
+        try {
+            $user_id = JWTAuth::parseToken()->toUser()->id;
+        } catch (\Exception $e) {
+            $user_id = null;
+        }
+
+        $eventName = Request::get('event');
+        $stat = UserStat::create([
+            'user_id'           => $user_id,
+            'event'             => $eventName,
+            'context'           => Request::get('context'),
+            'uuid'              => Request::get('uuid'),
+            'client_ip'         => Request::ip(),
+            'client_useragent'  => Request::header()['user-agent'][0],
+            'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
+        ]);
+        Log::debug("UserStatRecorded UserId={$user_id} Event={$eventName} id={$stat->id}");
+
+        return response()->success($stat);
     }
 
     public function getSchools(Request $request)
@@ -70,9 +99,9 @@ class GeneralController extends Controller
         $n->save();
     }
 
-    public function interestSignup(Request $request)
+    public function interestSignup()
     {
-        $email = $request->input('email');
+        $email = Request::get('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return response()->error('email is not valid!');
         }

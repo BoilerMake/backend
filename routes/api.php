@@ -25,6 +25,7 @@ Route::get('/docs', function () {
 Route::prefix('v1')->namespace('API')->group(function () {
     //heartbeat
     Route::get('ping', 'GeneralController@ping');
+    Route::post('stats', 'GeneralController@recordStat');
     //signup form
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup', 'GeneralController@interestSignup');

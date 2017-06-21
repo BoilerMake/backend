@@ -51,7 +51,15 @@ $app->configureMonologUsing(function ($monolog) {
         $monolog->pushHandler(new \Monolog\Handler\GelfHandler($publisher));
     }
 
-    //re-setup default laravel log style since we're overriding Monolog
+    if (env('SENTRY_DSN')) {
+        //send *errors* to sentry
+        $client = new Raven_Client(env('SENTRY_DSN'));
+        $handler = new Monolog\Handler\RavenHandler($client, Monolog\Logger::ERROR);
+        $handler->setFormatter(new Monolog\Formatter\LineFormatter("%message% %context% %extra%\n"));
+        $monolog->pushHandler($handler);
+    }
+
+    //re-setup default laravel log style since we're overriding Monolog initially
     $infoStreamHandler = new StreamHandler(storage_path('/logs/laravel.log'));
     $infoStreamHandler->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
     $monolog->pushHandler($infoStreamHandler);
