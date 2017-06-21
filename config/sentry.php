@@ -1,7 +1,7 @@
 <?php
 
-return array(
-    'dsn' => env('SENTRY_DSN',null),
+return [
+    'dsn' => env('SENTRY_DSN', null),
 
     // capture release as git sha
      'release' => trim(exec('git log --pretty="%h" -n1 HEAD')),
@@ -11,4 +11,4 @@ return array(
 
     // Capture default user context
     'user_context' => true,
-);
+];

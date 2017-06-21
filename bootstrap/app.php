@@ -51,7 +51,7 @@ $app->configureMonologUsing(function ($monolog) {
         $monolog->pushHandler(new \Monolog\Handler\GelfHandler($publisher));
     }
 
-    if(env('SENTRY_DSN')) {
+    if (env('SENTRY_DSN')) {
         //send *errors* to sentry
         $client = new Raven_Client(env('SENTRY_DSN'));
         $handler = new Monolog\Handler\RavenHandler($client, Monolog\Logger::ERROR);
