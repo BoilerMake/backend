@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\UserStat;
 use AWS;
-use JWTAuth;
 use Log;
+use JWTAuth;
+use Request;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\School;
 use App\Models\PodScan;
+use App\Models\UserStat;
 use App\Models\GithubEvent;
 use App\Models\Announcement;
-use Request;
 use App\Models\InboundMessage;
 use App\Models\InterestSignup;
 use App\Http\Controllers\Controller;
-use Route;
 
 class GeneralController extends Controller
 {
@@ -58,7 +57,7 @@ class GeneralController extends Controller
             'uuid'              => Request::get('uuid'),
             'client_ip'         => Request::ip(),
             'client_useragent'  => Request::header()['user-agent'][0],
-            'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null
+            'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
         ]);
         Log::debug("UserStatRecorded UserId={$user_id} Event={$eventName} id={$stat->id}");
 
