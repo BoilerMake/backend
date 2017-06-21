@@ -39,6 +39,10 @@ class GeneralController extends Controller
         ]);
     }
 
+    /**
+     * Logs a user stat event
+     * @return \Response
+     */
     public function recordStat() {
         try {
             $user_id = JWTAuth::parseToken()->toUser()->id;
@@ -56,7 +60,7 @@ class GeneralController extends Controller
             'client_useragent'  => Request::header()['user-agent'][0],
             'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null
         ]);
-        Log::info("Stat: UserId={$user_id} Event={$eventName}, id={$stat->id}");
+        Log::debug("UserStatRecorded UserId={$user_id} Event={$eventName} id={$stat->id}");
 
         return response()->success($stat);
     }

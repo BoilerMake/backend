@@ -185,8 +185,7 @@ return [
 
         Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
-        Laravel\Tinker\TinkerServiceProvider::class,
-
+        Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
     ],
 
     /*
@@ -242,6 +241,7 @@ return [
         'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
         'AWS' => Aws\Laravel\AwsFacade::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
 
     ],
 
