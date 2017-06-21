@@ -26,8 +26,7 @@ class UserStatsTest extends TestCase
             "referrer"  => null
         ];
 
-        $this->json('POST', "/v1/stats", $data, ['HTTP_Authorization'=>"Bearer {$token}"]);//->dump();
-//        Log::info($response->json());
+        $this->json('POST', "/v1/stats", $data, ['Authorization'=>"BearerBearer {$token}","X-hi"=>"aah"])->dump();
 //        $response->assertStatus(200);
 //        $this->assertDatabaseHas('user_stats',['uuid'=>$uuid,'user_id'=>$user->id]);
     }
