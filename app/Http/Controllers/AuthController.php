@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use Auth;
 use Hash;
@@ -11,7 +11,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use App\Mail\UserRegistration;
-use App\Http\Controllers\Controller;
 
 /**
  * Class AuthController.

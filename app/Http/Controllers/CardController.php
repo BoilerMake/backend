@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use Log;
 use Imagick;
@@ -8,7 +8,6 @@ use ImagickDraw;
 use ImagickPixel;
 use App\Models\User;
 use App\Models\PuzzleProgress;
-use App\Http\Controllers\Controller;
 
 class CardController extends Controller
 {
