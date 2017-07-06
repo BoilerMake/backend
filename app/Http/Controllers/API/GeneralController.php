@@ -54,6 +54,7 @@ class GeneralController extends Controller
         $stat = UserStat::create([
             'user_id'           => $user_id,
             'event'             => $eventName,
+            'subtitle'          => Request::get('subtitle'),
             'context'           => Request::get('context'),
             'uuid'              => Request::get('uuid'),
             'client_ip'         => Request::ip(),
