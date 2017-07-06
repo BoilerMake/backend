@@ -6,7 +6,7 @@ use Log;
 use App\Models\User;
 use App\Models\PuzzleProgress;
 use Illuminate\Console\Command;
-use App\Http\Controllers\API\CardController;
+use App\Http\Controllers\CardController;
 
 class GenerateAccessCards extends Command
 {

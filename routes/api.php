@@ -12,7 +12,7 @@
 |
 */
 //route route
-Route::any('/', 'API\GeneralController@info');
+Route::any('/', 'GeneralController@info');
 /*
  * PHPdocs
  */
@@ -22,7 +22,7 @@ Route::get('/docs', function () {
 /*
  * API ROUTES
  */
-Route::prefix('v1')->namespace('API')->group(function () {
+Route::prefix('v1')->group(function () {
     //heartbeat
     Route::get('ping', 'GeneralController@ping');
     Route::post('stats', 'GeneralController@recordStat');
