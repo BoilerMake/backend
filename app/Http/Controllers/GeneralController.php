@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use AWS;
 use Log;
@@ -15,7 +15,6 @@ use App\Models\GithubEvent;
 use App\Models\Announcement;
 use App\Models\InboundMessage;
 use App\Models\InterestSignup;
-use App\Http\Controllers\Controller;
 
 class GeneralController extends Controller
 {

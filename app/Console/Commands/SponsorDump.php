@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use App\Models\Application;
 use Illuminate\Console\Command;
-use App\Http\Controllers\API\GeneralController;
+use App\Http\Controllers\GeneralController;
 
 class SponsorDump extends Command
 {

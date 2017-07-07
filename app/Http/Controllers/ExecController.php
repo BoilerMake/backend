@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use DB;
 use Auth;
@@ -16,7 +16,6 @@ use App\Models\InterestSignup;
 use App\Models\ApplicationNote;
 use App\Models\ApplicationRating;
 use Eluceo\iCal\Component\Calendar;
-use App\Http\Controllers\Controller;
 
 /**
  * Class ExecController.
