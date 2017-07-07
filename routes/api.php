@@ -26,6 +26,8 @@ Route::prefix('v1')->group(function () {
     //heartbeat
     Route::get('ping', 'GeneralController@ping');
     Route::post('stats', 'GeneralController@recordStat');
+    Route::any('slackapp', 'SlackController@index');
+
     //signup form
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup', 'GeneralController@interestSignup');
