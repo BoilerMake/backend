@@ -19,6 +19,7 @@ Route::any('/', 'GeneralController@info');
 Route::get('/docs', function () {
     return File::get(public_path().'/docs/index.html');
 });
+Route::get('packet/{secret}','SponsorsController@packet');
 /*
  * API ROUTES
  */
