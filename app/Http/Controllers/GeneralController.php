@@ -60,7 +60,11 @@ class GeneralController extends Controller
             'client_useragent'  => Request::header()['user-agent'][0],
             'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
         ]);
-        Log::debug("UserStatRecorded UserId={$user_id} Event={$eventName} id={$stat->id}");
+        Log::info("UserStatRecorded",[
+            "user_id" => $user_id,
+            "event"   => $eventName,
+            "id"      => $stat->id,
+        ]);
 
         return response()->success($stat);
     }
@@ -68,7 +72,6 @@ class GeneralController extends Controller
     public function getSchools(Request $request)
     {
         $filter = $request->input('filter');
-        Log::info($filter);
         if (! $filter) {
             $filter = '';
         }

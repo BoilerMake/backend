@@ -45,7 +45,7 @@ class ResponseServiceProvider extends ServiceProvider
         Response::macro('error', function ($message, $data = null, $response_code = 400) use ($debugInfo) {
             $debugInfo['request_success'] = false;
             $debugInfo['request_response_code'] = $response_code;
-//            Log::info('api_request', $debugInfo);
+            Log::info('api_request', $debugInfo);
 
             return Response::json([
                 'success' => false,

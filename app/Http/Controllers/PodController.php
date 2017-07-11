@@ -83,8 +83,7 @@ class PodController extends Controller
         $scan->user_id = $user->id;
 
         $scan->message = 'processed pod scan from pod: '.$pod->name.' (#'.$pod->id.') for event: '.$event->title.' (#'.$event->id.') from user: '.$user->slug().' @ '.$request->ip();
-        Log::info('[POD] '.$scan->message);
-        //todo: UserStats log
+        Log::info('PodScan', ['message'=>$scan->message]);
         $scan->save();
 
         return $scan;
