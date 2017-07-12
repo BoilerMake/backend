@@ -50,10 +50,11 @@ class GeneralController extends Controller
         }
 
         $eventName = Request::get('event');
+        $subtitle = Request::get('subtitle');
         $stat = UserStat::create([
             'user_id'           => $user_id,
             'event'             => $eventName,
-            'subtitle'          => Request::get('subtitle'),
+            'subtitle'          => $subtitle,
             'context'           => Request::get('context'),
             'uuid'              => Request::get('uuid'),
             'client_ip'         => Request::ip(),
@@ -61,9 +62,10 @@ class GeneralController extends Controller
             'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
         ]);
         Log::info("UserStatRecorded",[
-            "user_id" => $user_id,
-            "event"   => $eventName,
-            "id"      => $stat->id,
+            'user_id'  => $user_id,
+            'event'    => $eventName,
+            'subtitle' => $subtitle,
+            'id'       => $stat->id,
         ]);
 
         return response()->success($stat);
@@ -106,10 +108,12 @@ class GeneralController extends Controller
     {
         $email = Request::get('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Log::info("InterestSignup Success");
             return response()->error('email is not valid!');
         }
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if ($signup->wasRecentlyCreated) {
+            Log::info("InterestSignup Fail");
             return response()->success('all signed up!');
         }
 

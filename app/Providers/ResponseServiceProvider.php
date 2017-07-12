@@ -22,36 +22,36 @@ class ResponseServiceProvider extends ServiceProvider
         } catch (\Exception $e) {
             $user = null;
         }
-        $debugInfo = [
-            'request_url'=>Request::fullUrl(),
-            'request_path'=>Request::path(),
-            'request_all_params'=>Request::all(),
-            'request_client_ip'=>Request::ip(),
-            'request_headers'=>Request::header(),
-            'request_user' => $user,
-            ];
 
-        Response::macro('success', function ($data) use ($debugInfo) {
-            $debugInfo['request_success'] = true;
-            $debugInfo['request_response_code'] = 200;
-            Log::info('api_request', $debugInfo);
+        $requestInfo = [
+            'url'=>Request::fullUrl(),
+            'path'=>Request::path(),
+            'params'=>Request::all(),
+            'ip'=>Request::ip(),
+            'headers'=>Request::header(),
+            'user' => $user,
+            'success' => true,
+            'code' => 200
+        ];
 
+        Response::macro('success', function ($data) use ($requestInfo) {
+            Log::info('api_request', ['request' => $requestInfo]);
             return Response::json([
                 'success' => true,
                 'data' => $data,
-                'debug' => $debugInfo,
-            ], 200, ['headerkey'=>'headerval']);
+                'request' => $requestInfo,
+            ], 200);
         });
-        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($debugInfo) {
-            $debugInfo['request_success'] = false;
-            $debugInfo['request_response_code'] = $response_code;
-            Log::info('api_request', $debugInfo);
 
+        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo) {
+            $requestInfo['success'] = false;
+            $requestInfo['code'] = $response_code;
+            Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
             return Response::json([
                 'success' => false,
                 'message' => $message, //todo: refactor to error_message?
                 'data' => $data,
-                'debug' => $debugInfo,
+                'request' => $requestInfo,
             ], $response_code);
         });
     }
