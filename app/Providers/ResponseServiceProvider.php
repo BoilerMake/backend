@@ -34,16 +34,20 @@ class ResponseServiceProvider extends ServiceProvider
             'code' => 200
         ];
 
-        Response::macro('success', function ($data) use ($requestInfo) {
+        //determine if we want to return debug info, based on x-debug-token, which gets set via React cookie.
+        $providedDebugToken = isset(Request::header()['x-debug-token']) ? Request::header()['x-debug-token'][0] : null;
+        $shouldDebugRequest = $providedDebugToken && $providedDebugToken === env('DEBUG_TOKEN');
+
+        Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest) {
             Log::info('api_request', ['request' => $requestInfo]);
             return Response::json([
                 'success' => true,
                 'data' => $data,
-                'request' => $requestInfo,
+                'request_debug' => $shouldDebugRequest ? $requestInfo : 'hidden',
             ], 200);
         });
 
-        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo) {
+        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo, $shouldDebugRequest) {
             $requestInfo['success'] = false;
             $requestInfo['code'] = $response_code;
             Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
@@ -51,7 +55,7 @@ class ResponseServiceProvider extends ServiceProvider
                 'success' => false,
                 'message' => $message, //todo: refactor to error_message?
                 'data' => $data,
-                'request' => $requestInfo,
+                'request_debug' => $shouldDebugRequest ? $requestInfo : 'hidden',
             ], $response_code);
         });
     }
