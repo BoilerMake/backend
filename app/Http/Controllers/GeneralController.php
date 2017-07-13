@@ -56,7 +56,7 @@ class GeneralController extends Controller
             'event'             => $eventName,
             'subtitle'          => $subtitle,
             'context'           => Request::get('context'),
-            'uuid'              => Request::get('uuid'),
+            'uuid'              => isset(Request::header()['x-uuid']) ? Request::header()['x-uuid'][0] : null,
             'client_ip'         => Request::ip(),
             'client_useragent'  => Request::header()['user-agent'][0],
             'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
