@@ -31,11 +31,12 @@ class ResponseServiceProvider extends ServiceProvider
             'headers'=>Request::header(),
             'user' => $user,
             'success' => true,
-            'code' => 200
+            'code' => 200,
         ];
 
         Response::macro('success', function ($data) use ($requestInfo) {
             Log::info('api_request', ['request' => $requestInfo]);
+
             return Response::json([
                 'success' => true,
                 'data' => $data,
@@ -47,6 +48,7 @@ class ResponseServiceProvider extends ServiceProvider
             $requestInfo['success'] = false;
             $requestInfo['code'] = $response_code;
             Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
+
             return Response::json([
                 'success' => false,
                 'message' => $message, //todo: refactor to error_message?
