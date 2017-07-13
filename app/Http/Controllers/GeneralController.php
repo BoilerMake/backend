@@ -61,7 +61,7 @@ class GeneralController extends Controller
             'client_useragent'  => Request::header()['user-agent'][0],
             'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
         ]);
-        Log::info("UserStatRecorded",[
+        Log::info('UserStatRecorded', [
             'user_id'  => $user_id,
             'event'    => $eventName,
             'subtitle' => $subtitle,
@@ -108,12 +108,14 @@ class GeneralController extends Controller
     {
         $email = Request::get('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Log::info("InterestSignup Success");
+            Log::info('InterestSignup Success');
+
             return response()->error('email is not valid!');
         }
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if ($signup->wasRecentlyCreated) {
-            Log::info("InterestSignup Fail");
+            Log::info('InterestSignup Fail');
+
             return response()->success('all signed up!');
         }
 

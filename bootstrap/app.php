@@ -52,15 +52,19 @@ $app->configureMonologUsing(function ($monolog) {
         $monolog->pushHandler($handler);
     }
 
-    $monolog->pushProcessor(function ($r) { $r["extra"] = ["app"=>"boilermake_api","env"=>env('APP_ENV')]; return $r;});
+    $monolog->pushProcessor(function ($r) {
+        $r['extra'] = ['app'=>'boilermake_api', 'env'=>env('APP_ENV')];
 
+        return $r;
+    });
 
     //re-setup default laravel log style since we're overriding Monolog initially
     $infoStreamHandler = new StreamHandler(storage_path('/logs/laravel.log'));
-    if(env('JSON_LOG'))
+    if (env('JSON_LOG')) {
         $infoStreamHandler->setFormatter(new \Monolog\Formatter\JsonFormatter());
-    else
+    } else {
         $infoStreamHandler->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
+    }
     $monolog->pushHandler($infoStreamHandler);
 });
 /*
