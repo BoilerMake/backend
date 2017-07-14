@@ -44,13 +44,6 @@ $app->singleton(
 use Monolog\Handler\StreamHandler;
 
 $app->configureMonologUsing(function ($monolog) {
-    if (env('GREYLOG_ADDRESS')) {
-        //ship off logs to greylog
-        $transport = new \Gelf\Transport\UdpTransport(env('GREYLOG_ADDRESS'), env('GREYLOG_PORT'));
-        $publisher = new \Gelf\Publisher($transport, null, 'bm');
-        $monolog->pushHandler(new \Monolog\Handler\GelfHandler($publisher));
-    }
-
     if (env('SENTRY_DSN')) {
         //send *errors* to sentry
         $client = new Raven_Client(env('SENTRY_DSN'));
@@ -59,9 +52,19 @@ $app->configureMonologUsing(function ($monolog) {
         $monolog->pushHandler($handler);
     }
 
+    $monolog->pushProcessor(function ($r) {
+        $r['extra'] = ['app'=>'boilermake_api', 'env'=>env('APP_ENV')];
+
+        return $r;
+    });
+
     //re-setup default laravel log style since we're overriding Monolog initially
     $infoStreamHandler = new StreamHandler(storage_path('/logs/laravel.log'));
-    $infoStreamHandler->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
+    if (env('JSON_LOG')) {
+        $infoStreamHandler->setFormatter(new \Monolog\Formatter\JsonFormatter());
+    } else {
+        $infoStreamHandler->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
+    }
     $monolog->pushHandler($infoStreamHandler);
 });
 /*

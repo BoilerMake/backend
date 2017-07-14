@@ -151,7 +151,6 @@ class CardController extends Controller
         if (in_array($user->id, $puzzleUsers)) {
             $skills[] = 'puzzle';
         }
-//        Log::info($skills);
         $skillsYPos = 640;
         if ($isExecCard) {
             $skillsYPos += 100;
