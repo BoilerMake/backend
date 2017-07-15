@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App;
 use AWS;
 use Log;
 use Hash;
@@ -182,20 +183,22 @@ class User extends Authenticatable
      */
     public function resumeURL($method = 'get')
     {
-        $id = $this->id;
+        if (App::environment() == 'testing') {
+            return "http://s3-mock-resumes/{$this->id}.pdf";
+        }
         $s3 = AWS::createClient('s3');
         switch ($method) {
             case 'get':
                 $cmd = $s3->getCommand('getObject', [
                     'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
+                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$this->id.'.pdf',
                     'ResponseContentType' => 'application/pdf',
                 ]);
                 break;
             case 'put':
                 $cmd = $s3->getCommand('PutObject', [
                     'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
+                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$this->id.'.pdf',
                 ]);
                 break;
         }
