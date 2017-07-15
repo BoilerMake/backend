@@ -121,6 +121,7 @@ class UsersController extends Controller
             'phase'       => $phase,
         ]);
     }
+
 //    public function completePuzzle(Request $request)
 //    {
 //        if (! Auth::user()) {

@@ -151,7 +151,8 @@ class User extends Authenticatable
     {
         if (! $this->hasRole(self::ROLE_HACKER)) {
             Log::error("tried to get application for user {$this->id}, but they are not a hacker");
-            return null;
+
+            return;
         }
 
         if ($execInfo) {
@@ -170,6 +171,7 @@ class User extends Authenticatable
     public function getToken()
     {
         $roles = $this->roles()->get()->pluck('name');
+
         return JWTAuth::fromUser($this, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$this->slug(), 'user_id'=>$this->id]);
     }
 
@@ -205,15 +207,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Tries to get school ID based on email
+     * Tries to get school ID based on email.
      * @return null|int
      */
     public function hintSchoolIdFromEmail()
     {
-        $domain  = substr(strrchr($this->email, "@"), 1);
-        $match = School::where(School::FIELD_EMAIL_DOMAIN,$domain)->first();
-        if($match)
+        $domain = substr(strrchr($this->email, '@'), 1);
+        $match = School::where(School::FIELD_EMAIL_DOMAIN, $domain)->first();
+        if ($match) {
             return $match->id;
-        return null;
+        }
     }
 }
