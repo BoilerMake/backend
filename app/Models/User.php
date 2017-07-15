@@ -101,7 +101,8 @@ class User extends Authenticatable
             Log::info("Attaching role: {$role} to user: {$this->id}", ['user_id'=>$this->id]);
             if ($role == self::ROLE_HACKER) {
                 //this will create the application
-                $this->getApplication();
+                $application = $this->getApplication();
+                $application->school_id = $this->hintSchoolIdFromEmail();
             } else {
                 //TODO: implement
                 Log::error("postSignupActions: need to implement role {$role}");
@@ -201,5 +202,18 @@ class User extends Authenticatable
         $request = $s3->createPresignedRequest($cmd, '+7 days');
 
         return (string) $request->getUri();
+    }
+
+    /**
+     * Tries to get school ID based on email
+     * @return null|int
+     */
+    public function hintSchoolIdFromEmail()
+    {
+        $domain  = substr(strrchr($this->email, "@"), 1);
+        $match = School::where(School::FIELD_EMAIL_DOMAIN,$domain)->first();
+        if($match)
+            return $match->id;
+        return null;
     }
 }

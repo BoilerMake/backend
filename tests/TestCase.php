@@ -9,10 +9,11 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    public function makeTestUser()
+    public function makeTestUser($email=null)
     {
         $faker = \Faker\Factory::create();
-        $email = $faker->email;
+        if(!$email)
+            $email = $faker->email;
 
         return User::addNew($email, null, false);
     }

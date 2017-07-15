@@ -67,6 +67,16 @@ class ApplicationsTest extends TestCase
         $this->assertFalse(array_key_exists(Application::FIELD_DECISION, $application));
     }
 
+    public function testHintEmail() {
+        $faker = \Faker\Factory::create();
+
+        $purdueStudent = $this->makeTestUser("{$faker->userName}@purdue.edu");
+        $otherStudent = $this->makeTestUser("{$faker->userName}@nomatch.edu");
+
+        $this->assertNotEquals($purdueStudent->hintSchoolIdFromEmail(),null);
+        $this->assertEquals($otherStudent->hintSchoolIdFromEmail(),null);
+    }
+
 //    public function testGetApplicationEmailNotConfirmed() {
 //
 //    }
