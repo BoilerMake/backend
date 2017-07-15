@@ -5,7 +5,6 @@ namespace App\Http;
 use App\Http\Middleware\HackersOnly;
 use App\Http\Middleware\JWTTestFix;
 use Barryvdh\Cors\HandleCors;
-use App\Http\Middleware\JWTTestFix;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
