@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Request;
 use App\Models\User;
 use App\Models\Application;
-use Log;
-use Request;
 use App\Models\PuzzleProgress;
 
 class UsersController extends Controller
@@ -31,7 +30,7 @@ class UsersController extends Controller
                 User::FIELD_EMAIL,
                 User::FIELD_FIRSTNAME,
                 User::FIELD_LASTNAME,
-                User::FIELD_PHONE
+                User::FIELD_PHONE,
             ])) {
                 $user->$key = $value;
                 $user->save();
@@ -40,7 +39,9 @@ class UsersController extends Controller
 
         return response()->success('ok');
     }
-    public function updateApplication() {
+
+    public function updateApplication()
+    {
         $user = Auth::user();
         $data = json_decode(Request::getContent(), true);
         $application = $user->getApplication();
@@ -60,18 +61,18 @@ class UsersController extends Controller
                 Application::FIELD_NEEDS_TRAVEL_REIMBURSEMENT,
                 Application::FIELD_IS_FIRST_HACKATHON,
                 Application::FIELD_HAS_NO_GITHUB,
-                Application::FIELD_HAS_NO_LINKEDIN
+                Application::FIELD_HAS_NO_LINKEDIN,
             ])) {
                 $application->$key = $value;
-            } else if(in_array($key, Application::USER_FIELDS_TO_INJECT)) {
+            } elseif (in_array($key, Application::USER_FIELDS_TO_INJECT)) {
                 $user->$key = $value;
-            } else if ($key == Application::FIELD_GITHUB) {
+            } elseif ($key == Application::FIELD_GITHUB) {
                 //if user is linked to a GH account, don't let them change username
-                if(!$user->github_user_id) {
+                if (! $user->github_user_id) {
                     //todo: turn github.com/user -> user
                     $application->github = $value;
                 }
-            } else if ($key == Application::FIELD_RSVP_FLAG) {
+            } elseif ($key == Application::FIELD_RSVP_FLAG) {
                 //check to make sure they were actually accepted in case we have some sneaky mofos
                 if ($application->decision == Application::DECISION_ACCEPT) {
                     $application->rsvp = $value;
@@ -88,6 +89,7 @@ class UsersController extends Controller
         }
         $user->save();
         $application->save();
+
         return response()->success([
             'application'=>$application,
             'validation'=>$application->validationDetails(),
@@ -101,14 +103,14 @@ class UsersController extends Controller
         $application = $user->getApplication();
 //        $application['skills'] = json_decode($application->skills, true);
 
-        foreach(Application::USER_FIELDS_TO_INJECT as $x) {
+        foreach (Application::USER_FIELDS_TO_INJECT as $x) {
             $application[$x] = $user->$x;
         }
 
         $phase = intval(getenv('APP_PHASE'));
         if ($phase < Application::PHASE_DECISIONS_REVEALED) {
             //don't reveal decisions early
-            $application->setHidden(['decision','emailed_decision']);
+            $application->setHidden(['decision', 'emailed_decision']);
         }
 
         return response()->success([
