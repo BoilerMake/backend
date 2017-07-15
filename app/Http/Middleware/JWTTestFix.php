@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App;
 use Closure;
 use JWTAuth;
-use Log;
 
 class JWTTestFix
 {
@@ -18,8 +17,10 @@ class JWTTestFix
      */
     public function handle($request, Closure $next)
     {
-        if((App::environment() == 'testing') && $request->headers->get('Authorization'))
+        if ((App::environment() == 'testing') && $request->headers->get('Authorization')) {
             JWTAuth::setRequest($request);
+        }
+
         return $next($request);
     }
 }

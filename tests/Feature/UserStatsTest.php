@@ -21,10 +21,11 @@ class UserStatsTest extends TestCase
             'referrer'  => null,
         ];
 
-        $response = $this->json('POST', "/v1/stats", $data, ['HTTP_Authorization'=>'Bearer '.$token, 'x-uuid'=>$uuid]);
+        $response = $this->json('POST', '/v1/stats', $data, ['HTTP_Authorization'=>'Bearer '.$token, 'x-uuid'=>$uuid]);
         $response->assertStatus(200);
-        $this->assertDatabaseHas('user_stats',['uuid'=>$uuid,'user_id'=>$user->id]);
+        $this->assertDatabaseHas('user_stats', ['uuid'=>$uuid, 'user_id'=>$user->id]);
     }
+
     public function testGuestEvent()
     {
         $faker = Factory::create();
@@ -35,8 +36,8 @@ class UserStatsTest extends TestCase
             'referrer'  => null,
         ];
 
-        $response = $this->json('POST', "/v1/stats", $data, ['x-uuid'=>$uuid]);
+        $response = $this->json('POST', '/v1/stats', $data, ['x-uuid'=>$uuid]);
         $response->assertStatus(200);
-        $this->assertDatabaseHas('user_stats',['uuid'=>$uuid]);
+        $this->assertDatabaseHas('user_stats', ['uuid'=>$uuid]);
     }
 }
