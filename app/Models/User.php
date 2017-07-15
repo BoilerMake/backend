@@ -2,9 +2,14 @@
 
 namespace App\Models;
 
+use App\Mail\UserRegistration;
+use Hash;
+use Illuminate\Support\Str;
 use JWTAuth;
 use Carbon\Carbon;
 use App\Services\Notifier;
+use Log;
+use Mail;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -31,6 +36,8 @@ class User extends Authenticatable
 
     protected $appends = ['launch', 'name'];
 
+    const ROLE_HACKER = "hacker";
+
     public function getLaunchAttribute()
     {
         return $this->id.''.substr($this->first_name, 0, 1);
@@ -42,16 +49,61 @@ class User extends Authenticatable
     }
 
     /**
-     * makes a user a hacker by default and gives them an application.
+     * @param string $email
+     * @param null $password
+     * @param bool $needToConfirmEmail
+     * @param array $roles
+     * @return User
+     * @internal param bool $shouldConfirmEmail
      */
-    public function postSignupActions($roles = ['hacker'])
+    public static function addNew($email, $password = null, $needToConfirmEmail = true, $roles = [self::ROLE_HACKER]) {
+        $user = new self;
+        if(!$password) {
+            //if a password was not provided during signup (i.e. GitHub OAuth, use something random)
+            $password = Str::random(10);
+        }
+        $user->password = Hash::make($password);
+        $user->email = $email;
+        $user->save();
+        $user->postSignupActions($roles); // Attach roles
+
+        if($needToConfirmEmail) {
+            $code = str_random(24);
+            $user->confirmation_code = $code;
+            $link = env('FRONTEND_ADDRESS') . '/confirm?tok=' . $code;
+            //todo: clean up this email building
+            Mail::to($user->email)->send(new UserRegistration($user, $link));
+        } else {
+            $user->confirmed = true;
+        }
+        $user->save();
+        return $user;
+    }
+
+    /**
+     * Checks if a a User exists with the given email
+     * @param $email
+     * @return mixed
+     */
+    public static function isEmailUsed($email) {
+        return self::where('email',$email)->exists();
+    }
+
+    /**
+     * makes a user a hacker by default and gives them an application.
+     * @param $roles
+     */
+    private function postSignupActions($roles)
     {
         foreach ($roles as $role) {
             $this->attachRole(Role::where('name', $role)->first());
-            if ($role == 'hacker') {
-                $app = new Application();
-                $app->user_id = $this->id;
-                $app->save();
+            Log::info("Attaching role: {$role} to user: {$this->id}",['user_id'=>$this->id]);
+            if ($role == self::ROLE_HACKER) {
+                //this will create the application
+                $this->getApplication();
+            } else {
+                //TODO: implement
+                Log::error("postSignupActions: need to implement role {$role}");
             }
         }
         $this->generateUniqueIdentifier();
@@ -69,7 +121,7 @@ class User extends Authenticatable
 
     public function slug()
     {
-        return $this->first_name.' '.$this->last_name.' (#'.$this->id.')';
+        return "{$this->first_name} {$this->last_name} (#{$this->id})";
     }
 
     public function application()
@@ -89,18 +141,22 @@ class User extends Authenticatable
         $n->sendEmail('BoilerMake Password Reset!', 'password-reset', ['token_url'=>getenv('FRONTEND_ADDRESS').'/pwr?tok='.$token]);
     }
 
-    public function getApplication($exec = false)
+    public function getApplication($execInfo = false)
     {
         //TODO: make sure user is a hacker
-        if ($exec) {
-            $application = Application::with('school', 'team', 'ratings', 'notes')->firstOrCreate(['user_id' => $this->id]);
-        } else {
-            $application = Application::with('school', 'team', 'ratings')->firstOrCreate(['user_id' => $this->id]);
+        if(!$this->hasRole(self::ROLE_HACKER)) {
+            Log::error("tried to get application for user {$this->id}, but they are not a hacker");
         }
 
+        if ($execInfo) {
+            $application = Application::with('school', 'ratings', 'notes')->firstOrCreate(['user_id' => $this->id]);
+        } else {
+            $application = Application::with('school')->firstOrCreate(['user_id' => $this->id]);
+        }
+        if($application->wasRecentlyCreated) {
+            Log::info("Creating application for user {$this->id}",['user_id'=>$this->id, 'application_id'=>$application->id]);
+        }
         $application->save();
-        $application->schoolinfo = $application->school;
-        $application->resume_uploaded = (int) $application->resume_uploaded;
 
         return $application;
     }

@@ -45,6 +45,7 @@ Route::prefix('v1')->group(function () {
     //auth
     Route::post('users/login', 'AuthController@login');
     Route::post('users/register', 'AuthController@register');
+    Route::post('users/auth/github/{code}', 'AuthController@githubAuth');
 
     //password reset + account confirmation
     Route::post('users/reset/send', 'AuthController@sendPasswordReset');

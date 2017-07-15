@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.31.2",
+            "version": "3.31.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "582e7764e0fa389c3248450cd6db2564dd656d99"
+                "reference": "785dbe7d78c60e9478770dc42db5495e521dd668"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/582e7764e0fa389c3248450cd6db2564dd656d99",
-                "reference": "582e7764e0fa389c3248450cd6db2564dd656d99",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/785dbe7d78c60e9478770dc42db5495e521dd668",
+                "reference": "785dbe7d78c60e9478770dc42db5495e521dd668",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-07-06 21:11:49"
+            "time": "2017-07-13 19:06:25"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -3492,16 +3492,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "5.11.0",
+            "version": "5.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "6887cc761df5b011bce5460ad643e846ad8a5548"
+                "reference": "7afdd2c6705220a09d2954b45b929d7be46d290b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/6887cc761df5b011bce5460ad643e846ad8a5548",
-                "reference": "6887cc761df5b011bce5460ad643e846ad8a5548",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/7afdd2c6705220a09d2954b45b929d7be46d290b",
+                "reference": "7afdd2c6705220a09d2954b45b929d7be46d290b",
                 "shasum": ""
             },
             "require": {
@@ -3534,7 +3534,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2017-06-16 20:19:46"
+            "time": "2017-07-13 23:57:30"
         },
         {
             "name": "tymon/jwt-auth",
