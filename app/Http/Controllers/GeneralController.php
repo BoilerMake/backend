@@ -24,7 +24,7 @@ class GeneralController extends Controller
      */
     public function ping()
     {
-        return ['pong'];
+        return response()->success(['pong']);
     }
 
     public function info()
@@ -83,7 +83,7 @@ class GeneralController extends Controller
         }
         $locs = School::where('name', 'like', '%'.$filter.'%')->orWhere('name', 'Other/School not listed')->get();
 
-        return $locs;
+        return response()->success($locs);
     }
 
     /**
@@ -126,44 +126,14 @@ class GeneralController extends Controller
         return response()->error('you were already signed up!');
     }
 
-    /**
-     * Pre signs an S3 URL pointing to a given user id.
-     * @param $id user ID
-     * @param string $method GET or PUT
-     * @return string the signed
-     * @codeCoverageIgnore
-     */
-    public static function resumeUrl($id, $method)
-    {
-        $s3 = AWS::createClient('s3');
-        switch ($method) {
-            case 'get':
-                $cmd = $s3->getCommand('getObject', [
-                    'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
-                    'ResponseContentType' => 'application/pdf',
-                ]);
-                break;
-            case 'put':
-                $cmd = $s3->getCommand('PutObject', [
-                'Bucket' => getenv('S3_BUCKET'),
-                'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
-                ]);
-                break;
-        }
-        $request = $s3->createPresignedRequest($cmd, '+7 days');
-
-        return (string) $request->getUri();
-    }
-
     public function getEvents()
     {
-        return Event::where('hidden', 0)->orderBy('begin')->get(['id', 'title', 'description', 'begin', 'end']);
+        return response()->success(Event::where('hidden', 0)->orderBy('begin')->get(['id', 'title', 'description', 'begin', 'end']));
     }
 
     public function getAnnouncements()
     {
-        return Announcement::orderBy('created_at', 'DESC')->get();
+        return response()->success(Announcement::orderBy('created_at', 'DESC')->get());
     }
 
     public function getActivity()

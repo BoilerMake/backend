@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use AWS;
 use Log;
 use Hash;
 use Mail;
@@ -143,13 +144,13 @@ class User extends Authenticatable
 
     /**
      * @param bool $execInfo
-     * @return Application
+     * @return Application|null
      */
     public function getApplication($execInfo = false)
     {
-        //TODO: make sure user is a hacker
         if (! $this->hasRole(self::ROLE_HACKER)) {
             Log::error("tried to get application for user {$this->id}, but they are not a hacker");
+            return null;
         }
 
         if ($execInfo) {
@@ -168,7 +169,37 @@ class User extends Authenticatable
     public function getToken()
     {
         $roles = $this->roles()->get()->pluck('name');
-
         return JWTAuth::fromUser($this, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$this->slug(), 'user_id'=>$this->id]);
+    }
+
+    /**
+     * Pre signs an S3 URL pointing to a given user id.
+     * @param $id user ID
+     * @param string $method GET or PUT
+     * @return string the signed
+     * @codeCoverageIgnore
+     */
+    public function resumeURL($method = 'get')
+    {
+        $id = $this->id;
+        $s3 = AWS::createClient('s3');
+        switch ($method) {
+            case 'get':
+                $cmd = $s3->getCommand('getObject', [
+                    'Bucket' => getenv('S3_BUCKET'),
+                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
+                    'ResponseContentType' => 'application/pdf',
+                ]);
+                break;
+            case 'put':
+                $cmd = $s3->getCommand('PutObject', [
+                    'Bucket' => getenv('S3_BUCKET'),
+                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
+                ]);
+                break;
+        }
+        $request = $s3->createPresignedRequest($cmd, '+7 days');
+
+        return (string) $request->getUri();
     }
 }

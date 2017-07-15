@@ -17,8 +17,7 @@ class ApplicationsTest extends TestCase
     {
         $faker = \Faker\Factory::create();
         $user = $this->makeTestUser();
-        $token = $user->getToken();
-        $response = $this->json('GET', '/v1/users/me/application', [], ['HTTP_Authorization' => 'Bearer '.$token]);
+        $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
         $response->assertStatus(200)->assertJson(['success' => true]);
         $data = $response->json()['data'];
         $application = $data['application'];
@@ -33,7 +32,7 @@ class ApplicationsTest extends TestCase
         $application[Application::FIELD_LINKEDIN] = $linedinVal;
         $application[Application::FIELD_GITHUB] = $github;
 
-        $response = $this->json('PUT', '/v1/users/me/application', $application, ['HTTP_Authorization' => 'Bearer '.$token]);
+        $response = $this->jsonWithAuth('PUT', '/v1/users/me/application', $application, $user);
         $response->assertStatus(200)->assertJson(['success' => true]);
 //        $data = $response->json()['data'];
 
@@ -54,17 +53,16 @@ class ApplicationsTest extends TestCase
     public function testLeakingDecisions()
     {
         $user = $this->makeTestUser();
-        $token = $user->getToken();
 
         $release = Application::PHASE_DECISIONS_REVEALED;
         putenv("APP_PHASE={$release}");
-        $response = $this->json('GET', '/v1/users/me/application', [], ['HTTP_Authorization' => 'Bearer '.$token]);
+        $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
         $application = $response->json()['data']['application'];
         $this->assertTrue(array_key_exists(Application::FIELD_DECISION, $application));
 
         $hide = Application::PHASE_APPLICATIONS_OPEN;
         putenv("APP_PHASE={$hide}");
-        $response = $this->json('GET', '/v1/users/me/application', [], ['HTTP_Authorization' => 'Bearer '.$token]);
+        $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
         $application = $response->json()['data']['application'];
         $this->assertFalse(array_key_exists(Application::FIELD_DECISION, $application));
     }

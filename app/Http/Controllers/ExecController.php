@@ -172,7 +172,7 @@ class ExecController extends Controller
         $user = Auth::user();
         $app = Application::with('user', 'school', 'team', 'notes.user')->find($id);
 
-        $app->resumeURL = GeneralController::resumeUrl($app->user->id, 'get');
+        $app->resumeURL = $app->user->resumeURL();
         $app->myrating = ApplicationRating::where('application_id', $id)->where('user_id', $user->id)->first();
         $app['validation'] = $app->validationDetails();
         $app->github_summary = $app->getGithubSummary();

@@ -16,4 +16,7 @@ abstract class TestCase extends BaseTestCase
 
         return User::addNew($email, null, false);
     }
+    public function jsonWithAuth($method, $url, $params,User $user) {
+        return $this->json($method, $url, $params, ['HTTP_Authorization' => 'Bearer '.$user->getToken()]);
+    }
 }

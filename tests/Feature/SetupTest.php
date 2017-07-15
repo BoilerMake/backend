@@ -27,7 +27,13 @@ class SetupTest extends TestCase
     {
         $response = $this->call('GET', '/v1/ping');
         $response->assertStatus(200);
-        $response->assertSee('pong');
+        $response->assertJsonFragment(['pong']);
+    }
+
+    public function test404()
+    {
+        $response = $this->call('GET', '/v1/missingroute');
+        $response->assertStatus(404);
     }
 
     public function testSamiDocs()
