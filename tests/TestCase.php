@@ -9,15 +9,18 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    public function makeTestUser($email=null)
+    public function makeTestUser($email = null)
     {
         $faker = \Faker\Factory::create();
-        if(!$email)
+        if (! $email) {
             $email = $faker->email;
+        }
 
         return User::addNew($email, null, false);
     }
-    public function jsonWithAuth($method, $url, $params,User $user) {
+
+    public function jsonWithAuth($method, $url, $params, User $user)
+    {
         return $this->json($method, $url, $params, ['HTTP_Authorization' => 'Bearer '.$user->getToken()]);
     }
 }
