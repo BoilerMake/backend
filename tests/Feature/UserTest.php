@@ -23,16 +23,16 @@ class UserTest extends TestCase
 
         $data = $response->json()['data'];
         $email = $user->email;
-        $this->assertEquals($email,$data['email']);
+        $this->assertEquals($email, $data['email']);
 
         $faker = \Faker\Factory::create();
         $firstName = $faker->firstName;
         $data[User::FIELD_FIRSTNAME] = $firstName;
 
         $response = $this->json('PUT', '/v1/users/me', $data, ['HTTP_Authorization' => 'Bearer '.$token]);
-        $this->assertDatabaseHas('users',[
+        $this->assertDatabaseHas('users', [
             'id'=>$user->id,
-            User::FIELD_FIRSTNAME=>$firstName
+            User::FIELD_FIRSTNAME=>$firstName,
         ]);
     }
 }
