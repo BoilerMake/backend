@@ -24,7 +24,7 @@ class Application extends Model
     const USER_FIELDS_TO_INJECT = [
         User::FIELD_FIRSTNAME,
         User::FIELD_LASTNAME,
-        User::FIELD_EMAIL
+        User::FIELD_EMAIL,
     ];
 
     const FIELD_GENDER = 'gender';
@@ -119,7 +119,7 @@ class Application extends Model
     {
         $reasons = [];
         $phase = intval(getenv('APP_PHASE'));
-        if ($phase >= Application::PHASE_APPLICATIONS_OPEN) {
+        if ($phase >= self::PHASE_APPLICATIONS_OPEN) {
             if (! $this->user->first_name) {
                 $reasons[] = 'First name not set.';
             }
@@ -154,7 +154,7 @@ class Application extends Model
                 $reasons[] = 'Race not provided.';
             }
         }
-        if ($phase >= Application::PHASE_DECISIONS_REVEALED) {
+        if ($phase >= self::PHASE_DECISIONS_REVEALED) {
             if (! $this->diet) {
                 $reasons[] = 'Dietary info not provided';
             }
@@ -176,7 +176,7 @@ class Application extends Model
     }
 
     /**
-     * Pulls in some github info
+     * Pulls in some github info.
      * @return array|mixed
      * @codeCoverageIgnore
      */

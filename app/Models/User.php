@@ -25,15 +25,15 @@ class User extends Authenticatable
         'first_name', 'last_name', 'email', 'password',
     ];
 
-    protected $hidden = [ 'password' ];
+    protected $hidden = ['password'];
     protected $appends = ['launch', 'name'];
 
     const ROLE_HACKER = 'hacker';
 
-    const FIELD_EMAIL = "email";
-    const FIELD_FIRSTNAME = "first_name";
-    const FIELD_LASTNAME = "last_name";
-    const FIELD_PHONE = "phone";
+    const FIELD_EMAIL = 'email';
+    const FIELD_FIRSTNAME = 'first_name';
+    const FIELD_LASTNAME = 'last_name';
+    const FIELD_PHONE = 'phone';
 
     public function getLaunchAttribute()
     {
