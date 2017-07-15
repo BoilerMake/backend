@@ -144,52 +144,28 @@ class AuthController extends Controller
 
         return response()->success('Success! password updated for '.$user->email);
     }
-    private function getGithubAuthToken($code) {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', 'https://github.com/login/oauth/access_token', [
-            'form_params' => [
-                'client_id'     => env('GITHUB_CLIENT_ID'),
-                'client_secret' => env('GITHUB_CLIENT_SECRET'),
-                'code'          => $code
-            ],
-            'headers' => [
-                'Accept' => 'application/json'
-            ]
-        ]);
-        //TODO: error handling
-        $result = json_decode($response->getBody(), true);
-        Log::info('githubAuth result from getting acccess token',$result);
-        if(isset($result['error'])) {
-            //todo: handle error here...
-            Log::info('githubAuth access token fetching error');
-            return false;
-        }
-        $access_token = $result['access_token'];
-        return $access_token;
-    }
+
+    /**
+     * @codeCoverageIgnore
+     * @param $code
+     * @return mixed
+     */
     public function githubAuth($code) {
-        $gitHub_token = $this->getGithubAuthToken($code);
+        $gitHub_token = GithubUser::getGithubAuthToken($code);
         if(!$gitHub_token) {
             //todo: handle error here...
             return response()->error('github error');
         }
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', "https://api.github.com/user?access_token={$gitHub_token}", [
-            'headers' => [
-                'Accept' => 'application/json'
-            ]
-        ]);
-        $result = json_decode($response->getBody(), true);
-        Log::info("githubAuth: user API response",$result);
-        $githubUser = GithubUser::store($result,$gitHub_token);
-        $username = $githubUser->username;
+        $githubUser = GithubUser::fetchFromOauthToken($gitHub_token);
 
-        if(!isset($result['email'])) {
+        //todo: strengthen this: ensure that user gave us the email scope / that we have email
+        if(!$githubUser->email) {
             Log::info("githubAuth: user didn't give email scope :(");
             //eek no email permissions scope
             return response()->error('no email scope :(');
         }
 
+        //do we have a user logged in already (e.g. if they are linking their GH)
         try {
             $loggedInUser = JWTAuth::parseToken()->toUser();
         } catch (\Exception $e) {
@@ -197,13 +173,14 @@ class AuthController extends Controller
         }
 
         $email = $githubUser->email;
+        $username = $githubUser->username;
         $doesUserExistAlready = User::isEmailUsed($email) || Application::where('github',$username)->exists();
-        $action = null;
 
+        //decide if we want to link, login, or create a User
+        $action = null;
         if($loggedInUser) {
             $action = 'link';
             Log::info("githubAuth: user #{$loggedInUser->id} is already logged in, so we should link account");
-            //todo: link to existing account if user is logged in
             $user = $loggedInUser;
         } else if($doesUserExistAlready) {
             //User exists, we are doing a login action
@@ -219,22 +196,25 @@ class AuthController extends Controller
             $user = User::addNew($email,null,false);
         }
         $user->github_user_id = $githubUser->id;
-        $user->save();
+        Log::info("githubAuth success, action={$action}",['user_id'=>$user->id]);
+
+        //autofill names
         if(!$user->first_name && !$user->last_name) {
             //we don't want to overwrite names, just autofill them if they are null
-            $nameParts = explode(" ",$result['name']);
+            $nameParts = explode(" ",$githubUser->name);
             $user->first_name = $nameParts[0];
             $user->last_name = isset($nameParts[1]) ? $nameParts[1] : null; //edge case: name on GH is only one word.
-
-
         }
+
+        //if user is a hacker, fill out some of their application
         if($user->hasRole(User::ROLE_HACKER)) {
             $application = $user->getApplication();
             $application->github = $username;
             $application->has_no_github = false;
             $application->save();
-            Log::info("Saved GH username {$username} int aapplication",['user_id'=>$user->id, 'application_id'=>$application->id]);
+            Log::info("Saved GH username {$username} int application",['user_id'=>$user->id, 'application_id'=>$application->id]);
         }
+        $user->save();
 
         return response()->success([
             'token'=>$user->getToken(),

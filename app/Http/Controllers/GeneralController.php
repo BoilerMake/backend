@@ -127,6 +127,7 @@ class GeneralController extends Controller
      * @param $id user ID
      * @param string $method GET or PUT
      * @return string the signed
+     * @codeCoverageIgnore
      */
     public static function resumeUrl($id, $method)
     {

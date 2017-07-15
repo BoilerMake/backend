@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\GithubUser;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\User;
@@ -17,14 +18,18 @@ class AuthTest extends TestCase
     {
         $faker = \Faker\Factory::create();
         $password = $faker->password;
-        $email = $faker->email;
         $this->post('/v1/users/register', ['email' => $faker->email])
             ->assertSee('["The password field is required."]');
         $this->post('/v1/users/register', ['password' => $password])
             ->assertSee('["The email field is required."]');
-        $this->post('/v1/users/register', ['password' => $password, 'email' => $faker->email])
+        //this one should succeed
+        $email = $faker->email;
+        $this->post('/v1/users/register', ['password' => $password, 'email' => $email])
             ->assertJsonStructure(['data'=>['token']]);
-
+        //and now we can't sign up with same email
+        $this->post('/v1/users/register', ['password' => $password, 'email' => $email])
+            ->assertJsonFragment(['success'=>false]);
+        //need a password
         $this->post('/v1/users/register', ['password' => '', 'email' => $faker->email])
             ->assertJsonFragment(['success'=>false]);
     }
@@ -167,5 +172,44 @@ class AuthTest extends TestCase
             ->assertJsonStructure(['data'=>['token']]);
 
 //        $token = json_decode($response->getContent(), true)['data']['token'];
+    }
+    public function testSavingGithub() {
+        $faker = \Faker\Factory::create();
+        $token = $faker->uuid;
+        $username = $faker->userName;
+        $data = ["login" => $username,
+            "id" => 707582,
+            "avatar_url" => "https://avatars5.githubusercontent.com/u/707582?v=4",
+            "gravatar_id" => "",
+            "url" => "https://api.github.com/users/{$username}",
+            "html_url" => "https://github.com/{$username}",
+            "followers_url" => "https://api.github.com/users/{$username}/followers",
+            "following_url" => "https://api.github.com/users/{$username}/following{/other_user}",
+            "gists_url" => "https://api.github.com/users/{$username}/gists{/gist_id}",
+            "starred_url" => "https://api.github.com/users/{$username}/starred{/owner}{/repo}",
+            "subscriptions_url" => "https://api.github.com/users/{$username}/subscriptions",
+            "organizations_url" => "https://api.github.com/users/{$username}/orgs",
+            "repos_url" => "https://api.github.com/users/{$username}/repos",
+            "events_url" => "https://api.github.com/users/{$username}/events{/privacy}",
+            "received_events_url" => "https://api.github.com/users/{$username}/received_events",
+            "type" => "User",
+            "site_admin" => false,
+            "name" => $faker->name,
+            "company" => "asdfg ",
+            "blog" => "http://{$username}.com",
+            "location" => "Purdue",
+            "email" => "user@{$username}.com",
+            "hireable" => true,
+            "bio" => "bioo",
+            "public_repos" => 33,
+            "public_gists" => 12,
+            "followers" => 41,
+            "following" => 34,
+            "created_at" => "2011-04-04T03:27:14Z",
+            "updated_at" => "2017-07-12T17:00:01Z"
+        ];
+        GithubUser::store($data,$token);
+        $this->assertDatabaseHas('github_users', ['username' => $username]);
+
     }
 }
