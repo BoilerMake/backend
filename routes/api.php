@@ -19,7 +19,9 @@ Route::any('/', 'GeneralController@info');
 Route::get('/docs', function () {
     return File::get(public_path().'/docs/index.html');
 });
+//used by sponsors.boilermake.org/packet/{secret}
 Route::get('packet/{secret}', 'SponsorsController@packet');
+
 /*
  * API ROUTES
  */
@@ -32,10 +34,6 @@ Route::prefix('v1')->group(function () {
     //signup form
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup', 'GeneralController@interestSignup');
-
-    //why is this here
-    Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);
-    Route::get('calendar', 'ExecController@generateCalendar');
 
     //day-of routes
     Route::get('events', 'GeneralController@getEvents');
@@ -58,7 +56,7 @@ Route::prefix('v1')->group(function () {
         //get update me
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
-        //returns URL to PUT upload resume pdf to
+
         Route::middleware(['hackersOnly'])->group(function () {
             //user application
             Route::get('application', 'UsersController@getApplication');
@@ -93,6 +91,10 @@ Route::prefix('v1')->group(function () {
         Route::post('events/create', 'ExecController@createEvent');
         Route::post('events/{event}/update', 'ExecController@editEvent');
         Route::post('events/{event}/delete', 'ExecController@deleteEvent');
+
+        //?
+        Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);
+        Route::get('calendar', 'ExecController@generateCalendar');
     });
 
     /*

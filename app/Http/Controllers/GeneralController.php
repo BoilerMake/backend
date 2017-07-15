@@ -76,7 +76,7 @@ class GeneralController extends Controller
 
     public function getSchools(Request $request)
     {
-        $filter = $request->input('filter');
+        $filter = Request::get('filter');
         if (! $filter) {
             $filter = '';
         }
@@ -87,10 +87,12 @@ class GeneralController extends Controller
 
     /**
      * Handles an incoming SMS from twillio.
+     * @deprecated
+     * @codeCoverageIgnore
      */
     public function inboundSMS()
     {
-        $input = Input::all();
+        $input = Request::all();
 
         $phone = $input['From'];
         $user_id = null;

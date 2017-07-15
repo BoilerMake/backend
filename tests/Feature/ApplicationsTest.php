@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\School;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Application;
@@ -77,7 +78,19 @@ class ApplicationsTest extends TestCase
         $this->assertNotEquals($purdueStudent->hintSchoolIdFromEmail(), null);
         $this->assertEquals($otherStudent->hintSchoolIdFromEmail(), null);
     }
+    public function testGetSchools() {
+        $response = $this->json('GET', '/v1/schools', []);
+        $response->assertStatus(200);
+        $num = School::count();
+        $this->assertEquals($num,count($response->json()['data']));
 
+        $randomSchool = School::inRandomOrder()->first();
+        $response = $this->json('GET', '/v1/schools', ['filter'=>$randomSchool->name]);
+        $response->assertStatus(200);
+        //we will expect 2 here, because of "Other/School not Listed"
+
+        $this->assertEquals(2,count($response->json()['data']));
+    }
 //    public function testGetApplicationEmailNotConfirmed() {
 //
 //    }
