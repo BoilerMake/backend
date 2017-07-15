@@ -17,8 +17,6 @@ class Kernel extends ConsoleKernel
         Commands\CreateUser::class,
         Commands\PodPodKey::class,
         Commands\JWTKey::class,
-        Commands\CalculateApplications::class,
-        Commands\ProcessExpiredRSVP::class,
         Commands\AcceptDrivingHackers::class,
         Commands\GenerateEmailTodo::class,
         Commands\BusRoster::class,
@@ -36,7 +34,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')->hourly();
         $schedule->command('applications:calculate')->everyFiveMinutes();
 //        $schedule->command('users:github')->everyFiveMinutes();
         $schedule->command('applications:expiredrsvp')->hourly();

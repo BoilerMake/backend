@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Application;
+use Carbon\Carbon;
 use Illuminate\Foundation\Inspiring;
 
 /*
@@ -13,6 +15,23 @@ use Illuminate\Foundation\Inspiring;
 |
 */
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->describe('Display an inspiring quote');
+Artisan::command('applications:calculate', function () {
+    foreach (Application::all() as $app) {
+        $app->completed_calculated = $app->completed;
+        $app->save();
+    }
+})->describe('calculate application status and put it in the DB');
+
+Artisan::command('applications:expiredrsvp', function () {
+    $expiredAppsIds = [];
+    foreach (Application::where('decision', Application::DECISION_ACCEPT)->whereNull('rsvp')->get() as $app) {
+        if (Carbon::parse($app->rsvp_deadline)->lt(Carbon::now())) {
+            $app->decision = Application::DECISION_EXPIRED;
+            $app->save();
+            $expiredAppsIds[]=$app->id;
+        }
+    }
+    $message = "ExpiredRSVP: ".sizeof($expiredAppsIds)." applications expired";
+    $this->comment($message);
+    Log::info($message,['application_ids'=>$expiredAppsIds]);
+})->describe('process expired RSVPs');
