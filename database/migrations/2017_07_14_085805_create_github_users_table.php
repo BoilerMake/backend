@@ -25,7 +25,7 @@ class CreateGithubUsersTable extends Migration
             $table->string('blog')->nullable();
             $table->string('location')->nullable();
             $table->string('email')->nullable();
-            $table->text('bio')->nullable();;
+            $table->text('bio')->nullable();
             $table->integer('public_repos')->default(0);
             $table->integer('public_gists')->default(0);
             $table->integer('followers')->default(0);

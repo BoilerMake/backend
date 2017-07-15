@@ -36,7 +36,7 @@ class ResponseServiceProvider extends ServiceProvider
 
         //determine if we want to return debug info, based on x-debug-token, which gets set via React cookie.
         $providedDebugToken = isset(Request::header()['x-debug-token']) ? Request::header()['x-debug-token'][0] : null;
-        $shouldDebugRequest = ($providedDebugToken && $providedDebugToken === env('DEBUG_TOKEN') || (env('APP_ENV') !== "production"));
+        $shouldDebugRequest = ($providedDebugToken && $providedDebugToken === env('DEBUG_TOKEN') || (env('APP_ENV') !== 'production'));
 
         Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest) {
             Log::info('api_request', ['request' => $requestInfo]);
