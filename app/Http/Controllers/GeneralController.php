@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use AWS;
 use Log;
 use JWTAuth;
 use Request;
