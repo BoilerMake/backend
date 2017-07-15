@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
     {
         if($exception instanceof NotFoundHttpException)
         {
-            return response()->error('Route not found', 404);
+            return response()->error('Route not found', 404, 404);
         }
         return parent::render($request, $exception);
     }

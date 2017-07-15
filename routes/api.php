@@ -64,8 +64,6 @@ Route::prefix('v1')->group(function () {
             Route::get('application', 'UsersController@getApplication');
             Route::put('application', 'UsersController@updateApplication');
 
-            Route::get('resumePUT', 'UsersController@getResumePutUrl');
-
             //user puzzle status
             Route::post('puzzles', 'UsersController@completePuzzle');
             Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');

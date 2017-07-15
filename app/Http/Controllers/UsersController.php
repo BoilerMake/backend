@@ -101,11 +101,13 @@ class UsersController extends Controller
     {
         $user = Auth::user();
         $application = $user->getApplication();
-//        $application['skills'] = json_decode($application->skills, true);
+        $application['skills'] = json_decode($application->skills, true);
 
         foreach (Application::USER_FIELDS_TO_INJECT as $x) {
             $application[$x] = $user->$x;
         }
+        $application['resume_get_url'] = $application[Application::FIELD_RESUME_UPLOADED_FLAG] ? $application->user->resumeURL() : null;
+        $application['resume_put_url'] = $application->user->resumeURL('put');
 
         $phase = intval(getenv('APP_PHASE'));
         if ($phase < Application::PHASE_DECISIONS_REVEALED) {
@@ -114,18 +116,11 @@ class UsersController extends Controller
         }
 
         return response()->success([
-            'application'     => $application,
-            'validation'      => $application->validationDetails(),
-            'phase'           => $phase,
-            'resume_view_url' => $application[Application::FIELD_RESUME_UPLOADED_FLAG] ? $application->user->resumeURL() : null,
+            'application' => $application,
+            'validation'  => $application->validationDetails(),
+            'phase'       => $phase,
         ]);
     }
-
-    public function getResumePutUrl()
-    {
-        return response()->success(Auth::user()->resumeUrl('put'));
-    }
-
 //    public function completePuzzle(Request $request)
 //    {
 //        if (! Auth::user()) {
