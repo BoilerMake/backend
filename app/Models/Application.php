@@ -16,13 +16,49 @@ class Application extends Model
     const DECISION_WAITLIST = 2;
     const DECISION_REJECT = 1;
     const DECISION_UNDECIDED = 0;
+
+    const PHASE_INTEREST_SIGNUPS = 1;
+    const PHASE_APPLICATIONS_OPEN = 2;
+    const PHASE_DECISIONS_REVEALED = 3;
+
+    const USER_FIELDS_TO_INJECT = [
+        User::FIELD_FIRSTNAME,
+        User::FIELD_LASTNAME,
+        User::FIELD_EMAIL
+    ];
+
+    const FIELD_GENDER = 'gender';
+    const FIELD_MAJOR = 'major';
+    const FIELD_GRAD_YEAR = 'grad_year';
+    const FIELD_DIET = 'diet';
+    const FIELD_DIET_RESTRICTIONS = 'diet_restrictions';
+    const FIELD_GITHUB = 'github';
+    const FIELD_LINKEDIN = 'linkedin';
+    const FIELD_RESUME_FILENAME = 'resume_filename';
+    const FIELD_RESUME_UPLOADED_FLAG = 'resume_uploaded';
+    const FIELD_RSVP_FLAG = 'rsvp';
+    const FIELD_NEEDS_TRAVEL_REIMBURSEMENT = 'needsTravelReimbursement';
+    const FIELD_IS_FIRST_HACKATHON = 'isFirstHackathon';
+    const FIELD_RACE = 'race';
+    const FIELD_HAS_NO_GITHUB = 'has_no_github';
+    const FIELD_COMPLETED_CALCULATED = 'completed_calculated';
+    const FIELD_SKILLS = 'skills';
+    const FIELD_RSVP_DEADLINE = 'rsvp_deadline';
+    const FIELD_HAS_NO_LINKEDIN = 'has_no_linkedin';
+    const FIELD_EMAILED_DECISION = 'emailed_decision';
+    const FIELD_DECISION = 'decision';
+    const FIELD_CHECKED_IN_AT = 'checked_in_at';
+    const FIELD_GITHUB_ETAG = 'github_etag';
+
     public $schoolinfo = null;
+
     protected $dates = [
         'created_at',
         'updated_at',
-        'rsvp_deadline',
+        self::FIELD_RSVP_DEADLINE,
     ];
-    protected $fillable = ['user_id', 'age', 'gender', 'major', 'grad_year', 'diet', 'diet_restrictions', 'tshirt', 'phone', 'created_at', 'updated_at', 'deleted_at'];
+    protected $guarded = ['id'];
+    protected $appends = ['completed', 'reviews'];
 
     public function user()
     {
@@ -74,8 +110,6 @@ class Application extends Model
         ];
     }
 
-    protected $appends = ['completed', 'reviews'];
-
     public function getCompletedAttribute()
     {
         return $this->validationDetails()['valid'];
@@ -85,7 +119,7 @@ class Application extends Model
     {
         $reasons = [];
         $phase = intval(getenv('APP_PHASE'));
-        if ($phase >= 2) {
+        if ($phase >= Application::PHASE_APPLICATIONS_OPEN) {
             if (! $this->user->first_name) {
                 $reasons[] = 'First name not set.';
             }
@@ -120,7 +154,7 @@ class Application extends Model
                 $reasons[] = 'Race not provided.';
             }
         }
-        if ($phase >= 3) {
+        if ($phase >= Application::PHASE_DECISIONS_REVEALED) {
             if (! $this->diet) {
                 $reasons[] = 'Dietary info not provided';
             }
@@ -141,6 +175,11 @@ class Application extends Model
         return ApplicationRating::where('application_id', $this->id)->get()->count();
     }
 
+    /**
+     * Pulls in some github info
+     * @return array|mixed
+     * @codeCoverageIgnore
+     */
     public function getGithubSummary()
     {
         $github_username = $this->github;
@@ -171,7 +210,6 @@ class Application extends Model
                 'url'=>$each['html_url'],
                 'full_name'=>$each['full_name'],
                 'language'=>$each['language'],
-                'description'=>$each['description'],
                 'description'=>$each['description'],
             ];
         }

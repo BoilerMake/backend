@@ -54,7 +54,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        if (intval(config('app.phase')) < 2) {
+        if (intval(config('app.phase')) < Application::PHASE_APPLICATIONS_OPEN) {
             return response()->error('applications are not open');
         }
 

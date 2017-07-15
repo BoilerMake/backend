@@ -55,18 +55,21 @@ Route::prefix('v1')->group(function () {
      * User routes
      */
     Route::middleware(['jwt.auth'])->prefix('users/me')->group(function () {
-
         //get update me
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
         //returns URL to PUT upload resume pdf to
-        Route::get('resumePUT', 'UsersController@getResumePutUrl');
-        //user application
-        Route::get('application', 'UsersController@getApplication');
-        Route::post('application', 'UsersController@updateApplication');
-        //user puzzle sdtatus
-        Route::post('puzzles', 'UsersController@completePuzzle');
-        Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
+        Route::middleware(['hackersOnly'])->group(function () {
+            //user application
+            Route::get('application', 'UsersController@getApplication');
+            Route::put('application', 'UsersController@updateApplication');
+
+            Route::get('resumePUT', 'UsersController@getResumePutUrl');
+
+            //user puzzle status
+            Route::post('puzzles', 'UsersController@completePuzzle');
+            Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
+        });
     });
     /*
      * Exec routes

@@ -25,18 +25,15 @@ class User extends Authenticatable
         'first_name', 'last_name', 'email', 'password',
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
-
+    protected $hidden = [ 'password' ];
     protected $appends = ['launch', 'name'];
 
     const ROLE_HACKER = "hacker";
+
+    const FIELD_EMAIL = "email";
+    const FIELD_FIRSTNAME = "first_name";
+    const FIELD_LASTNAME = "last_name";
+    const FIELD_PHONE = "phone";
 
     public function getLaunchAttribute()
     {
@@ -45,7 +42,7 @@ class User extends Authenticatable
 
     public function getNameAttribute()
     {
-        return $this->first_name.' '.$this->last_name;
+        return "{$this->first_name} {$this->last_name}";
     }
 
     /**
@@ -141,6 +138,10 @@ class User extends Authenticatable
         $n->sendEmail('BoilerMake Password Reset!', 'password-reset', ['token_url'=>getenv('FRONTEND_ADDRESS').'/pwr?tok='.$token]);
     }
 
+    /**
+     * @param bool $execInfo
+     * @return Application
+     */
     public function getApplication($execInfo = false)
     {
         //TODO: make sure user is a hacker

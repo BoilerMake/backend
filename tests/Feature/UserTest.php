@@ -12,13 +12,27 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testGetUser()
+    public function testGetUpdateUser()
     {
-        $user = factory(User::class)->create();
+        $user = $this->makeTestUser();
         $token = $user->getToken();
         $response = $this->json('GET', '/v1/users/me', [], ['HTTP_Authorization' => 'Bearer '.$token]);
         $response
             ->assertStatus(200)
             ->assertJson(['success' => true]);
+
+        $data = $response->json()['data'];
+        $email = $user->email;
+        $this->assertEquals($email,$data['email']);
+
+        $faker = \Faker\Factory::create();
+        $firstName = $faker->firstName;
+        $data[User::FIELD_FIRSTNAME] = $firstName;
+
+        $response = $this->json('PUT', '/v1/users/me', $data, ['HTTP_Authorization' => 'Bearer '.$token]);
+        $this->assertDatabaseHas('users',[
+            'id'=>$user->id,
+            User::FIELD_FIRSTNAME=>$firstName
+        ]);
     }
 }
