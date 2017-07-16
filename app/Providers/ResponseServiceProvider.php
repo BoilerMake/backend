@@ -32,6 +32,7 @@ class ResponseServiceProvider extends ServiceProvider
             'user' => $user,
             'success' => true,
             'code' => 200,
+            'timing_ms' => round(1000*(microtime(true)-LARAVEL_START)),
         ];
 
         //determine if we want to return debug info, based on x-debug-token, which gets set via React cookie.
