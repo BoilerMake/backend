@@ -78,17 +78,17 @@ class AuthController extends Controller
      * @param  Request $request: code
      * @return string status message
      */
-    public function confirmEmail(Request $request)
+    public function confirmEmail($code=null)
     {
-        if (! isset($request->code)) {
+        if (!$code) {
             return response()->error('Code is required');
         }
-        $user = User::where('confirmation_code', $request->code)->first();
+        $user = User::where('confirmation_code', $code)->first();
         if ($user) {
             $user->confirmed = 1;
             $user->save();
-
-            return response()->success('Email confirmed!');
+            Log::info("confirmEmail {$user->email}");
+            return response()->success(['message'=>'Email confirmed!', 'token'=>$user->getToken()]);
         }
 
         return response()->error('Code is invalid');

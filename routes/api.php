@@ -48,7 +48,7 @@ Route::prefix('v1')->group(function () {
     //password reset + account confirmation
     Route::post('users/reset/send', 'AuthController@sendPasswordReset');
     Route::post('users/reset/perform', 'AuthController@performPasswordReset');
-    Route::get('users/verify/{code?}', 'AuthController@confirmEmail');
+    Route::post('users/verify/{code?}', 'AuthController@confirmEmail');
     /*
      * User routes
      */

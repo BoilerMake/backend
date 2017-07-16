@@ -65,14 +65,15 @@ class User extends Authenticatable
         $user->password = Hash::make($password);
         $user->email = $email;
         $user->save();
+        Log::info("User::addNew",['user_id'=>$user->id]);
         $user->postSignupActions($roles); // Attach roles
-
         if ($needToConfirmEmail) {
-            $code = str_random(24);
+            $code = str_random(10);
             $user->confirmation_code = $code;
-            $link = env('FRONTEND_ADDRESS').'/confirm?tok='.$code;
+            $link = env('FRONTEND_ADDRESS').'/confirm/'.$code;
             //todo: clean up this email building
-            Mail::to($user->email)->send(new UserRegistration($user, $link));
+            Log::info("going to send UserRegistration to user_id {$user->id}, email {$email} ",['user_id'=>$user->id]);
+            Mail::to($email)->send(new UserRegistration($user, $link));
         } else {
             $user->confirmed = true;
         }
