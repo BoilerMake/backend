@@ -51,7 +51,8 @@ class GeneralController extends Controller
         $eventName = Request::get('event');
         $subtitle = Request::get('subtitle');
         $client = Request::get('client');
-        $uuid = isset(Request::header()['x-uuid']) ? Request::header()['x-uuid'][0] : null;
+        $uuid = Request::header('x-uuid');
+
         $stat = UserStat::create([
             'user_id'           => $user_id,
             'event'             => $eventName,
@@ -59,8 +60,8 @@ class GeneralController extends Controller
             'context'           => Request::get('context'),
             'uuid'              => $uuid,
             'client_ip'         => Request::ip(),
-            'client_useragent'  => Request::header()['user-agent'][0],
-            'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
+            'client_useragent'  => Request::header('user-agent'),
+            'client_referer'    => Request::header('referer')
         ]);
         Log::info('UserStatRecorded', [
             'user_id'  => $user_id,

@@ -150,6 +150,10 @@ class AuthController extends Controller
      */
     public function githubAuth($code)
     {
+        if (intval(config('app.phase')) < Application::PHASE_APPLICATIONS_OPEN) {
+            return response()->error('applications are not open');
+        }
+
         $gitHub_token = GithubUser::getGithubAuthToken($code);
         if (! $gitHub_token) {
             //todo: handle error here...
@@ -197,7 +201,7 @@ class AuthController extends Controller
         $user->github_user_id = $githubUser->id;
         Log::info("githubAuth success, action={$action}", ['user_id'=>$user->id]);
 
-        //autofill names
+        //auto-fill names
         if (! $user->first_name && ! $user->last_name) {
             //we don't want to overwrite names, just autofill them if they are null
             $nameParts = explode(' ', $githubUser->name);

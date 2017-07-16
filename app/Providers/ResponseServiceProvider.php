@@ -24,28 +24,29 @@ class ResponseServiceProvider extends ServiceProvider
         }
 
         $requestInfo = [
-            'url'=>Request::fullUrl(),
-            'path'=>Request::path(),
-            'params'=>Request::all(),
-            'ip'=>Request::ip(),
-            'headers'=>Request::header(),
-            'user' => $user,
-            'success' => true,
-            'code' => 200,
+            'url'       => Request::fullUrl(),
+            'path'      => Request::path(),
+            'params'    => Request::all(),
+            'ip'        => Request::ip(),
+            'headers'   => Request::header(),
+            'user'      => $user,
+            'success'   => true,
+            'code'      => 200,
             'timing_ms' => round(1000*(microtime(true)-LARAVEL_START)),
         ];
 
         //determine if we want to return debug info, based on x-debug-token, which gets set via React cookie.
-        $providedDebugToken = isset(Request::header()['x-debug-token']) ? Request::header()['x-debug-token'][0] : null;
+        //we will also return debug info in a dev env
+        $providedDebugToken = Request::header('x-debug-token');
         $shouldDebugRequest = ($providedDebugToken && $providedDebugToken === env('DEBUG_TOKEN') || (env('APP_ENV') !== 'production'));
 
         Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest) {
             Log::info('api_request', ['request' => $requestInfo]);
 
             return Response::json([
-                'success' => true,
-                'data' => $data,
-                'request_debug' => $shouldDebugRequest ? $requestInfo : 'hidden',
+                'success'       => true,
+                'data'          => $data,
+                'request_debug' => $shouldDebugRequest ? $requestInfo : null,
             ], 200);
         });
 
@@ -55,10 +56,10 @@ class ResponseServiceProvider extends ServiceProvider
             Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
 
             return Response::json([
-                'success' => false,
-                'message' => $message, //todo: refactor to error_message?
-                'data' => $data,
-                'request_debug' => $shouldDebugRequest ? $requestInfo : 'hidden',
+                'success'       => false,
+                'message'       => $message,
+                'data'          => $data,
+                'request_debug' => $shouldDebugRequest ? $requestInfo : null,
             ], $response_code);
         });
     }
