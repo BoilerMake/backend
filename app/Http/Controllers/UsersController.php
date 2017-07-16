@@ -58,7 +58,6 @@ class UsersController extends Controller
                 Application::FIELD_DIET_RESTRICTIONS,
                 Application::FIELD_RESUME_FILENAME,
                 Application::FIELD_RESUME_UPLOADED_FLAG,
-                Application::FIELD_NEEDS_TRAVEL_REIMBURSEMENT,
                 Application::FIELD_IS_FIRST_HACKATHON,
                 Application::FIELD_HAS_NO_GITHUB,
                 Application::FIELD_HAS_NO_LINKEDIN,

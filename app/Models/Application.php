@@ -37,7 +37,6 @@ class Application extends Model
     const FIELD_RESUME_FILENAME = 'resume_filename';
     const FIELD_RESUME_UPLOADED_FLAG = 'resume_uploaded';
     const FIELD_RSVP_FLAG = 'rsvp';
-    const FIELD_NEEDS_TRAVEL_REIMBURSEMENT = 'needsTravelReimbursement';
     const FIELD_IS_FIRST_HACKATHON = 'isFirstHackathon';
     const FIELD_RACE = 'race';
     const FIELD_HAS_NO_GITHUB = 'has_no_github';
@@ -143,9 +142,6 @@ class Application extends Model
             }
             if (! ($this->major)) {
                 $reasons[] = 'Major not provided.';
-            }
-            if (! isset($this->needsTravelReimbursement)) {
-                $reasons[] = 'Travel info not provided.';
             }
             if (! isset($this->isFirstHackathon)) {
                 $reasons[] = 'First hackathon? not provided.';
