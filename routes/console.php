@@ -1,8 +1,7 @@
 <?php
 
-use App\Models\Application;
 use Carbon\Carbon;
-use Illuminate\Foundation\Inspiring;
+use App\Models\Application;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,10 +27,10 @@ Artisan::command('applications:expiredrsvp', function () {
         if (Carbon::parse($app->rsvp_deadline)->lt(Carbon::now())) {
             $app->decision = Application::DECISION_EXPIRED;
             $app->save();
-            $expiredAppsIds[]=$app->id;
+            $expiredAppsIds[] = $app->id;
         }
     }
-    $message = "ExpiredRSVP: ".sizeof($expiredAppsIds)." applications expired";
+    $message = 'ExpiredRSVP: '.count($expiredAppsIds).' applications expired';
     $this->comment($message);
-    Log::info($message,['application_ids'=>$expiredAppsIds]);
+    Log::info($message, ['application_ids'=>$expiredAppsIds]);
 })->describe('process expired RSVPs');
