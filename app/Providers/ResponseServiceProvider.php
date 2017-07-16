@@ -33,7 +33,7 @@ class ResponseServiceProvider extends ServiceProvider
             'user'      => $user,
             'success'   => true,
             'code'      => 200,
-            'timing_ms' => round(1000*(microtime(true)-LARAVEL_START)),
+            'timing_ms' => round(1000 * (microtime(true) - LARAVEL_START)),
         ];
 
         //determine if we want to return debug info, based on x-debug-token, which gets set via React cookie.
@@ -44,8 +44,9 @@ class ResponseServiceProvider extends ServiceProvider
         //if on !production, log requests only if env says to, because they are inherently verbose
         $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
         Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest, $shouldLog) {
-            if($shouldLog)
+            if ($shouldLog) {
                 Log::info('api_request', ['request' => $requestInfo]);
+            }
 
             return Response::json([
                 'success'       => true,
@@ -57,8 +58,9 @@ class ResponseServiceProvider extends ServiceProvider
         Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo, $shouldDebugRequest, $shouldLog) {
             $requestInfo['success'] = false;
             $requestInfo['code'] = $response_code;
-            if($shouldLog)
+            if ($shouldLog) {
                 Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
+            }
 
             return Response::json([
                 'success'       => false,

@@ -62,10 +62,10 @@ class GeneralController extends Controller
             'uuid'              => $uuid,
             'client_ip'         => Request::ip(),
             'client_useragent'  => Request::header('user-agent'),
-            'client_referer'    => Request::header('referer')
+            'client_referer'    => Request::header('referer'),
         ]);
         $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
-        if($shouldLog) {
+        if ($shouldLog) {
             Log::info('UserStatRecorded', [
                 'user_id' => $user_id,
                 'event' => $eventName,

@@ -8,10 +8,9 @@ use Carbon\Carbon;
 use App\Models\InterestSignup;
 
 /**
- * Slack app for BM internal use
+ * Slack app for BM internal use.
  * @codeCoverageIgnore
  * Class SlackController
- * @package App\Http\Controllers
  */
 class SlackController extends Controller
 {

@@ -11,8 +11,7 @@ use Illuminate\Console\Command;
 
 /**
  * Pulls in user github activity
- * Class GetGithubActivity
- * @package App\Console\Commands
+ * Class GetGithubActivity.
  * @codeCoverageIgnore
  */
 class GetGithubActivity extends Command

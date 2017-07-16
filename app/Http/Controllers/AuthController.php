@@ -78,9 +78,9 @@ class AuthController extends Controller
      * @param  Request $request: code
      * @return string status message
      */
-    public function confirmEmail($code=null)
+    public function confirmEmail($code = null)
     {
-        if (!$code) {
+        if (! $code) {
             return response()->error('Code is required');
         }
         $user = User::where('confirmation_code', $code)->first();
@@ -88,6 +88,7 @@ class AuthController extends Controller
             $user->confirmed = 1;
             $user->save();
             Log::info("confirmEmail {$user->email}");
+
             return response()->success(['message'=>'Email confirmed!', 'token'=>$user->getToken()]);
         }
 
