@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use Log;
 use JWTAuth;
 use Request;
@@ -63,14 +64,17 @@ class GeneralController extends Controller
             'client_useragent'  => Request::header('user-agent'),
             'client_referer'    => Request::header('referer')
         ]);
-        Log::info('UserStatRecorded', [
-            'user_id'  => $user_id,
-            'event'    => $eventName,
-            'subtitle' => $subtitle,
-            'uuid'     => $uuid,
-            'client'   => $client,
-            'id'       => $stat->id,
-        ]);
+        $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
+        if($shouldLog) {
+            Log::info('UserStatRecorded', [
+                'user_id' => $user_id,
+                'event' => $eventName,
+                'subtitle' => $subtitle,
+                'uuid' => $uuid,
+                'client' => $client,
+                'id' => $stat->id,
+            ]);
+        }
 
         return response()->success($stat);
     }

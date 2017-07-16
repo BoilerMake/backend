@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App;
 use Log;
 use Request;
 use Illuminate\Support\ServiceProvider;
@@ -40,8 +41,11 @@ class ResponseServiceProvider extends ServiceProvider
         $providedDebugToken = Request::header('x-debug-token');
         $shouldDebugRequest = ($providedDebugToken && $providedDebugToken === env('DEBUG_TOKEN') || (env('APP_ENV') !== 'production'));
 
-        Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest) {
-            Log::info('api_request', ['request' => $requestInfo]);
+        //if on !production, log requests only if env says to, because they are inherently verbose
+        $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
+        Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest, $shouldLog) {
+            if($shouldLog)
+                Log::info('api_request', ['request' => $requestInfo]);
 
             return Response::json([
                 'success'       => true,
@@ -50,10 +54,11 @@ class ResponseServiceProvider extends ServiceProvider
             ], 200);
         });
 
-        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo, $shouldDebugRequest) {
+        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo, $shouldDebugRequest, $shouldLog) {
             $requestInfo['success'] = false;
             $requestInfo['code'] = $response_code;
-            Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
+            if($shouldLog)
+                Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
 
             return Response::json([
                 'success'       => false,
