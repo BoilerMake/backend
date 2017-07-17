@@ -47,43 +47,36 @@ class UsersController extends Controller
         $application = $user->getApplication();
 
         foreach ($data as $key => $value) {
-            if (in_array($key, [
-                Application::FIELD_GRAD_YEAR,
-                Application::FIELD_GENDER,
-                Application::FIELD_MAJOR,
-                Application::FIELD_DIET,
-                Application::FIELD_DIET_RESTRICTIONS,
-                Application::FIELD_RACE,
-                Application::FIELD_LINKEDIN,
-                Application::FIELD_DIET_RESTRICTIONS,
-                Application::FIELD_RESUME_FILENAME,
-                Application::FIELD_RESUME_UPLOADED_FLAG,
-                Application::FIELD_IS_FIRST_HACKATHON,
-                Application::FIELD_HAS_NO_GITHUB,
-                Application::FIELD_HAS_NO_LINKEDIN,
-            ])) {
+            if (in_array($key, Application::INITIAL_FIELDS)) {
                 $application->$key = $value;
             } elseif (in_array($key, Application::USER_FIELDS_TO_INJECT)) {
+                //we combine some User fields onto Application, since name lives on User and it makes things easier.
                 $user->$key = $value;
             } elseif ($key == Application::FIELD_GITHUB) {
-                //if user is linked to a GH account, don't let them change username
                 if (! $user->github_user_id) {
-                    //todo: turn github.com/user -> user
-                    $application->github = $value;
+                    //let them change username IF they are not linked to a Github account
+                    $application->github = User::extractUsernameFromURL($value);
+                }
+            } elseif ($key == Application::FIELD_LINKEDIN) {
+                $application[Application::FIELD_LINKEDIN] = User::extractUsernameFromURL($value);
+            } else if ($key == 'school') {
+                if (isset($value['id'])) {
+                    $application->school_id = $value['id'];
+                } else {
+                    $application->school_id = null;
                 }
             } elseif ($key == Application::FIELD_RSVP_FLAG) {
+                //TODO: check RSVP phase
                 //check to make sure they were actually accepted in case we have some sneaky mofos
                 if ($application->decision == Application::DECISION_ACCEPT) {
                     $application->rsvp = $value;
                 }
-//            } else if ($key == 'skills') {
-//                $application->skills = json_encode($value);
-//            } else if ($key == 'school') {
-//                if (isset($value['id'])) {
-//                    $application->school_id = $value['id'];
-//                } else {
-//                    $application->school_id = null;
-//                }
+            } else if ($key == 'skills') {
+//                TODO: check RSVP phase
+                $application->skills = json_encode($value);
+            } elseif (in_array($key, [Application::FIELD_DIET, Application::FIELD_DIET_RESTRICTIONS])) {
+                //TODO: check RSVP phase
+                $application->$key = $value;
             }
         }
         $user->save();

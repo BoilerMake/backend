@@ -147,14 +147,12 @@ class User extends Authenticatable
 
     /**
      * @param bool $execInfo
-     * @return Application|null
      */
     public function getApplication($execInfo = false)
     {
         if (! $this->hasRole(self::ROLE_HACKER)) {
             Log::error("tried to get application for user {$this->id}, but they are not a hacker");
-
-            return;
+            return null;
         }
 
         if ($execInfo) {
@@ -173,7 +171,6 @@ class User extends Authenticatable
     public function getToken()
     {
         $roles = $this->roles()->get()->pluck('name');
-
         return JWTAuth::fromUser($this, ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$this->slug(), 'user_id'=>$this->id]);
     }
 
@@ -221,5 +218,17 @@ class User extends Authenticatable
         if ($match) {
             return $match->id;
         }
+    }
+    /**
+     * Turns strings like github.com/username into username
+     * @param $value
+     */
+    public static function extractUsernameFromURL($url)
+    {
+        if (strpos($url, '/') === false) {
+            //no slashes in it probably means it's a vanilla username
+            return $url;
+        }
+        return substr($url, strrpos($url, '/') + 1);
     }
 }

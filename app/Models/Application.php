@@ -49,6 +49,18 @@ class Application extends Model
     const FIELD_CHECKED_IN_AT = 'checked_in_at';
     const FIELD_GITHUB_ETAG = 'github_etag';
 
+    const INITIAL_FIELDS = [
+        self::FIELD_GRAD_YEAR,
+        self::FIELD_GENDER,
+        self::FIELD_MAJOR,
+        self::FIELD_RACE,
+        self::FIELD_RESUME_FILENAME,
+        self::FIELD_RESUME_UPLOADED_FLAG,
+        self::FIELD_IS_FIRST_HACKATHON,
+        self::FIELD_HAS_NO_GITHUB,
+        self::FIELD_HAS_NO_LINKEDIN,
+    ];
+
     public $schoolinfo = null;
 
     protected $dates = [
