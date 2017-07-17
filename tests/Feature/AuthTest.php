@@ -222,4 +222,19 @@ class AuthTest extends TestCase
         GithubUser::store($data, $token);
         $this->assertDatabaseHas('github_users', ['username' => $username]);
     }
+
+    public function testMissingToken()
+    {
+        $response = $this->json('GET', '/v1/users/me');
+        $response
+            ->assertStatus(401)
+            ->assertJson(['success' => false]);
+    }
+    public function testInvalidToken()
+    {
+        $response = $this->json('GET', '/v1/users/me',[],['HTTP_Authorization'=>'Bearer blah']);
+        $response
+            ->assertStatus(401)
+            ->assertJson(['success' => false]);
+    }
 }
