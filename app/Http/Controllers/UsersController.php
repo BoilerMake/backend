@@ -89,11 +89,7 @@ class UsersController extends Controller
         $user->save();
         $application->save();
 
-        return response()->success([
-            'application'=>$application,
-            'validation'=>$application->validationDetails(),
-            'phase'=>intval(getenv('APP_PHASE')),
-        ]);
+        return response()->success('ok');
     }
 
     public function getApplication()
@@ -108,8 +104,7 @@ class UsersController extends Controller
         $application['resume_get_url'] = $application[Application::FIELD_RESUME_UPLOADED_FLAG] ? $application->user->resumeURL() : null;
         $application['resume_put_url'] = $application->user->resumeURL('put');
 
-        $phase = intval(getenv('APP_PHASE'));
-        if ($phase < Application::PHASE_DECISIONS_REVEALED) {
+        if (!Application::isPhaseInEffect(Application::PHASE_DECISIONS_REVEALED)) {
             //don't reveal decisions early
             $application->setHidden(['decision', 'emailed_decision']);
         }
@@ -117,7 +112,7 @@ class UsersController extends Controller
         return response()->success([
             'application' => $application,
             'validation'  => $application->validationDetails(),
-            'phase'       => $phase,
+            'phase'       => Application::getCurrentPhase(),
         ]);
     }
 

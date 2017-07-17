@@ -66,6 +66,13 @@ class ApplicationsTest extends TestCase
         $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
         $application = $response->json()['data']['application'];
         $this->assertFalse(array_key_exists(Application::FIELD_DECISION, $application));
+
+        //we wouldn't have applications and interest signups at the same point but...
+        $hide = Application::PHASE_INTEREST_SIGNUPS;
+        putenv("APP_PHASE={$hide}");
+        $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
+        $application = $response->json()['data']['application'];
+        $this->assertFalse(array_key_exists(Application::FIELD_DECISION, $application));
     }
 
     public function testHintEmail()

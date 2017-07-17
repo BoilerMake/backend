@@ -214,4 +214,18 @@ class Application extends Model
 
         return $data;
     }
+
+    public static function getCurrentPhase()
+    {
+        return intval(getenv('APP_PHASE'));
+    }
+
+    /**
+     * if $phase is less than or equal to current, it is in effect
+     * @param $phase
+     * @return bool
+     */
+    public static function isPhaseInEffect($phase) {
+        return $phase <= self::getCurrentPhase();
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Application;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\User;
@@ -9,6 +10,14 @@ use App\Models\GithubUser;
 
 class AuthTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        //we'll overrride the phase on a test by test basis.
+        $phase = Application::PHASE_APPLICATIONS_OPEN;
+        putenv("APP_PHASE={$phase}");
+
+    }
     /**
      * Test that sign up validation and token generation is working.
      *
@@ -82,7 +91,8 @@ class AuthTest extends TestCase
 
     public function testAppPhaseSignups()
     {
-        config(['app.phase' => 1]);
+        $phase = Application::PHASE_INTEREST_SIGNUPS;
+        putenv("APP_PHASE={$phase}");
         $faker = \Faker\Factory::create();
         $first_name = $faker->firstName;
         $last_name = $faker->lastName;
@@ -93,7 +103,8 @@ class AuthTest extends TestCase
                 'data'=>null,
                 'message'=>'applications are not open',
                 'success'=>false, ]);
-        config(['app.phase' => 3]);
+        $phase = Application::PHASE_APPLICATIONS_OPEN;
+        putenv("APP_PHASE={$phase}");
         $faker = \Faker\Factory::create();
         $first_name = $faker->firstName;
         $last_name = $faker->lastName;
