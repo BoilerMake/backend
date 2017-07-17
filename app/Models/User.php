@@ -146,24 +146,20 @@ class User extends Authenticatable
     }
 
     /**
-     * @param bool $execInfo
+     * Gets the user's application
      */
-    public function getApplication($execInfo = false)
+    public function getApplication()
     {
         if (! $this->hasRole(self::ROLE_HACKER)) {
             Log::error("tried to get application for user {$this->id}, but they are not a hacker");
             return null;
         }
 
-        if ($execInfo) {
-            $application = Application::with('school', 'ratings', 'notes')->firstOrCreate(['user_id' => $this->id]);
-        } else {
-            $application = Application::with('school')->firstOrCreate(['user_id' => $this->id]);
-        }
+        $application = Application::with('school')->firstOrCreate(['user_id' => $this->id]);
+
         if ($application->wasRecentlyCreated) {
             Log::info("Creating application for user {$this->id}", ['user_id'=>$this->id, 'application_id'=>$application->id]);
         }
-        $application->save();
 
         return $application;
     }

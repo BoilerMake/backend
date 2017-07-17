@@ -19,6 +19,8 @@ use App\Models\InterestSignup;
 class GeneralController extends Controller
 {
     /**
+     * GET /ping
+     *
      * Heartbeat endpoint.
      * @return array
      */
@@ -27,6 +29,11 @@ class GeneralController extends Controller
         return response()->success(['pong']);
     }
 
+    /**
+     * GET /
+     *
+     * @return mixed
+     */
     public function info()
     {
         return response()->success([
@@ -38,10 +45,12 @@ class GeneralController extends Controller
     }
 
     /**
+     * POST /stats
+     *
      * Logs a user stat event.
      * @return \Response
      */
-    public function recordStat()
+    public function createUserStat()
     {
         try {
             $user_id = JWTAuth::parseToken()->toUser()->id;
@@ -79,7 +88,12 @@ class GeneralController extends Controller
         return response()->success($stat);
     }
 
-    public function getSchools(Request $request)
+    /**
+     * GET /schools
+     * @param Request $request
+     * @return mixed
+     */
+    public function getSchools()
     {
         $filter = Request::get('filter');
         if (! $filter) {
@@ -114,55 +128,73 @@ class GeneralController extends Controller
         $n->save();
     }
 
+    /**
+     * POST interest/signup
+     *
+     * @return mixed
+     */
     public function interestSignup()
     {
         $email = Request::get('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Log::info('InterestSignup Success');
-
+            Log::info('InterestSignup Fail');
             return response()->error('email is not valid!');
         }
+
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if ($signup->wasRecentlyCreated) {
-            Log::info('InterestSignup Fail');
-
+            Log::info('InterestSignup Success');
             return response()->success('all signed up!');
         }
 
         return response()->error('you were already signed up!');
     }
 
+    /*
+     * GET /events
+     */
     public function getEvents()
     {
         return response()->success(Event::where('hidden', 0)->orderBy('begin')->get(['id', 'title', 'description', 'begin', 'end']));
     }
 
+    /*
+     * GET /announcements
+     */
     public function getAnnouncements()
     {
         return response()->success(Announcement::orderBy('created_at', 'DESC')->get());
     }
 
+    /*
+     * GET /activity
+     * @codeCoverageIgnore
+     */
     public function getActivity()
     {
-        $pushes = GithubEvent::where('type', 'PushEvent')->with('user')->orderBy('timestamp', 'DESC')->get();
         $github = [];
-//        foreach ($pushes as $push) {
-//            $github[] = [
-//                'id'=>$push->id,
-//                'message'=>$push->user->name.' pushed to '.$push->repo,
-//                'timestamp'=>$push->timestamp, ];
-//        }
+        foreach (GithubEvent::where('type', 'PushEvent')->with('user')->orderBy('timestamp', 'DESC')->get() as $push) {
+            $github[] = [
+                'id'        => $push->id,
+                'message'   => $push->user->name.' pushed to '.$push->repo,
+                'timestamp' => $push->timestamp
+            ];
+        }
 
         $podScans = [];
-//        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
-//            if ($scan->user && $scan->pod) {
-//                $podScans[] = [
-//                    'id'=>$scan->id,
-//                    'message'=>$scan->user->name.' scanned at pod '.$scan->pod->name,
-//                    'timestamp'=>$scan->created_at->toDateTimeString(), ];
-//            }
-//        }
+        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
+            if ($scan->user && $scan->pod) {
+                $podScans[] = [
+                    'id'        => $scan->id,
+                    'message'   => $scan->user->name.' scanned at pod '.$scan->pod->name,
+                    'timestamp' => $scan->created_at->toDateTimeString()
+                ];
+            }
+        }
 
-        return ['github'=>$github, 'pods'=>$podScans];
+        return [
+            'github'=>$github,
+            'pods'=>$podScans
+        ];
     }
 }

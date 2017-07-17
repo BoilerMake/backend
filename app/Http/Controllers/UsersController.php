@@ -11,6 +11,7 @@ use App\Models\PuzzleProgress;
 class UsersController extends Controller
 {
     /**
+     * GET /users/me
      * Gets the currently logged in User.
      * @return User|null
      */
@@ -19,6 +20,10 @@ class UsersController extends Controller
         return response()->success(Auth::user());
     }
 
+    /**
+     * PUT /users/me
+     * @return mixed
+     */
     public function updateMe()
     {
         $user = Auth::user();
@@ -40,6 +45,38 @@ class UsersController extends Controller
         return response()->success('ok');
     }
 
+    /**
+     * GET /users/me/application
+     * @return mixed
+     */
+    public function getApplication()
+    {
+        $user = Auth::user();
+        $application = $user->getApplication();
+        $application['skills'] = json_decode($application->skills, true);
+
+        foreach (Application::USER_FIELDS_TO_INJECT as $x) {
+            $application[$x] = $user->$x;
+        }
+        $application['resume_get_url'] = $application[Application::FIELD_RESUME_UPLOADED_FLAG] ? $application->user->resumeURL() : null;
+        $application['resume_put_url'] = $application->user->resumeURL('put');
+
+        if (!Application::isPhaseInEffect(Application::PHASE_DECISIONS_REVEALED)) {
+            //don't reveal decisions early
+            $application->setHidden(['decision', 'emailed_decision']);
+        }
+
+        return response()->success([
+            'application' => $application,
+            'validation'  => $application->validationDetails(),
+            'phase'       => Application::getCurrentPhase(),
+        ]);
+    }
+
+    /**
+     * PUT /users/me/application
+     * @return mixed
+     */
     public function updateApplication()
     {
         $user = Auth::user();
@@ -83,30 +120,6 @@ class UsersController extends Controller
         $application->save();
 
         return response()->success('ok');
-    }
-
-    public function getApplication()
-    {
-        $user = Auth::user();
-        $application = $user->getApplication();
-        $application['skills'] = json_decode($application->skills, true);
-
-        foreach (Application::USER_FIELDS_TO_INJECT as $x) {
-            $application[$x] = $user->$x;
-        }
-        $application['resume_get_url'] = $application[Application::FIELD_RESUME_UPLOADED_FLAG] ? $application->user->resumeURL() : null;
-        $application['resume_put_url'] = $application->user->resumeURL('put');
-
-        if (!Application::isPhaseInEffect(Application::PHASE_DECISIONS_REVEALED)) {
-            //don't reveal decisions early
-            $application->setHidden(['decision', 'emailed_decision']);
-        }
-
-        return response()->success([
-            'application' => $application,
-            'validation'  => $application->validationDetails(),
-            'phase'       => Application::getCurrentPhase(),
-        ]);
     }
 
 //    public function completePuzzle(Request $request)

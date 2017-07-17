@@ -28,7 +28,7 @@ Route::get('packet/{secret}', 'SponsorsController@packet');
 Route::prefix('v1')->group(function () {
     //heartbeat
     Route::get('ping', 'GeneralController@ping');
-    Route::post('stats', 'GeneralController@recordStat');
+    Route::post('stats', 'GeneralController@createUserStat');
     Route::any('slackapp', 'SlackController@index');
 
     //signup form
@@ -63,8 +63,8 @@ Route::prefix('v1')->group(function () {
             Route::put('application', 'UsersController@updateApplication');
 
             //user puzzle status
-            Route::post('puzzles', 'UsersController@completePuzzle');
-            Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
+//            Route::post('puzzles', 'UsersController@completePuzzle');
+//            Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
         });
     });
     /*
