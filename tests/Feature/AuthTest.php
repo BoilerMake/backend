@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\Application;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\GithubUser;
+use App\Models\Application;
 
 class AuthTest extends TestCase
 {
@@ -16,8 +16,8 @@ class AuthTest extends TestCase
         //we'll overrride the phase on a test by test basis.
         $phase = Application::PHASE_APPLICATIONS_OPEN;
         putenv("APP_PHASE={$phase}");
-
     }
+
     /**
      * Test that sign up validation and token generation is working.
      *
@@ -230,9 +230,10 @@ class AuthTest extends TestCase
             ->assertStatus(401)
             ->assertJson(['success' => false]);
     }
+
     public function testInvalidToken()
     {
-        $response = $this->json('GET', '/v1/users/me',[],['HTTP_Authorization'=>'Bearer blah']);
+        $response = $this->json('GET', '/v1/users/me', [], ['HTTP_Authorization'=>'Bearer blah']);
         $response
             ->assertStatus(401)
             ->assertJson(['success' => false]);

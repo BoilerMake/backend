@@ -51,7 +51,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        if (!Application::isPhaseInEffect(Application::PHASE_APPLICATIONS_OPEN)) {
+        if (! Application::isPhaseInEffect(Application::PHASE_APPLICATIONS_OPEN)) {
             return response()->error('applications are not open');
         }
 
@@ -151,7 +151,7 @@ class AuthController extends Controller
      */
     public function githubAuth($code)
     {
-        if (!Application::isPhaseInEffect(Application::PHASE_APPLICATIONS_OPEN)) {
+        if (! Application::isPhaseInEffect(Application::PHASE_APPLICATIONS_OPEN)) {
             return response()->error('applications are not open');
         }
 
