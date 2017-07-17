@@ -97,12 +97,12 @@ class ApplicationsTest extends TestCase
         $response->assertStatus(200);
         //we will expect 5+1 here, because of "Other/School not Listed"
 
-        $this->assertEquals(5+1, count($response->json()['data']));
+        $this->assertEquals(5 + 1, count($response->json()['data']));
         $response = $this->json('GET', '/v1/schools', ['filter'=>'urbana']);
         $response->assertStatus(200);
         //we will expect 1+1 here, because of "Other/School not Listed"
 
-        $this->assertEquals(1+1, count($response->json()['data']));
+        $this->assertEquals(1 + 1, count($response->json()['data']));
     }
 
 //    public function testGetApplicationEmailNotConfirmed() {
