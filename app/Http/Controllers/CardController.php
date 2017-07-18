@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Models\PuzzleProgress;
 
 /**
- * Class CardController
+ * Class CardController.
  * @codeCoverageIgnore
  */
 class CardController extends Controller

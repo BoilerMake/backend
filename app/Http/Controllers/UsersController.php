@@ -21,7 +21,7 @@ class UsersController extends Controller
     }
 
     /**
-     * PUT /users/me
+     * PUT /users/me.
      * @return mixed
      */
     public function updateMe()
@@ -46,7 +46,7 @@ class UsersController extends Controller
     }
 
     /**
-     * GET /users/me/application
+     * GET /users/me/application.
      * @return mixed
      */
     public function getApplication()
@@ -61,7 +61,7 @@ class UsersController extends Controller
         $application['resume_get_url'] = $application[Application::FIELD_RESUME_UPLOADED_FLAG] ? $application->user->resumeURL() : null;
         $application['resume_put_url'] = $application->user->resumeURL('put');
 
-        if (!Application::isPhaseInEffect(Application::PHASE_DECISIONS_REVEALED)) {
+        if (! Application::isPhaseInEffect(Application::PHASE_DECISIONS_REVEALED)) {
             //don't reveal decisions early
             $application->setHidden(['decision', 'emailed_decision']);
         }
@@ -74,7 +74,7 @@ class UsersController extends Controller
     }
 
     /**
-     * PUT /users/me/application
+     * PUT /users/me/application.
      * @return mixed
      */
     public function updateApplication()
@@ -102,8 +102,8 @@ class UsersController extends Controller
                 if ($application->decision == Application::DECISION_ACCEPT) {
                     $application->rsvp = $value;
                 }
-            } else if ($key == 'skills') {
-//                TODO: check RSVP phase
+            } elseif ($key == 'skills') {
+                //                TODO: check RSVP phase
                 $application->skills = json_encode($value);
             } elseif (in_array($key, [Application::FIELD_DIET, Application::FIELD_DIET_RESTRICTIONS])) {
                 //TODO: check RSVP phase

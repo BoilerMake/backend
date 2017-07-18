@@ -19,7 +19,7 @@ use App\Models\InterestSignup;
 class GeneralController extends Controller
 {
     /**
-     * GET /ping
+     * GET /ping.
      *
      * Heartbeat endpoint.
      * @return array
@@ -30,7 +30,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * GET /
+     * GET /.
      *
      * @return mixed
      */
@@ -45,7 +45,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * POST /stats
+     * POST /stats.
      *
      * Logs a user stat event.
      * @return \Response
@@ -89,7 +89,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * GET /schools
+     * GET /schools.
      * @param Request $request
      * @return mixed
      */
@@ -129,7 +129,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * POST interest/signup
+     * POST interest/signup.
      *
      * @return mixed
      */
@@ -138,12 +138,14 @@ class GeneralController extends Controller
         $email = Request::get('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             Log::info('InterestSignup Fail');
+
             return response()->error('email is not valid!');
         }
 
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if ($signup->wasRecentlyCreated) {
             Log::info('InterestSignup Success');
+
             return response()->success('all signed up!');
         }
 
@@ -177,7 +179,7 @@ class GeneralController extends Controller
             $github[] = [
                 'id'        => $push->id,
                 'message'   => $push->user->name.' pushed to '.$push->repo,
-                'timestamp' => $push->timestamp
+                'timestamp' => $push->timestamp,
             ];
         }
 
@@ -187,14 +189,14 @@ class GeneralController extends Controller
                 $podScans[] = [
                     'id'        => $scan->id,
                     'message'   => $scan->user->name.' scanned at pod '.$scan->pod->name,
-                    'timestamp' => $scan->created_at->toDateTimeString()
+                    'timestamp' => $scan->created_at->toDateTimeString(),
                 ];
             }
         }
 
         return [
             'github'=>$github,
-            'pods'=>$podScans
+            'pods'=>$podScans,
         ];
     }
 }
