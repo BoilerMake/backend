@@ -155,7 +155,7 @@ class User extends Authenticatable
             return null;
         }
 
-        $application = Application::with('school')->firstOrCreate(['user_id' => $this->id]);
+        $application = Application::firstOrCreate(['user_id' => $this->id]);
 
         if ($application->wasRecentlyCreated) {
             Log::info("Creating application for user {$this->id}", ['user_id'=>$this->id, 'application_id'=>$application->id]);

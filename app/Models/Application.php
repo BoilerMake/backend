@@ -59,6 +59,7 @@ class Application extends Model
         self::FIELD_IS_FIRST_HACKATHON,
         self::FIELD_HAS_NO_GITHUB,
         self::FIELD_HAS_NO_LINKEDIN,
+        'school_id'
     ];
 
     public $schoolinfo = null;
@@ -145,6 +146,9 @@ class Application extends Model
             }
             if (! ($this->github) && ! ($this->has_no_github)) {
                 $reasons[] = "Github username not provided. If you don't have a github, indicate that.";
+            }
+            if (! ($this->linkedin) && ! ($this->has_no_linkedin)) {
+                $reasons[] = "LinkedIn username not provided. If you don't have a LinkedIn, indicate that.";
             }
             if (! isset($this->grad_year)) {
                 $reasons[] = 'Grad year not provided.';

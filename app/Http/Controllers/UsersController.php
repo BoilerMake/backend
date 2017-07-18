@@ -67,7 +67,7 @@ class UsersController extends Controller
         }
 
         return response()->success([
-            'application' => $application,
+            'applicationForm' => $application,
             'validation'  => $application->validationDetails(),
             'phase'       => Application::getCurrentPhase(),
         ]);
@@ -96,12 +96,6 @@ class UsersController extends Controller
                 }
             } elseif ($key == Application::FIELD_LINKEDIN) {
                 $application[Application::FIELD_LINKEDIN] = User::extractUsernameFromURL($value);
-            } else if ($key == 'school') {
-                if (isset($value['id'])) {
-                    $application->school_id = $value['id'];
-                } else {
-                    $application->school_id = null;
-                }
             } elseif ($key == Application::FIELD_RSVP_FLAG) {
                 //TODO: check RSVP phase
                 //check to make sure they were actually accepted in case we have some sneaky mofos
