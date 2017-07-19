@@ -41,6 +41,7 @@ class ExecController extends Controller
     public function getHackersBulk(Request $request)
     {
         $ids = $request->all();
+
         return User::whereHas('roles', function ($q) use ($ids) {
             $q->where('name', 'hacker')->whereIn('id', $ids);
         })->with('application', 'application.school')->get();
@@ -151,7 +152,6 @@ class ExecController extends Controller
 //
 //        return $app;
 //    }
-
 
     /**
      * @param Request $request
