@@ -9,6 +9,10 @@ use ImagickPixel;
 use App\Models\User;
 use App\Models\PuzzleProgress;
 
+/**
+ * Class CardController.
+ * @codeCoverageIgnore
+ */
 class CardController extends Controller
 {
     const CARD_TYPE_HACKER = 1;

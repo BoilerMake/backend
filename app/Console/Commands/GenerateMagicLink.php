@@ -39,8 +39,8 @@ class GenerateMagicLink extends Command
     public function handle()
     {
         $user_id = $this->ask('user id?');
-        $this->info('user: '.$user_id);
         $user = User::find($user_id);
+        $this->info('user: '.$user->slug());
         $this->info(env('REACT_FRONTEND_ADDRESS').'/l/?t='.$user->getToken());
     }
 }

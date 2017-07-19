@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Auth;
-use Hash;
-use Mail;
+use JWTAuth;
 use Validator;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\GithubUser;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
-use App\Mail\UserRegistration;
 
 /**
  * Class AuthController.
@@ -44,12 +45,13 @@ class AuthController extends Controller
     /**
      * Register a user.
      *
+     * TODO: error handling like duplicate accounts
      * @param  Request $request: email, password
      * @return string status message
      */
     public function register(Request $request)
     {
-        if (intval(config('app.phase')) < 2) {
+        if (! Application::isPhaseInEffect(Application::PHASE_APPLICATIONS_OPEN)) {
             return response()->error('applications are not open');
         }
 
@@ -58,25 +60,15 @@ class AuthController extends Controller
             'password'    => 'required',
         ]);
 
+        $email = $request['email'];
         if ($validator->fails()) {
             return response()->error($validator->errors()->all());
+        } elseif (User::isEmailUsed($email)) {
+            return response()->error('There is already an account with that email!');
         } else {
-            $code = str_random(24);
-            $user = new User;
-            $user->password = Hash::make($request['password']);
-            $user->email = $request['email'];
-            $user->confirmation_code = $code;
-            $user->save();
+            $user = User::addNew($email, $request['password']);
 
-            $user->postSignupActions(); // Attach roles
-
-            $token = $user->getToken();
-
-            //todo: clean up this email building
-            $link = env('FRONTEND_ADDRESS').'/confirm?tok='.$code;
-            Mail::to($user->email)->send(new UserRegistration($user, $link));
-
-            return response()->success(compact('token'));
+            return response()->success(['token'=>$user->getToken()]);
         }
     }
 
@@ -86,17 +78,18 @@ class AuthController extends Controller
      * @param  Request $request: code
      * @return string status message
      */
-    public function confirmEmail(Request $request)
+    public function confirmEmail($code = null)
     {
-        if (! isset($request->code)) {
+        if (! $code) {
             return response()->error('Code is required');
         }
-        $user = User::where('confirmation_code', $request->code)->first();
+        $user = User::where(User::FIELD_CONFIRMATION_CODE, $code)->first();
         if ($user) {
             $user->confirmed = 1;
             $user->save();
+            Log::info("confirmEmail {$user->email}");
 
-            return response()->success('Email confirmed!');
+            return response()->success(['message'=>'Email confirmed!', 'token'=>$user->getToken()]);
         }
 
         return response()->error('Code is invalid');
@@ -149,5 +142,88 @@ class AuthController extends Controller
         $reset->save();
 
         return response()->success('Success! password updated for '.$user->email);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @param $code
+     * @return mixed
+     */
+    public function githubAuth($code)
+    {
+        if (! Application::isPhaseInEffect(Application::PHASE_APPLICATIONS_OPEN)) {
+            return response()->error('applications are not open');
+        }
+
+        $gitHub_token = GithubUser::getGithubAuthToken($code);
+        if (! $gitHub_token) {
+            //todo: handle error here...
+            return response()->error('github error');
+        }
+        $githubUser = GithubUser::fetchFromOauthToken($gitHub_token);
+
+        //todo: strengthen this: ensure that user gave us the email scope / that we have email
+        if (! $githubUser->email) {
+            Log::info("githubAuth: user didn't give email scope :(");
+            //eek no email permissions scope
+            return response()->error('no email scope :(');
+        }
+
+        //do we have a user logged in already (e.g. if they are linking their GH)
+        try {
+            $loggedInUser = JWTAuth::parseToken()->toUser();
+        } catch (\Exception $e) {
+            $loggedInUser = null;
+        }
+
+        $email = $githubUser->email;
+        $username = $githubUser->username;
+        $doesUserExistAlready = User::isEmailUsed($email) || Application::where('github', $username)->exists();
+
+        //decide if we want to link, login, or create a User
+        $action = null;
+        if ($loggedInUser) {
+            $action = 'link';
+            Log::info("githubAuth: user #{$loggedInUser->id} is already logged in, so we should link account");
+            $user = $loggedInUser;
+        } elseif ($doesUserExistAlready) {
+            //User exists, we are doing a login action
+            $action = 'login';
+            $user = User::where('email', $email)->first();
+            if (! $user) {
+                //fallback to matching via application form responses
+                $user = Application::where('github', $username)->first()->user;
+            }
+        } else {
+            //need to create a new user!
+            $action = 'create';
+            $user = User::addNew($email, null, false);
+        }
+        $user->github_user_id = $githubUser->id;
+        Log::info("githubAuth success, action={$action}", ['user_id'=>$user->id]);
+
+        //auto-fill names
+        if (! $user->first_name && ! $user->last_name) {
+            //we don't want to overwrite names, just autofill them if they are null
+            $nameParts = explode(' ', $githubUser->name);
+            $user->first_name = $nameParts[0];
+            $user->last_name = isset($nameParts[1]) ? $nameParts[1] : null; //edge case: name on GH is only one word.
+        }
+
+        //if user is a hacker, fill out some of their application
+        if ($user->hasRole(User::ROLE_HACKER)) {
+            $application = $user->getApplication();
+            $application->github = $username;
+            $application->has_no_github = false;
+            $application->save();
+            Log::info("Saved GH username {$username} int application", ['user_id'=>$user->id, 'application_id'=>$application->id]);
+        }
+        $user->save();
+
+        return response()->success([
+            'token'=>$user->getToken(),
+            'username' => $username,
+            'action' => $action,
+        ]);
     }
 }

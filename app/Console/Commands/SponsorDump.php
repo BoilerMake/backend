@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\User;
 use App\Models\Application;
 use Illuminate\Console\Command;
-use App\Http\Controllers\GeneralController;
 
 class SponsorDump extends Command
 {
@@ -48,11 +47,7 @@ class SponsorDump extends Command
         $apps = Application::with('user')->get();
         foreach ($apps as $app) {
             if ($app->checked_in_at && $app->resume_uploaded) {
-                $userId = $app->user->id;
-//                $this->info($userId);
-                $resumeURL = GeneralController::resumeUrl($userId, 'get');
-//                $this->info($resumeURL);
-
+                $resumeURL = $app->user->resumeURL();
                 $resumeFilename = $app->user->first_name.'_'.$app->user->last_name.'_'.$app->user->id;
                 $tmpPDF = sys_get_temp_dir().'/resumes/'.$resumeFilename.'.pdf';
                 try {

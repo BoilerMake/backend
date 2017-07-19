@@ -12,6 +12,7 @@ class SponsorsController extends Controller
      * Redirects user from secret packet link to the S3 url.
      * @param $secret
      * @return \Illuminate\Http\RedirectResponse|string
+     * @codeCoverageIgnore
      */
     public function packet($secret)
     {

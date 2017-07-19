@@ -19,23 +19,21 @@ Route::any('/', 'GeneralController@info');
 Route::get('/docs', function () {
     return File::get(public_path().'/docs/index.html');
 });
+//used by sponsors.boilermake.org/packet/{secret}
 Route::get('packet/{secret}', 'SponsorsController@packet');
+
 /*
  * API ROUTES
  */
 Route::prefix('v1')->group(function () {
     //heartbeat
     Route::get('ping', 'GeneralController@ping');
-    Route::post('stats', 'GeneralController@recordStat');
+    Route::post('stats', 'GeneralController@createUserStat');
     Route::any('slackapp', 'SlackController@index');
 
     //signup form
     Route::get('schools', 'GeneralController@getSchools');
     Route::post('interest/signup', 'GeneralController@interestSignup');
-
-    //why is this here
-    Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);
-    Route::get('calendar', 'ExecController@generateCalendar');
 
     //day-of routes
     Route::get('events', 'GeneralController@getEvents');
@@ -45,27 +43,29 @@ Route::prefix('v1')->group(function () {
     //auth
     Route::post('users/login', 'AuthController@login');
     Route::post('users/register', 'AuthController@register');
+    Route::post('users/auth/github/{code}', 'AuthController@githubAuth');
 
     //password reset + account confirmation
     Route::post('users/reset/send', 'AuthController@sendPasswordReset');
     Route::post('users/reset/perform', 'AuthController@performPasswordReset');
-    Route::get('users/verify/{code?}', 'AuthController@confirmEmail');
+    Route::post('users/verify/{code?}', 'AuthController@confirmEmail');
     /*
      * User routes
      */
     Route::middleware(['jwt.auth'])->prefix('users/me')->group(function () {
-
         //get update me
         Route::get('/', 'UsersController@getMe');
         Route::put('/', 'UsersController@updateMe');
-        //returns URL to PUT upload resume pdf to
-        Route::get('resumePUT', 'UsersController@getResumePutUrl');
-        //user application
-        Route::get('application', 'UsersController@getApplication');
-        Route::post('application', 'UsersController@updateApplication');
-        //user puzzle sdtatus
-        Route::post('puzzles', 'UsersController@completePuzzle');
-        Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
+
+        Route::middleware(['hackersOnly'])->group(function () {
+            //user application
+            Route::get('application', 'UsersController@getApplication');
+            Route::put('application', 'UsersController@updateApplication');
+
+            //user puzzle status
+//            Route::post('puzzles', 'UsersController@completePuzzle');
+//            Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
+        });
     });
     /*
      * Exec routes
@@ -91,6 +91,10 @@ Route::prefix('v1')->group(function () {
         Route::post('events/create', 'ExecController@createEvent');
         Route::post('events/{event}/update', 'ExecController@editEvent');
         Route::post('events/{event}/delete', 'ExecController@deleteEvent');
+
+        //?
+        Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);
+        Route::get('calendar', 'ExecController@generateCalendar');
     });
 
     /*

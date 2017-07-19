@@ -12,7 +12,7 @@ class SchoolSeeder extends Seeder
      */
     public function run()
     {
-        School::firstOrCreate(['name' => 'Purdue University']);
+        School::firstOrCreate(['name' => 'Purdue University', School::FIELD_EMAIL_DOMAIN=>'purdue.edu']);
         School::firstOrCreate(['name' => 'University of Texas-Dallas']);
         School::firstOrCreate(['name' => 'Rose-Hulman Institute of Technology']);
         School::firstOrCreate(['name' => 'University of Waterloo']);

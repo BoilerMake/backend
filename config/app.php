@@ -143,7 +143,6 @@ return [
          * Laravel Framework Service Providers...
          */
         Illuminate\Auth\AuthServiceProvider::class,
-        Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
@@ -175,17 +174,17 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
-        'Barryvdh\Cors\ServiceProvider',
-        'Zizaco\Entrust\EntrustServiceProvider',
-        'Spatie\Tail\TailServiceProvider',
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
+        Spatie\Tail\TailServiceProvider::class,
 
         Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
+        Clockwork\Support\Laravel\ClockworkServiceProvider::class,
     ],
 
     /*

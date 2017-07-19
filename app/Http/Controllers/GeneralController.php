@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use AWS;
+use App;
 use Log;
 use JWTAuth;
 use Request;
@@ -19,14 +19,21 @@ use App\Models\InterestSignup;
 class GeneralController extends Controller
 {
     /**
+     * GET /ping.
+     *
      * Heartbeat endpoint.
      * @return array
      */
     public function ping()
     {
-        return ['pong'];
+        return response()->success(['pong']);
     }
 
+    /**
+     * GET /.
+     *
+     * @return mixed
+     */
     public function info()
     {
         return response()->success([
@@ -38,10 +45,12 @@ class GeneralController extends Controller
     }
 
     /**
+     * POST /stats.
+     *
      * Logs a user stat event.
      * @return \Response
      */
-    public function recordStat()
+    public function createUserStat()
     {
         try {
             $user_id = JWTAuth::parseToken()->toUser()->id;
@@ -51,43 +60,58 @@ class GeneralController extends Controller
 
         $eventName = Request::get('event');
         $subtitle = Request::get('subtitle');
+        $client = Request::get('client');
+        $uuid = Request::header('x-uuid');
+
         $stat = UserStat::create([
             'user_id'           => $user_id,
             'event'             => $eventName,
             'subtitle'          => $subtitle,
             'context'           => Request::get('context'),
-            'uuid'              => isset(Request::header()['x-uuid']) ? Request::header()['x-uuid'][0] : null,
+            'uuid'              => $uuid,
             'client_ip'         => Request::ip(),
-            'client_useragent'  => Request::header()['user-agent'][0],
-            'client_referer'   => isset(Request::header()['referer']) ? Request::header()['referer'][0] : null,
+            'client_useragent'  => Request::header('user-agent'),
+            'client_referer'    => Request::header('referer'),
         ]);
-        Log::info('UserStatRecorded', [
-            'user_id'  => $user_id,
-            'event'    => $eventName,
-            'subtitle' => $subtitle,
-            'id'       => $stat->id,
-        ]);
+        $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
+        if ($shouldLog) {
+            Log::info('UserStatRecorded', [
+                'user_id' => $user_id,
+                'event' => $eventName,
+                'subtitle' => $subtitle,
+                'uuid' => $uuid,
+                'client' => $client,
+                'id' => $stat->id,
+            ]);
+        }
 
         return response()->success($stat);
     }
 
-    public function getSchools(Request $request)
+    /**
+     * GET /schools.
+     * @param Request $request
+     * @return mixed
+     */
+    public function getSchools()
     {
-        $filter = $request->input('filter');
+        $filter = Request::get('filter');
         if (! $filter) {
             $filter = '';
         }
         $locs = School::where('name', 'like', '%'.$filter.'%')->orWhere('name', 'Other/School not listed')->get();
 
-        return $locs;
+        return response()->success($locs);
     }
 
     /**
      * Handles an incoming SMS from twillio.
+     * @deprecated
+     * @codeCoverageIgnore
      */
     public function inboundSMS()
     {
-        $input = Input::all();
+        $input = Request::all();
 
         $phone = $input['From'];
         $user_id = null;
@@ -104,17 +128,23 @@ class GeneralController extends Controller
         $n->save();
     }
 
+    /**
+     * POST interest/signup.
+     *
+     * @return mixed
+     */
     public function interestSignup()
     {
         $email = Request::get('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Log::info('InterestSignup Success');
+            Log::info('InterestSignup Fail');
 
             return response()->error('email is not valid!');
         }
+
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if ($signup->wasRecentlyCreated) {
-            Log::info('InterestSignup Fail');
+            Log::info('InterestSignup Success');
 
             return response()->success('all signed up!');
         }
@@ -122,66 +152,51 @@ class GeneralController extends Controller
         return response()->error('you were already signed up!');
     }
 
-    /**
-     * Pre signs an S3 URL pointing to a given user id.
-     * @param $id user ID
-     * @param string $method GET or PUT
-     * @return string the signed
+    /*
+     * GET /events
      */
-    public static function resumeUrl($id, $method)
-    {
-        $s3 = AWS::createClient('s3');
-        switch ($method) {
-            case 'get':
-                $cmd = $s3->getCommand('getObject', [
-                    'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
-                    'ResponseContentType' => 'application/pdf',
-                ]);
-                break;
-            case 'put':
-                $cmd = $s3->getCommand('PutObject', [
-                'Bucket' => getenv('S3_BUCKET'),
-                'Key'    => getenv('S3_PREFIX').'/resumes/'.$id.'.pdf',
-                ]);
-                break;
-        }
-        $request = $s3->createPresignedRequest($cmd, '+7 days');
-
-        return (string) $request->getUri();
-    }
-
     public function getEvents()
     {
-        return Event::where('hidden', 0)->orderBy('begin')->get(['id', 'title', 'description', 'begin', 'end']);
+        return response()->success(Event::where('hidden', 0)->orderBy('begin')->get(['id', 'title', 'description', 'begin', 'end']));
     }
 
+    /*
+     * GET /announcements
+     */
     public function getAnnouncements()
     {
-        return Announcement::orderBy('created_at', 'DESC')->get();
+        return response()->success(Announcement::orderBy('created_at', 'DESC')->get());
     }
 
+    /*
+     * GET /activity
+     * @codeCoverageIgnore
+     */
     public function getActivity()
     {
-        $pushes = GithubEvent::where('type', 'PushEvent')->with('user')->orderBy('timestamp', 'DESC')->get();
         $github = [];
-//        foreach ($pushes as $push) {
-//            $github[] = [
-//                'id'=>$push->id,
-//                'message'=>$push->user->name.' pushed to '.$push->repo,
-//                'timestamp'=>$push->timestamp, ];
-//        }
+        foreach (GithubEvent::where('type', 'PushEvent')->with('user')->orderBy('timestamp', 'DESC')->get() as $push) {
+            $github[] = [
+                'id'        => $push->id,
+                'message'   => $push->user->name.' pushed to '.$push->repo,
+                'timestamp' => $push->timestamp,
+            ];
+        }
 
         $podScans = [];
-//        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
-//            if ($scan->user && $scan->pod) {
-//                $podScans[] = [
-//                    'id'=>$scan->id,
-//                    'message'=>$scan->user->name.' scanned at pod '.$scan->pod->name,
-//                    'timestamp'=>$scan->created_at->toDateTimeString(), ];
-//            }
-//        }
+        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
+            if ($scan->user && $scan->pod) {
+                $podScans[] = [
+                    'id'        => $scan->id,
+                    'message'   => $scan->user->name.' scanned at pod '.$scan->pod->name,
+                    'timestamp' => $scan->created_at->toDateTimeString(),
+                ];
+            }
+        }
 
-        return ['github'=>$github, 'pods'=>$podScans];
+        return [
+            'github'=>$github,
+            'pods'=>$podScans,
+        ];
     }
 }

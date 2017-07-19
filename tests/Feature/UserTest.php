@@ -3,31 +3,35 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\User;
 
 class UserTest extends TestCase
 {
-    public function getToken()
-    {
-        $faker = \Faker\Factory::create();
-        $first_name = $faker->firstName;
-        $last_name = $faker->lastName;
-        $password = $faker->password;
-        $email = $faker->email;
-        $response = $this->call('POST', '/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
-
-        return json_decode($response->getContent(), true)['data']['token'];
-    }
-
     /**
-     * Test that user interest signups are working.
+     * Test that user signups are working.
      *
      * @return void
      */
-    public function testGetUser()
+    public function testGetUpdateUser()
     {
-        $this->json('GET', '/v1/users/me', [], ['HTTP_Authorization' => 'Bearer '.$this->getToken()]);
-//        $response
-//            ->assertStatus(200)
-//            ->assertJson(['success' => true]);
+        $user = $this->makeTestUser();
+        $response = $this->jsonWithAuth('GET', '/v1/users/me', [], $user);
+        $response
+            ->assertStatus(200)
+            ->assertJson(['success' => true]);
+
+        $data = $response->json()['data'];
+        $email = $user->email;
+        $this->assertEquals($email, $data['email']);
+
+        $faker = \Faker\Factory::create();
+        $firstName = $faker->firstName;
+        $data[User::FIELD_FIRSTNAME] = $firstName;
+
+        $response = $this->jsonWithAuth('PUT', '/v1/users/me', $data, $user);
+        $this->assertDatabaseHas('users', [
+            'id'=>$user->id,
+            User::FIELD_FIRSTNAME=>$firstName,
+        ]);
     }
 }

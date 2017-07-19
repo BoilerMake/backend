@@ -16,13 +16,61 @@ class Application extends Model
     const DECISION_WAITLIST = 2;
     const DECISION_REJECT = 1;
     const DECISION_UNDECIDED = 0;
+
+    const PHASE_INTEREST_SIGNUPS = 1;
+    const PHASE_APPLICATIONS_OPEN = 2;
+    const PHASE_DECISIONS_REVEALED = 3;
+
+    const USER_FIELDS_TO_INJECT = [
+        User::FIELD_FIRSTNAME,
+        User::FIELD_LASTNAME,
+        User::FIELD_EMAIL,
+    ];
+
+    const FIELD_GENDER = 'gender';
+    const FIELD_MAJOR = 'major';
+    const FIELD_GRAD_YEAR = 'grad_year';
+    const FIELD_DIET = 'diet';
+    const FIELD_DIET_RESTRICTIONS = 'diet_restrictions';
+    const FIELD_GITHUB = 'github';
+    const FIELD_LINKEDIN = 'linkedin';
+    const FIELD_RESUME_FILENAME = 'resume_filename';
+    const FIELD_RESUME_UPLOADED_FLAG = 'resume_uploaded';
+    const FIELD_RSVP_FLAG = 'rsvp';
+    const FIELD_IS_FIRST_HACKATHON = 'isFirstHackathon';
+    const FIELD_RACE = 'race';
+    const FIELD_HAS_NO_GITHUB = 'has_no_github';
+    const FIELD_COMPLETED_CALCULATED = 'completed_calculated';
+    const FIELD_SKILLS = 'skills';
+    const FIELD_RSVP_DEADLINE = 'rsvp_deadline';
+    const FIELD_HAS_NO_LINKEDIN = 'has_no_linkedin';
+    const FIELD_EMAILED_DECISION = 'emailed_decision';
+    const FIELD_DECISION = 'decision';
+    const FIELD_CHECKED_IN_AT = 'checked_in_at';
+    const FIELD_GITHUB_ETAG = 'github_etag';
+
+    const INITIAL_FIELDS = [
+        self::FIELD_GRAD_YEAR,
+        self::FIELD_GENDER,
+        self::FIELD_MAJOR,
+        self::FIELD_RACE,
+        self::FIELD_RESUME_FILENAME,
+        self::FIELD_RESUME_UPLOADED_FLAG,
+        self::FIELD_IS_FIRST_HACKATHON,
+        self::FIELD_HAS_NO_GITHUB,
+        self::FIELD_HAS_NO_LINKEDIN,
+        'school_id',
+    ];
+
     public $schoolinfo = null;
+
     protected $dates = [
         'created_at',
         'updated_at',
-        'rsvp_deadline',
+        self::FIELD_RSVP_DEADLINE,
     ];
-    protected $fillable = ['user_id', 'age', 'gender', 'major', 'grad_year', 'diet', 'diet_restrictions', 'tshirt', 'phone', 'created_at', 'updated_at', 'deleted_at'];
+    protected $guarded = ['id'];
+    protected $appends = ['completed'];
 
     public function user()
     {
@@ -34,47 +82,10 @@ class Application extends Model
         return $this->belongsTo('App\Models\School');
     }
 
-    public function ratings()
-    {
-        return $this->hasMany('App\Models\ApplicationRating');
-    }
-
     public function notes()
     {
         return $this->hasMany('App\Models\ApplicationNote');
     }
-
-    public function ratingInfo()
-    {
-        $count = ApplicationRating::where('application_id', $this->id)->get()->count();
-        $sum = 0;
-        $ratings = [];
-        foreach ($this->ratings as $each) {
-            $rating = intval($each->rating);
-            $sum += $rating;
-            $ratings[] = $rating;
-        }
-        $min = 0;
-        $max = 0;
-        $avg = 0;
-        if ($count != 0) {
-            $avg = $sum / $count;
-            $min = min($ratings);
-            $max = max($ratings);
-            $avg = $sum / $count;
-        }
-
-        return
-        [
-            'count'=>$count,
-            'min'=>$min,
-            'max'=>$max,
-            // "ratings"=>$ratings,
-            'average'=>$avg,
-        ];
-    }
-
-    protected $appends = ['completed', 'reviews'];
 
     public function getCompletedAttribute()
     {
@@ -85,7 +96,7 @@ class Application extends Model
     {
         $reasons = [];
         $phase = intval(getenv('APP_PHASE'));
-        if ($phase >= 2) {
+        if ($phase >= self::PHASE_APPLICATIONS_OPEN) {
             if (! $this->user->first_name) {
                 $reasons[] = 'First name not set.';
             }
@@ -101,6 +112,9 @@ class Application extends Model
             if (! ($this->github) && ! ($this->has_no_github)) {
                 $reasons[] = "Github username not provided. If you don't have a github, indicate that.";
             }
+            if (! ($this->linkedin) && ! ($this->has_no_linkedin)) {
+                $reasons[] = "LinkedIn username not provided. If you don't have a LinkedIn, indicate that.";
+            }
             if (! isset($this->grad_year)) {
                 $reasons[] = 'Grad year not provided.';
             }
@@ -110,9 +124,6 @@ class Application extends Model
             if (! ($this->major)) {
                 $reasons[] = 'Major not provided.';
             }
-            if (! isset($this->needsTravelReimbursement)) {
-                $reasons[] = 'Travel info not provided.';
-            }
             if (! isset($this->isFirstHackathon)) {
                 $reasons[] = 'First hackathon? not provided.';
             }
@@ -120,7 +131,7 @@ class Application extends Model
                 $reasons[] = 'Race not provided.';
             }
         }
-        if ($phase >= 3) {
+        if ($phase >= self::PHASE_DECISIONS_REVEALED) {
             if (! $this->diet) {
                 $reasons[] = 'Dietary info not provided';
             }
@@ -134,13 +145,10 @@ class Application extends Model
     }
 
     /**
-     * Determine number of times the application has been reviewed.
+     * Pulls in some github info.
+     * @return array|mixed
+     * @codeCoverageIgnore
      */
-    public function getReviewsAttribute()
-    {
-        return ApplicationRating::where('application_id', $this->id)->get()->count();
-    }
-
     public function getGithubSummary()
     {
         $github_username = $this->github;
@@ -172,12 +180,26 @@ class Application extends Model
                 'full_name'=>$each['full_name'],
                 'language'=>$each['language'],
                 'description'=>$each['description'],
-                'description'=>$each['description'],
             ];
         }
         $data = ['success'=>true, 'summary'=> $summary];
         Cache::put('github_summary-'.$github_username, $data, Carbon::now()->addDays(10));
 
         return $data;
+    }
+
+    public static function getCurrentPhase()
+    {
+        return intval(getenv('APP_PHASE'));
+    }
+
+    /**
+     * if $phase is less than or equal to current, it is in effect.
+     * @param $phase
+     * @return bool
+     */
+    public static function isPhaseInEffect($phase)
+    {
+        return $phase <= self::getCurrentPhase();
     }
 }

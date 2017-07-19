@@ -7,6 +7,11 @@ use Request;
 use Carbon\Carbon;
 use App\Models\InterestSignup;
 
+/**
+ * Slack app for BM internal use.
+ * @codeCoverageIgnore
+ * Class SlackController
+ */
 class SlackController extends Controller
 {
     protected $textLines = [];

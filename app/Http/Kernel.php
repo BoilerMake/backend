@@ -3,6 +3,8 @@
 namespace App\Http;
 
 use Barryvdh\Cors\HandleCors;
+use App\Http\Middleware\JWTTestFix;
+use App\Http\Middleware\HackersOnly;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -16,6 +18,8 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         HandleCors::class,
+        JWTTestFix::class,
+        \Clockwork\Support\Laravel\ClockworkMiddleware::class,
     ];
 
     /**
@@ -36,7 +40,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        'jwt.auth'    => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
         'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+        'hackersOnly' => HackersOnly::class,
     ];
 }

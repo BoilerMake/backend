@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use DB;
 use Auth;
 use Validator;
 use Carbon\Carbon;
@@ -14,7 +13,6 @@ use App\Models\Announcement;
 use Illuminate\Http\Request;
 use App\Models\InterestSignup;
 use App\Models\ApplicationNote;
-use App\Models\ApplicationRating;
 use Eluceo\iCal\Component\Calendar;
 
 /**
@@ -35,27 +33,18 @@ class ExecController extends Controller
      */
     public function getHackers()
     {
-        $users = User::whereHas('roles', function ($q) {
+        return User::whereHas('roles', function ($q) {
             $q->where('name', 'hacker');
         })->with('application', 'application.school')->get();
-        foreach ($users as $user) {
-            $user['application']['rating_info'] = $user->application->ratingInfo();
-        }
-
-        return $users;
     }
 
     public function getHackersBulk(Request $request)
     {
         $ids = $request->all();
-        $users = User::whereHas('roles', function ($q) use ($ids) {
+
+        return User::whereHas('roles', function ($q) use ($ids) {
             $q->where('name', 'hacker')->whereIn('id', $ids);
         })->with('application', 'application.school')->get();
-        foreach ($users as $user) {
-            $user['application']['rating_info'] = $user->application->ratingInfo();
-        }
-
-        return $users;
     }
 
     public function putHackersBulk(Request $request)
@@ -152,46 +141,17 @@ class ExecController extends Controller
         return ['ok'];
     }
 
-    public function getNextApplicationID()
-    {
-        $user = Auth::user();
-        foreach (Application::orderBy(DB::raw('RAND()'))->get() as $app) {
-            //we must find the applications that are completed and have fewer than 3 reviews and that i didn't review
-            if ($app->completed) {
-                if ($app->reviews < 3) {
-                    if (! ApplicationRating::where('application_id', $app->id)->where('user_id', $user->id)->first()) {
-                        return $app->id;
-                    }
-                }
-            }
-        }
-    }
-
-    public function getApplication($id)
-    {
-        $user = Auth::user();
-        $app = Application::with('user', 'school', 'team', 'notes.user')->find($id);
-
-        $app->resumeURL = GeneralController::resumeUrl($app->user->id, 'get');
-        $app->myrating = ApplicationRating::where('application_id', $id)->where('user_id', $user->id)->first();
-        $app['validation'] = $app->validationDetails();
-        $app->github_summary = $app->getGithubSummary();
-
-        return $app;
-    }
-
-    public function rateApplication(Request $request, $id)
-    {
-        $user = Auth::user();
-        $rating = $request->all()['rating'];
-        $ranking = ApplicationRating::firstOrNew(['application_id'=>intval($id), 'user_id'=>$user->id]);
-        $ranking->application_id = intval($id);
-        $ranking->user_id = $user->id;
-        $ranking->rating = $rating;
-        $ranking->save();
-
-        return ['next'=>self::getNextApplicationID()];
-    }
+//    public function getApplication($id)
+//    {
+//        $user = Auth::user();
+//        $app = Application::with('user', 'school', 'team', 'notes.user')->find($id);
+//
+//        $app->resumeURL = $app->user->resumeURL();
+//        $app['validation'] = $app->validationDetails();
+//        $app->github_summary = $app->getGithubSummary();
+//
+//        return $app;
+//    }
 
     /**
      * @param Request $request

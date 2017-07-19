@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App;
 use Log;
 use Request;
 use Illuminate\Support\ServiceProvider;
@@ -24,40 +25,48 @@ class ResponseServiceProvider extends ServiceProvider
         }
 
         $requestInfo = [
-            'url'=>Request::fullUrl(),
-            'path'=>Request::path(),
-            'params'=>Request::all(),
-            'ip'=>Request::ip(),
-            'headers'=>Request::header(),
-            'user' => $user,
-            'success' => true,
-            'code' => 200,
+            'url'       => Request::fullUrl(),
+            'path'      => Request::path(),
+            'params'    => Request::all(),
+            'ip'        => Request::ip(),
+            'headers'   => Request::header(),
+            'user'      => $user,
+            'success'   => true,
+            'code'      => 200,
+            'timing_ms' => round(1000 * (microtime(true) - LARAVEL_START)),
         ];
 
         //determine if we want to return debug info, based on x-debug-token, which gets set via React cookie.
-        $providedDebugToken = isset(Request::header()['x-debug-token']) ? Request::header()['x-debug-token'][0] : null;
-        $shouldDebugRequest = $providedDebugToken && $providedDebugToken === env('DEBUG_TOKEN');
+        //we will also return debug info in a dev env
+        $providedDebugToken = Request::header('x-debug-token');
+        $shouldDebugRequest = ($providedDebugToken && $providedDebugToken === env('DEBUG_TOKEN') || (env('APP_ENV') !== 'production'));
 
-        Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest) {
-            Log::info('api_request', ['request' => $requestInfo]);
+        //if on !production, log requests only if env says to, because they are inherently verbose
+        $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
+        Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest, $shouldLog) {
+            if ($shouldLog) {
+                Log::info('api_request', ['request' => $requestInfo]);
+            }
 
             return Response::json([
-                'success' => true,
-                'data' => $data,
-                'request_debug' => $shouldDebugRequest ? $requestInfo : 'hidden',
+                'success'       => true,
+                'data'          => $data,
+                'request_debug' => $shouldDebugRequest ? $requestInfo : null,
             ], 200);
         });
 
-        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo, $shouldDebugRequest) {
+        Response::macro('error', function ($message, $data = null, $response_code = 400) use ($requestInfo, $shouldDebugRequest, $shouldLog) {
             $requestInfo['success'] = false;
             $requestInfo['code'] = $response_code;
-            Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
+            if ($shouldLog) {
+                Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
+            }
 
             return Response::json([
-                'success' => false,
-                'message' => $message, //todo: refactor to error_message?
-                'data' => $data,
-                'request_debug' => $shouldDebugRequest ? $requestInfo : 'hidden',
+                'success'       => false,
+                'message'       => $message,
+                'data'          => $data,
+                'request_debug' => $shouldDebugRequest ? $requestInfo : null,
             ], $response_code);
         });
     }
