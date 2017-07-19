@@ -21,7 +21,7 @@ class ApplicationsTest extends TestCase
         $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
         $response->assertStatus(200)->assertJson(['success' => true]);
         $data = $response->json()['data'];
-        $application = $data['application'];
+        $application = $data['applicationForm'];
         foreach (Application::USER_FIELDS_TO_INJECT as $x) {
             $this->assertTrue(array_key_exists($x, $application));
         }
@@ -58,20 +58,20 @@ class ApplicationsTest extends TestCase
         $release = Application::PHASE_DECISIONS_REVEALED;
         putenv("APP_PHASE={$release}");
         $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
-        $application = $response->json()['data']['application'];
+        $application = $response->json()['data']['applicationForm'];
         $this->assertTrue(array_key_exists(Application::FIELD_DECISION, $application));
 
         $hide = Application::PHASE_APPLICATIONS_OPEN;
         putenv("APP_PHASE={$hide}");
         $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
-        $application = $response->json()['data']['application'];
+        $application = $response->json()['data']['applicationForm'];
         $this->assertFalse(array_key_exists(Application::FIELD_DECISION, $application));
 
         //we wouldn't have applications and interest signups at the same point but...
         $hide = Application::PHASE_INTEREST_SIGNUPS;
         putenv("APP_PHASE={$hide}");
         $response = $this->jsonWithAuth('GET', '/v1/users/me/application', [], $user);
-        $application = $response->json()['data']['application'];
+        $application = $response->json()['data']['applicationForm'];
         $this->assertFalse(array_key_exists(Application::FIELD_DECISION, $application));
     }
 

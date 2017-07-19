@@ -27,7 +27,7 @@ class User extends Authenticatable
         'first_name', 'last_name', 'email', 'password',
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = ['password', self::FIELD_CONFIRMATION_CODE];
     protected $appends = ['launch', 'name'];
 
     const ROLE_HACKER = 'hacker';
@@ -36,6 +36,7 @@ class User extends Authenticatable
     const FIELD_FIRSTNAME = 'first_name';
     const FIELD_LASTNAME = 'last_name';
     const FIELD_PHONE = 'phone';
+    const FIELD_CONFIRMATION_CODE = 'confirmation_code';
 
     public function getLaunchAttribute()
     {
@@ -69,7 +70,7 @@ class User extends Authenticatable
         $user->postSignupActions($roles); // Attach roles
         if ($needToConfirmEmail) {
             $code = str_random(10);
-            $user->confirmation_code = $code;
+            $user[User::FIELD_CONFIRMATION_CODE] = $code;
             $link = env('FRONTEND_ADDRESS').'/confirm/'.$code;
             //todo: clean up this email building
             Log::info("going to send UserRegistration to user_id {$user->id}, email {$email} ", ['user_id'=>$user->id]);

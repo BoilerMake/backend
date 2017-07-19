@@ -70,7 +70,7 @@ class Application extends Model
         self::FIELD_RSVP_DEADLINE,
     ];
     protected $guarded = ['id'];
-    protected $appends = ['completed', 'reviews'];
+    protected $appends = ['completed'];
 
     public function user()
     {

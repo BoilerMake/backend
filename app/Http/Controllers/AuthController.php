@@ -83,7 +83,7 @@ class AuthController extends Controller
         if (! $code) {
             return response()->error('Code is required');
         }
-        $user = User::where('confirmation_code', $code)->first();
+        $user = User::where(User::FIELD_CONFIRMATION_CODE, $code)->first();
         if ($user) {
             $user->confirmed = 1;
             $user->save();
