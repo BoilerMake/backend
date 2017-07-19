@@ -59,7 +59,7 @@ class Application extends Model
         self::FIELD_IS_FIRST_HACKATHON,
         self::FIELD_HAS_NO_GITHUB,
         self::FIELD_HAS_NO_LINKEDIN,
-        'school_id'
+        'school_id',
     ];
 
     public $schoolinfo = null;

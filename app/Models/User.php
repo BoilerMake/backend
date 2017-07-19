@@ -70,7 +70,7 @@ class User extends Authenticatable
         $user->postSignupActions($roles); // Attach roles
         if ($needToConfirmEmail) {
             $code = str_random(10);
-            $user[User::FIELD_CONFIRMATION_CODE] = $code;
+            $user[self::FIELD_CONFIRMATION_CODE] = $code;
             $link = env('FRONTEND_ADDRESS').'/confirm/'.$code;
             //todo: clean up this email building
             Log::info("going to send UserRegistration to user_id {$user->id}, email {$email} ", ['user_id'=>$user->id]);
