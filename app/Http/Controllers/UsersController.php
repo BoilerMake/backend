@@ -113,7 +113,7 @@ class UsersController extends Controller
         $user->save();
         $application->save();
 
-        return response()->success('ok');
+        return $this->getApplication();
     }
 
 //    public function completePuzzle(Request $request)

@@ -217,6 +217,7 @@ class User extends Authenticatable
         if ($match) {
             return $match->id;
         }
+        return null;
     }
 
     /**
