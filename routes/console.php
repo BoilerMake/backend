@@ -15,10 +15,7 @@ use App\Models\Application;
 */
 
 Artisan::command('applications:calculate', function () {
-    foreach (Application::all() as $app) {
-        $app->completed_calculated = $app->completed;
-        $app->save();
-    }
+    Application::calculateCompleted();
 })->describe('calculate application status and put it in the DB');
 
 Artisan::command('applications:expiredrsvp', function () {

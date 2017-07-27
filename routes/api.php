@@ -70,21 +70,16 @@ Route::prefix('v1')->group(function () {
     /*
      * Exec routes
      */
-    Route::middleware(['jwt.auth', 'role:exec'])->prefix('execs')->group(function () {
-        //list hackers
-        Route::get('hackers', 'ExecController@getHackers');
-        //old routes?
-        Route::post('hackers/bulk', 'ExecController@getHackersBulk');
-        Route::put('hackers/bulk', 'ExecController@putHackersBulk');
+    Route::middleware(['jwt.auth', 'role:exec'])->prefix('exec')->group(function () {
+        Route::get('dashboard','ExecController@dashboardData');
+
         //get users list/overview by ID/perform action by ID
         Route::get('users', 'ExecController@getUsers');
-        Route::get('users/{id}/view', 'ExecController@getUser');
+        Route::get('users/{id}', 'ExecController@getUser');
         Route::post('users/{id}/action', 'ExecController@doAction');
-        //application review
-        Route::get('applications/next', 'ExecController@getNextApplicationID');
-        Route::get('applications/{id}/view', 'ExecController@getApplication');
-        Route::put('applications/{id}/rate', 'ExecController@rateApplication');
-        Route::post('applications/{id}/notes', 'ExecController@addApplicationNote');
+        //applications
+        Route::get('applications','ExecController@getApplications');
+        Route::get('applications/{id}', 'ExecController@getApplication');
         //day-of annoucements
         Route::post('announcements/add', 'ExecController@addAnnouncement');
         //calendar events

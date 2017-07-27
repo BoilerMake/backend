@@ -28,38 +28,10 @@ class ExecController extends Controller
         return InterestSignup::all();
     }
 
-    /**
-     * @return array ofhackers
-     */
-    public function getHackers()
-    {
-        return User::whereHas('roles', function ($q) {
-            $q->where('name', 'hacker');
-        })->with('application', 'application.school')->get();
-    }
-
-    public function getHackersBulk(Request $request)
-    {
-        $ids = $request->all();
-
-        return User::whereHas('roles', function ($q) use ($ids) {
-            $q->where('name', 'hacker')->whereIn('id', $ids);
-        })->with('application', 'application.school')->get();
-    }
-
-    public function putHackersBulk(Request $request)
-    {
-        $ids = $request->all()['hackers'];
-        $decision = $request->all()['decision'];
-        $users = User::whereHas('roles', function ($q) use ($ids) {
-            $q->where('name', 'hacker')->whereIn('id', $ids);
-        })->with('application', 'application.school')->get();
-        foreach ($users as $user) {
-            $user->application->decision = $decision;
-            $user->application->save();
-        }
-
-        return $users;
+    public function dashboardData() {
+        return response()->success([
+            'interest_count' => InterestSignup::count()
+        ]);
     }
 
     /**
@@ -71,8 +43,11 @@ class ExecController extends Controller
         foreach ($users as $eachUser) {
             $eachUser->roles = $eachUser->roles()->pluck('name');
         }
-
-        return $users;
+        return response()->success($users);
+    }
+    public function getApplications()
+    {
+        return response()->success(Application::with('user','school')->get());
     }
 
     /**

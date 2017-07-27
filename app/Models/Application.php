@@ -72,6 +72,19 @@ class Application extends Model
     protected $guarded = ['id'];
     protected $appends = ['completed'];
 
+    public static function calculateCompleted()
+    {
+        $count = 0;
+        foreach (self::all() as $app) {
+            $app->completed_calculated = $app->completed;
+            if($app->completed) {
+                $count++;
+            }
+            $app->save();
+        }
+        return $count;
+    }
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');
