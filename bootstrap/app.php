@@ -65,7 +65,7 @@ $app->configureMonologUsing(function ($monolog) {
     });
 
     //re-setup default laravel log style since we're overriding Monoog initially
-    $infoStreamHandler = new StreamHandler(storage_path('/logs/laravel.log'));
+    $infoStreamHandler = new StreamHandler(storage_path('logs/laravel.log'));
     if (env('JSON_LOG')) {
         //logstash pipeline needs JSON logs
         $infoStreamHandler->setFormatter(new \Monolog\Formatter\JsonFormatter());
