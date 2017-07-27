@@ -18,18 +18,20 @@ class SponsorsController extends Controller
     {
         if ($secret != env('PACKET_SECRET')) {
             Log::info('sponsorship_packet_auth_fail');
-
             return 'not authorized';
         }
         Log::info('sponsorship_packet_read');
         $s3 = AWS::createClient('s3');
-        $cmd = $s3->getCommand('getObject', [
+
+        // Get the object
+        $result = $s3->getObject(array(
             'Bucket' => getenv('S3_BUCKET'),
             'Key'    => getenv('S3_PREFIX').'/packet.pdf',
-            'ResponseContentType' => 'application/pdf',
-        ]);
-        $request = $s3->createPresignedRequest($cmd, '+7 days');
+        ));
 
-        return Redirect::to((string) $request->getUri());
+        // Display the object in the browser
+        header("Content-Type: {$result['ContentType']}");
+        header('Content-Disposition: inline; filename="BoilerMake_sponsorship_packet.pdf"');
+        echo $result['Body'];
     }
 }
