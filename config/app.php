@@ -185,6 +185,7 @@ return [
         App\Providers\ResponseServiceProvider::class,
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
+        OwenIt\Auditing\AuditingServiceProvider::class,
     ],
 
     /*

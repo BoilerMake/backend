@@ -8,8 +8,13 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Application extends Model
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+
+
+class Application extends Model implements AuditableContract
 {
+    use Auditable;
     use SoftDeletes;
     const DECISION_EXPIRED = 4;
     const DECISION_ACCEPT = 3;

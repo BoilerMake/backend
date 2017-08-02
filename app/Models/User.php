@@ -15,8 +15,12 @@ use App\Mail\UserRegistration;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+
+class User extends Authenticatable implements AuditableContract
 {
+    use Auditable;
     use EntrustUserTrait;
     /**
      * The attributes that are mass assignable.

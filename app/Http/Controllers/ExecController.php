@@ -57,18 +57,9 @@ class ExecController extends Controller
      */
     public function getUser($id)
     {
-        $user = User::find($id);
-        $application = null;
-        if ($user->hasRole('hacker')) {
-            $application = $user->getApplication(true);
-        }
-
-        return [
-            'user'=>$user,
-            'application'=>$application,
-            'roles'=>$user->roles()->pluck('name'),
-            'isHacker'=>$user->hasRole('hacker'),
-            ];
+        $user = User::with('audits')->find($id);
+        $user->roles = $user->roles()->pluck('name');
+        return response()->success($user);
     }
 
     public function doAction(Request $request, $id)
@@ -116,17 +107,14 @@ class ExecController extends Controller
         return ['ok'];
     }
 
-//    public function getApplication($id)
-//    {
-//        $user = Auth::user();
-//        $app = Application::with('user', 'school', 'team', 'notes.user')->find($id);
-//
-//        $app->resumeURL = $app->user->resumeURL();
-//        $app['validation'] = $app->validationDetails();
+    public function getApplication($id)
+    {
+        $app = Application::with('user', 'school', 'notes.user','audits')->find($id);
+        $app->resumeURL = $app->user->resumeURL();
+        $app->validationDetails = $app->validationDetails();
 //        $app->github_summary = $app->getGithubSummary();
-//
-//        return $app;
-//    }
+        return $app;
+    }
 
     /**
      * @param Request $request
