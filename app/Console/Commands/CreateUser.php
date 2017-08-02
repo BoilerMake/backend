@@ -60,14 +60,11 @@ class CreateUser extends Command
         }
         $password = Hash::make($password);
 
-        $user = new User;
+        $user = User::addNew($this->argument('email'),$password,true,$roles);
         $user->first_name = $this->argument('first_name');
         $user->last_name = $this->argument('last_name');
-        $user->password = $password;
-        $user->email = $this->argument('email');
         $user->save();
 
-        $user->postSignupActions($roles);
         if ($shouldSendPasswordReset) {
             $user->sendPasswordResetEmail();
         }
