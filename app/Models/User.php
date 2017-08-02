@@ -12,10 +12,9 @@ use Carbon\Carbon;
 use App\Services\Notifier;
 use Illuminate\Support\Str;
 use App\Mail\UserRegistration;
+use OwenIt\Auditing\Auditable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
-use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 class User extends Authenticatable implements AuditableContract
@@ -221,7 +220,6 @@ class User extends Authenticatable implements AuditableContract
         if ($match) {
             return $match->id;
         }
-        return null;
     }
 
     /**

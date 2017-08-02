@@ -71,14 +71,14 @@ Route::prefix('v1')->group(function () {
      * Exec routes
      */
     Route::middleware(['jwt.auth', 'role:exec'])->prefix('exec')->group(function () {
-        Route::get('dashboard','ExecController@dashboardData');
+        Route::get('dashboard', 'ExecController@dashboardData');
 
         //get users list/overview by ID/perform action by ID
         Route::get('users', 'ExecController@getUsers');
         Route::get('users/{id}', 'ExecController@getUser');
         Route::post('users/{id}/action', 'ExecController@doAction');
         //applications
-        Route::get('applications','ExecController@getApplications');
+        Route::get('applications', 'ExecController@getApplications');
         Route::get('applications/{id}', 'ExecController@getApplication');
         //day-of annoucements
         Route::post('announcements/add', 'ExecController@addAnnouncement');

@@ -60,7 +60,7 @@ class CreateUser extends Command
         }
         $password = Hash::make($password);
 
-        $user = User::addNew($this->argument('email'),$password,true,$roles);
+        $user = User::addNew($this->argument('email'), $password, true, $roles);
         $user->first_name = $this->argument('first_name');
         $user->last_name = $this->argument('last_name');
         $user->save();

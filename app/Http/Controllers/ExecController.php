@@ -28,9 +28,10 @@ class ExecController extends Controller
         return InterestSignup::all();
     }
 
-    public function dashboardData() {
+    public function dashboardData()
+    {
         return response()->success([
-            'interest_count' => InterestSignup::count()
+            'interest_count' => InterestSignup::count(),
         ]);
     }
 
@@ -43,11 +44,13 @@ class ExecController extends Controller
         foreach ($users as $eachUser) {
             $eachUser->roles = $eachUser->roles()->pluck('name');
         }
+
         return response()->success($users);
     }
+
     public function getApplications()
     {
-        return response()->success(Application::with('user','school')->get());
+        return response()->success(Application::with('user', 'school')->get());
     }
 
     /**
@@ -59,8 +62,9 @@ class ExecController extends Controller
     {
         $user = User::with('audits')->find($id);
         $user->roles = $user->roles()->pluck('name');
-        $app = Application::where('user_id',$id)->first();
+        $app = Application::where('user_id', $id)->first();
         $user->application_id = $app ? $app->id : null;
+
         return response()->success($user);
     }
 
@@ -111,7 +115,7 @@ class ExecController extends Controller
 
     public function getApplication($id)
     {
-        $application = Application::with('user', 'school', 'notes.user','audits')->find($id);
+        $application = Application::with('user', 'school', 'notes.user', 'audits')->find($id);
         foreach (Application::USER_FIELDS_TO_INJECT as $x) {
             $application[$x] = $application->user->$x;
         }
