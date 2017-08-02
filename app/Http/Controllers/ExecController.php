@@ -59,6 +59,8 @@ class ExecController extends Controller
     {
         $user = User::with('audits')->find($id);
         $user->roles = $user->roles()->pluck('name');
+        $app = Application::where('user_id',$id)->first();
+        $user->application_id = $app ? $app->id : null;
         return response()->success($user);
     }
 
@@ -109,11 +111,14 @@ class ExecController extends Controller
 
     public function getApplication($id)
     {
-        $app = Application::with('user', 'school', 'notes.user','audits')->find($id);
-        $app->resumeURL = $app->user->resumeURL();
-        $app->validationDetails = $app->validationDetails();
+        $application = Application::with('user', 'school', 'notes.user','audits')->find($id);
+        foreach (Application::USER_FIELDS_TO_INJECT as $x) {
+            $application[$x] = $application->user->$x;
+        }
+        $application->resumeURL = $application->user->resumeURL();
+        $application->validationDetails = $application->validationDetails();
 //        $app->github_summary = $app->getGithubSummary();
-        return $app;
+        return response()->success($application);
     }
 
     /**
