@@ -154,7 +154,7 @@ class Application extends Model implements AuditableContract
 
         return [
             'valid'   => (count($reasons) === 0),
-            'reasons' => $reasons
+            'reasons' => $reasons,
         ];
     }
 
