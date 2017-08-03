@@ -112,53 +112,50 @@ class Application extends Model implements AuditableContract
     public function validationDetails()
     {
         $reasons = [];
-        $phase = intval(getenv('APP_PHASE'));
-        if ($phase >= self::PHASE_APPLICATIONS_OPEN) {
-            if (! $this->user->first_name) {
-                $reasons[] = 'First name not set.';
-            }
-            if (! $this->user->last_name) {
-                $reasons[] = 'Last name not set.';
-            }
-            if (! isset($this->school_id)) {
-                $reasons[] = 'School not set.';
-            }
-            if (! ($this->resume_uploaded)) {
-                $reasons[] = 'Resume not uploaded.';
-            }
-            if (! ($this->github) && ! ($this->has_no_github)) {
-                $reasons[] = "Github username not provided. If you don't have a github, indicate that.";
-            }
-            if (! ($this->linkedin) && ! ($this->has_no_linkedin)) {
-                $reasons[] = "LinkedIn username not provided. If you don't have a LinkedIn, indicate that.";
-            }
-            if (! isset($this->grad_year)) {
-                $reasons[] = 'Grad year not provided.';
-            }
-            if (! isset($this->gender)) {
-                $reasons[] = 'Gender not provided.';
-            }
-            if (! ($this->major)) {
-                $reasons[] = 'Major not provided.';
-            }
-            if (! isset($this->isFirstHackathon)) {
-                $reasons[] = 'First hackathon? not provided.';
-            }
-            if (! isset($this->race)) {
-                $reasons[] = 'Race not provided.';
-            }
+        if (! $this->user->first_name) {
+            $reasons[] = 'First name not set.';
         }
-        if ($phase >= self::PHASE_DECISIONS_REVEALED) {
+        if (! $this->user->last_name) {
+            $reasons[] = 'Last name not set.';
+        }
+        if (! isset($this->school_id)) {
+            $reasons[] = 'School not set.';
+        }
+        if (! ($this->resume_uploaded)) {
+            $reasons[] = 'Resume not uploaded.';
+        }
+        if (! ($this->github) && ! ($this->has_no_github)) {
+            $reasons[] = "Github username not provided. If you don't have a github, indicate that.";
+        }
+        if (! ($this->linkedin) && ! ($this->has_no_linkedin)) {
+            $reasons[] = "LinkedIn username not provided. If you don't have a LinkedIn, indicate that.";
+        }
+        if (! isset($this->grad_year)) {
+            $reasons[] = 'Grad year not provided.';
+        }
+        if (! isset($this->gender)) {
+            $reasons[] = 'Gender not provided.';
+        }
+        if (! ($this->major)) {
+            $reasons[] = 'Major not provided.';
+        }
+        if (! isset($this->isFirstHackathon)) {
+            $reasons[] = 'First hackathon? not provided.';
+        }
+        if (! isset($this->race)) {
+            $reasons[] = 'Race not provided.';
+        }
+
+        if (self::isPhaseInEffect(self::PHASE_DECISIONS_REVEALED)) {
             if (! $this->diet) {
                 $reasons[] = 'Dietary info not provided';
             }
         }
-        $valid = true;
-        if (count($reasons) != 0) {
-            $valid = false;
-        }
 
-        return ['valid'=>$valid, 'reasons'=>$reasons];
+        return [
+            'valid'   => (count($reasons) === 0),
+            'reasons' => $reasons
+        ];
     }
 
     /**
