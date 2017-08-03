@@ -53,7 +53,7 @@ class UsersController extends Controller
     {
         $user = Auth::user();
         $application = $user->getApplication();
-        $application['skills'] = json_decode($application->skills, true);//todo: put this as a model prop
+        $application['skills'] = json_decode($application->skills, true); //todo: put this as a model prop
 
         foreach (Application::USER_FIELDS_TO_INJECT as $x) {
             $application[$x] = $user->$x;

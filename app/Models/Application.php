@@ -5,12 +5,10 @@ namespace App\Models;
 use Cache;
 use GuzzleHttp;
 use Carbon\Carbon;
+use OwenIt\Auditing\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-
 
 class Application extends Model implements AuditableContract
 {
@@ -82,11 +80,12 @@ class Application extends Model implements AuditableContract
         $count = 0;
         foreach (self::all() as $app) {
             $app->completed_calculated = $app->completed;
-            if($app->completed) {
+            if ($app->completed) {
                 $count++;
             }
             $app->save();
         }
+
         return $count;
     }
 
