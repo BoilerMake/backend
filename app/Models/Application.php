@@ -51,6 +51,9 @@ class Application extends Model implements AuditableContract
     const FIELD_DECISION = 'decision';
     const FIELD_CHECKED_IN_AT = 'checked_in_at';
     const FIELD_GITHUB_ETAG = 'github_etag';
+    const FIELD_TERMS_AND_CONDITIONS_1 = 'tandc_1';//over 18
+    const FIELD_TERMS_AND_CONDITIONS_2 = 'tandc_2';//MLH code of conduct
+    const FIELD_TERMS_AND_CONDITIONS_3 = 'tandc_3';//privacy policy
 
     const INITIAL_FIELDS = [
         self::FIELD_GRAD_YEAR,
@@ -63,6 +66,9 @@ class Application extends Model implements AuditableContract
         self::FIELD_HAS_NO_GITHUB,
         self::FIELD_HAS_NO_LINKEDIN,
         'school_id',
+        self::FIELD_TERMS_AND_CONDITIONS_1,
+        self::FIELD_TERMS_AND_CONDITIONS_2,
+        self::FIELD_TERMS_AND_CONDITIONS_3,
     ];
 
     public $schoolinfo = null;
@@ -144,6 +150,15 @@ class Application extends Model implements AuditableContract
         }
         if (! isset($this->race)) {
             $reasons[] = 'Race not provided.';
+        }
+        if(!$this[self::FIELD_TERMS_AND_CONDITIONS_1]) {
+            $reasons[] = 'T&C 1 not checked';
+        }
+        if(!$this[self::FIELD_TERMS_AND_CONDITIONS_2]) {
+            $reasons[] = 'T&C 2 not checked';
+        }
+        if(!$this[self::FIELD_TERMS_AND_CONDITIONS_3]) {
+            $reasons[] = 'T&C 3 not checked';
         }
 
         if (self::isPhaseInEffect(self::PHASE_DECISIONS_REVEALED)) {
