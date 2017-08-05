@@ -70,6 +70,7 @@ class UsersController extends Controller
             'applicationForm' => $application,
             'validation'  => $application->validationDetails(),
             'phase'       => Application::getCurrentPhase(),
+            'message'     => $application->completed ? 'Your application is completed!' : 'Your application is not yet complete though!'
         ]);
     }
 
