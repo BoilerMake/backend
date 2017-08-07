@@ -32,7 +32,7 @@ class UserRegistration extends Mailable
     public function build()
     {
         return $this->from('hello@boilermake.org', 'BoilerMake')
-                    ->subject('Welcome to BoilerMake!')
+                    ->subject('Confirm your BoilerMake Account')
                     ->view('emails.welcome')
                     ->with([
                         'user' => $this->user,

@@ -48,6 +48,9 @@ class ExecController extends Controller
         return response()->success($users);
     }
 
+    /**
+     * Gets all applications
+     */
     public function getApplications()
     {
         return response()->success(Application::with('user', 'school')->get());
