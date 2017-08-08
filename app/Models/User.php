@@ -148,7 +148,7 @@ class User extends Authenticatable implements AuditableContract
         $reset->token = $token;
         $reset->save();
 
-        $link = getenv('FRONTEND_ADDRESS').'/pwr?tok='.$token;
+        $link = getenv('FRONTEND_ADDRESS').'/reset/'.$token;
         Log::info("going to send PasswordReset to user_id {$this->id}, email {$this->email} ", ['user_id'=>$this->id]);
         Mail::to($this->email)->send(new PasswordResetEmail($this, $link));
     }
