@@ -9,9 +9,9 @@ use Hash;
 use Mail;
 use JWTAuth;
 use Carbon\Carbon;
-use App\Services\Notifier;
 use Illuminate\Support\Str;
 use App\Mail\UserRegistration;
+use App\Mail\PasswordReset as PasswordResetEmail;
 use OwenIt\Auditing\Auditable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -137,6 +137,9 @@ class User extends Authenticatable implements AuditableContract
         return $this->hasOne('App\Models\Application');
     }
 
+    /**
+     * Sends the user a password reset email
+     */
     public function sendPasswordResetEmail()
     {
         $token = md5(Carbon::now().env('APP_KEY'));
@@ -145,8 +148,9 @@ class User extends Authenticatable implements AuditableContract
         $reset->token = $token;
         $reset->save();
 
-        $n = new Notifier($this);
-        $n->sendEmail('BoilerMake Password Reset!', 'password-reset', ['token_url'=>getenv('FRONTEND_ADDRESS').'/pwr?tok='.$token]);
+        $link = getenv('FRONTEND_ADDRESS').'/pwr?tok='.$token;
+        Log::info("going to send PasswordReset to user_id {$this->id}, email {$this->email} ", ['user_id'=>$this->id]);
+        Mail::to($this->email)->send(new PasswordResetEmail($this, $link));
     }
 
     /**
