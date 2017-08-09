@@ -162,11 +162,10 @@ class AuthController extends Controller
         }
         $githubUser = GithubUser::fetchFromOauthToken($gitHub_token);
 
-        //todo: strengthen this: ensure that user gave us the email scope / that we have email
         if (! $githubUser->email) {
-            Log::info("githubAuth: user didn't give email scope :(");
-            //eek no email permissions scope
-            return response()->error('no email scope :(');
+            Log::info("githubAuth: user didn't give email");
+            //eek no email
+            return response()->error('You do not have an email attached to your GitHub profile.');
         }
 
         //do we have a user logged in already (e.g. if they are linking their GH)
