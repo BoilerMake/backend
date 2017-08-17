@@ -215,6 +215,7 @@ class SchoolSeeder extends Seeder
         School::firstOrCreate(['name' => 'Worcester Polytechnic Institute']);
         School::firstOrCreate(['name' => 'Florida International University']);
         School::firstOrCreate(['name' => 'University of Miami']);
+        School::firstOrCreate(['name' => 'Valparaiso University']);
 
         School::firstOrCreate(['name' => 'Other/School not listed']);
     }
