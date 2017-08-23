@@ -34,7 +34,7 @@ class ExecController extends Controller
         $interestEmails = InterestSignup::all()->pluck('email');
         $signupEmails = User::all()->pluck('email');
         $interestEmailsWhoHaveNotSignedUp = $interestEmails->intersect($signupEmails)->count();
-        $percentOfInterestWhoApplied = ($interestCount-$interestEmailsWhoHaveNotSignedUp)/$interestCount;
+        $percentOfInterestWhoApplied = ($interestCount-$interestEmailsWhoHaveNotSignedUp)/$interestCount*100;
 
 
         $reasonsMap = [];
@@ -46,7 +46,7 @@ class ExecController extends Controller
         arsort($reasonsMap);
         return response()->success([
             'interest_count'           => $interestCount,
-            'percent_interest_applied' => $percentOfInterestWhoApplied,
+            'percent_interest_applied' => intval($percentOfInterestWhoApplied),
             'reasons_map'              => $reasonsMap
         ]);
     }
