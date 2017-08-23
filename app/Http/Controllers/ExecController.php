@@ -30,8 +30,24 @@ class ExecController extends Controller
 
     public function dashboardData()
     {
+        $interestCount = InterestSignup::count();
+        $interestEmails = InterestSignup::all()->pluck('email');
+        $signupEmails = User::all()->pluck('email');
+        $interestEmailsWhoHaveNotSignedUp = $interestEmails->intersect($signupEmails)->count();
+        $percentOfInterestWhoApplied = ($interestCount-$interestEmailsWhoHaveNotSignedUp)/$interestCount;
+
+
+        $reasonsMap = [];
+        foreach (Application::all() as $app) {
+            foreach ($app->validationDetails()['reasons'] as $reason) {
+                $reasonsMap[$reason] = !array_key_exists($reason, $reasonsMap) ? 1 :  $reasonsMap[$reason] + 1;
+            }
+        }
+        arsort($reasonsMap);
         return response()->success([
-            'interest_count' => InterestSignup::count(),
+            'interest_count'           => $interestCount,
+            'percent_interest_applied' => $percentOfInterestWhoApplied,
+            'reasons_map'              => $reasonsMap
         ]);
     }
 
