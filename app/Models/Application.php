@@ -117,59 +117,75 @@ class Application extends Model implements AuditableContract
 
     public function validationDetails()
     {
-        $reasons = [];
+        $reason_label = [];
+        $reason_field = [];
         if (! $this->user->first_name) {
-            $reasons[] = 'First name not set.';
+            $reason_label[] = 'First name not set.';
+            $reason_field[] = 'first_name';
         }
         if (! $this->user->last_name) {
-            $reasons[] = 'Last name not set.';
+            $reason_label[] = 'Last name not set.';
+            $reason_field[] = 'last_name';
         }
         if (! isset($this->school_id)) {
-            $reasons[] = 'School not set.';
+            $reason_label[] = 'School not set.';
+            $reason_field[] = 'school_id';
         }
         if (! ($this->resume_uploaded)) {
-            $reasons[] = 'Resume not uploaded.';
+            $reason_label[] = 'Resume not uploaded.';
+            $reason_field[] = self::FIELD_RESUME_FILENAME;
         }
         if (! ($this->github) && ! ($this->has_no_github)) {
-            $reasons[] = "Github username not provided. If you don't have a github, indicate that.";
+            $reason_label[] = "Github username not provided. If you don't have a github, indicate that.";
+            $reason_field[] = self::FIELD_GITHUB;
         }
         if (! ($this->linkedin) && ! ($this->has_no_linkedin)) {
-            $reasons[] = "LinkedIn username not provided. If you don't have a LinkedIn, indicate that.";
+            $reason_label[] = "LinkedIn username not provided. If you don't have a LinkedIn, indicate that.";
+            $reason_field[] = self::FIELD_LINKEDIN;
         }
         if (! isset($this->grad_year)) {
-            $reasons[] = 'Grad year not provided.';
+            $reason_label[] = 'Grad year not provided.';
+            $reason_field[] = self::FIELD_GRAD_YEAR;
         }
         if (! isset($this->gender)) {
-            $reasons[] = 'Gender not provided.';
+            $reason_label[] = 'Gender not provided.';
+            $reason_field[] = self::FIELD_GENDER;
         }
         if (! ($this->major)) {
-            $reasons[] = 'Major not provided.';
+            $reason_label[] = 'Major not provided.';
+            $reason_field[] = self::FIELD_MAJOR;
         }
         if (! isset($this->isFirstHackathon)) {
-            $reasons[] = 'First hackathon? not provided.';
+            $reason_label[] = 'First hackathon? not provided.';
+            $reason_field[] = self::FIELD_IS_FIRST_HACKATHON;
         }
         if (! isset($this->race)) {
-            $reasons[] = 'Race not provided.';
+            $reason_label[] = 'Race not provided.';
+            $reason_field[] = self::FIELD_RACE;
         }
         if (! $this[self::FIELD_TERMS_AND_CONDITIONS_1]) {
-            $reasons[] = 'T&C 1 not checked';
+            $reason_label[] = 'T&C 1 not checked';
+            $reason_field[] = self::FIELD_TERMS_AND_CONDITIONS_1;
         }
         if (! $this[self::FIELD_TERMS_AND_CONDITIONS_2]) {
-            $reasons[] = 'T&C 2 not checked';
+            $reason_label[] = 'T&C 2 not checked';
+            $reason_field[] = self::FIELD_TERMS_AND_CONDITIONS_2;
         }
         if (! $this[self::FIELD_TERMS_AND_CONDITIONS_3]) {
-            $reasons[] = 'T&C 3 not checked';
+            $reason_label[] = 'T&C 3 not checked';
+            $reason_field[] = self::FIELD_TERMS_AND_CONDITIONS_3;
         }
 
         if (self::isPhaseInEffect(self::PHASE_DECISIONS_REVEALED)) {
             if (! $this->diet) {
-                $reasons[] = 'Dietary info not provided';
+                $reason_label[] = 'Dietary info not provided';
             }
         }
 
         return [
-            'valid'   => (count($reasons) === 0),
-            'reasons' => $reasons,
+            'valid'   => (count($reason_label) === 0),
+            'reason_label' => $reason_label,
+            'reason_field' => $reason_field,
         ];
     }
 
