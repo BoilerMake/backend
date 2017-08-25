@@ -51,7 +51,7 @@ class GetGithubActivity extends Command
 
         $doneUsers = 0;
         $doneEvents = 0;
-//        foreach (Application::whereNotNull('checked_in_at')->get() as $app) {
+        //        foreach (Application::whereNotNull('checked_in_at')->get() as $app) {
         foreach (Application::all() as $app) {
             $username = $app->github;
             if (! $username) {

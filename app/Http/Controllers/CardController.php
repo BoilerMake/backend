@@ -33,7 +33,7 @@ class CardController extends Controller
 
         $whitePixel = new ImagickPixel('#FFFFFF');
 
-//        $combined   =   new Imagick();
+        //        $combined   =   new Imagick();
 
         $x = 0;
         foreach ($pages as $page) {
@@ -94,8 +94,8 @@ class CardController extends Controller
                 $card->destroy();
             }
 
-//            $combined->addImage( $image );
-//            $combined->setImageFormat("jpg");
+            //            $combined->addImage( $image );
+            //            $combined->setImageFormat("jpg");
             $fileName = 'cards-output/layout-'.$x.'.pdf';
             $path = public_path().'/'.$fileName;
             $image->writeImage($path);
