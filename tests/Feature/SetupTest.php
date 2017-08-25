@@ -39,6 +39,6 @@ class SetupTest extends TestCase
     public function testSamiDocs()
     {
         $response = $this->call('GET', '/docs');
-//        Log::info(exec('composer run-script docs'));
+        //        Log::info(exec('composer run-script docs'));
     }
 }

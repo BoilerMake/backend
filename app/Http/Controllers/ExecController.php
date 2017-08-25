@@ -34,20 +34,20 @@ class ExecController extends Controller
         $interestEmails = InterestSignup::all()->pluck('email');
         $signupEmails = User::all()->pluck('email');
         $interestEmailsWhoHaveNotSignedUp = $interestEmails->intersect($signupEmails)->count();
-        $percentOfInterestWhoApplied = ($interestCount-$interestEmailsWhoHaveNotSignedUp)/$interestCount*100;
-
+        $percentOfInterestWhoApplied = ($interestCount - $interestEmailsWhoHaveNotSignedUp) / $interestCount * 100;
 
         $reasonsMap = [];
         foreach (Application::all() as $app) {
             foreach ($app->validationDetails()['reasons'] as $reason) {
-                $reasonsMap[$reason] = !array_key_exists($reason, $reasonsMap) ? 1 :  $reasonsMap[$reason] + 1;
+                $reasonsMap[$reason] = ! array_key_exists($reason, $reasonsMap) ? 1 : $reasonsMap[$reason] + 1;
             }
         }
         arsort($reasonsMap);
+
         return response()->success([
             'interest_count'           => $interestCount,
             'percent_interest_applied' => intval($percentOfInterestWhoApplied),
-            'reasons_map'              => $reasonsMap
+            'reasons_map'              => $reasonsMap,
         ]);
     }
 
@@ -65,7 +65,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Gets all applications
+     * Gets all applications.
      */
     public function getApplications()
     {
@@ -140,7 +140,7 @@ class ExecController extends Controller
         }
         $application->resumeURL = $application->user->resumeURL();
         $application->validationDetails = $application->validationDetails();
-//        $app->github_summary = $app->getGithubSummary();
+        //        $app->github_summary = $app->getGithubSummary();
         return response()->success($application);
     }
 

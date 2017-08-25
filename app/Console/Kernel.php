@@ -35,7 +35,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('applications:calculate')->everyFiveMinutes();
-//        $schedule->command('users:github')->everyFiveMinutes();
+        //        $schedule->command('users:github')->everyFiveMinutes();
         $schedule->command('applications:expiredrsvp')->hourly();
     }
 

@@ -11,9 +11,9 @@ use JWTAuth;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Mail\UserRegistration;
-use App\Mail\PasswordReset as PasswordResetEmail;
 use OwenIt\Auditing\Auditable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
+use App\Mail\PasswordReset as PasswordResetEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
@@ -138,7 +138,7 @@ class User extends Authenticatable implements AuditableContract
     }
 
     /**
-     * Sends the user a password reset email
+     * Sends the user a password reset email.
      */
     public function sendPasswordResetEmail()
     {
