@@ -3,16 +3,6 @@
 use Carbon\Carbon;
 use App\Models\Application;
 
-/*
-|--------------------------------------------------------------------------
-| Console Routes
-|--------------------------------------------------------------------------
-|
-| This file is where you may define all of your Closure based console
-| commands. Each Closure is bound to a command instance allowing a
-| simple approach to interacting with each command's IO methods.
-|
-*/
 
 Artisan::command('applications:calculate', function () {
     Application::calculateCompleted();
@@ -31,3 +21,10 @@ Artisan::command('applications:expiredrsvp', function () {
     $this->comment($message);
     Log::info($message, ['application_ids'=>$expiredAppsIds]);
 })->describe('process expired RSVPs');
+
+Artisan::command('applications:incompleteEmails', function () {
+    Application::calculateCompleted();
+    foreach(Application::with('user')->where('completed_calculated',false)->get() as $app) {
+        $this->info($app->user->first_name.",".$app->user->email);
+    }
+})->describe('get info for incomplete applications');
