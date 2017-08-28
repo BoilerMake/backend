@@ -163,7 +163,7 @@ class AuthController extends Controller
         $githubUser = GithubUser::fetchFromOauthToken($gitHub_token);
 
         if (! $githubUser->email) {
-            Log::info("githubAuth: user didn't give email");
+            Log::error("githubAuth: user didn't give email", ['githubUsername' => $githubUser->userName]);
             //eek no email
             return response()->error('You do not have an email attached to your GitHub profile.');
         }

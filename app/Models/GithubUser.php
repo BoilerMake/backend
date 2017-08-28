@@ -76,7 +76,6 @@ class GithubUser extends Model
         if (isset($result['error'])) {
             //todo: handle error here...
             Log::info('getGithubAuthToken access token fetching error', $result);
-
             return false;
         }
         Log::info('getGithubAuthToken successfully fetched userdata from access token', $result);
@@ -98,9 +97,23 @@ class GithubUser extends Model
                 'Accept' => 'application/json',
             ],
         ]);
-        $result = json_decode($response->getBody(), true);
-        Log::info('fetchFromOauthToken: user API response', $result);
+        $thisGithubUser = json_decode($response->getBody(), true);
+        Log::info('fetchFromOauthToken: user API response, user:'.$thisGithubUser['login'], $thisGithubUser);
+        //so the prior response might not include an email unless it's a public email, so we need to explicitly grab email
 
-        return self::store($result, $gitHub_token);
+        $emailResponse = $client->request('GET', "https://api.github.com/user/emails?access_token={$gitHub_token}", [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+        $emailResult = json_decode($emailResponse->getBody(), true);
+        Log::info('fetchFromOauthToken: $emailResult API response', $emailResult);
+        foreach ($emailResult as $email) {
+            if($email['primary']) {
+                $thisGithubUser['email'] = $email['email'];
+                Log::info('found primary email for user! '.$email['email']);
+            }
+        }
+        return self::store($thisGithubUser, $gitHub_token);
     }
 }
