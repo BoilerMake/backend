@@ -180,7 +180,7 @@ class AuthTest extends TestCase
         $this->post('/v1/users/login', ['email' => $user->email, 'password' => $newPassword])
             ->assertJsonStructure(['data'=>['token']]);
 
-//        $token = json_decode($response->getContent(), true)['data']['token'];
+        //        $token = json_decode($response->getContent(), true)['data']['token'];
     }
 
     public function testSavingGithub()

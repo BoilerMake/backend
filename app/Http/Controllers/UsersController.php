@@ -117,7 +117,7 @@ class UsersController extends Controller
         return $this->getApplication();
     }
 
-//    public function completePuzzle(Request $request)
+    //    public function completePuzzle(Request $request)
 //    {
 //        if (! Auth::user()) {
 //            return ['auth plz'];

@@ -3,7 +3,6 @@
 use Carbon\Carbon;
 use App\Models\Application;
 
-
 Artisan::command('applications:calculate', function () {
     Application::calculateCompleted();
 })->describe('calculate application status and put it in the DB');
@@ -24,7 +23,7 @@ Artisan::command('applications:expiredrsvp', function () {
 
 Artisan::command('applications:incompleteEmails', function () {
     Application::calculateCompleted();
-    foreach(Application::with('user')->where('completed_calculated',false)->get() as $app) {
-        $this->info($app->user->first_name.",".$app->user->email);
+    foreach (Application::with('user')->where('completed_calculated', false)->get() as $app) {
+        $this->info($app->user->first_name.','.$app->user->email);
     }
 })->describe('get info for incomplete applications');

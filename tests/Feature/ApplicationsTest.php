@@ -35,7 +35,7 @@ class ApplicationsTest extends TestCase
 
         $response = $this->jsonWithAuth('PUT', '/v1/users/me/application', $application, $user);
         $response->assertStatus(200)->assertJson(['success' => true]);
-//        $data = $response->json()['data'];
+        //        $data = $response->json()['data'];
 
         $this->assertDatabaseHas('users', [
             'id'=>$user->id,
@@ -105,7 +105,7 @@ class ApplicationsTest extends TestCase
         $this->assertEquals(1 + 1, count($response->json()['data']));
     }
 
-//    public function testGetApplicationEmailNotConfirmed() {
+    //    public function testGetApplicationEmailNotConfirmed() {
 //
 //    }
 }

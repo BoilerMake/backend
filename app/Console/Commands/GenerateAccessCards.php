@@ -65,11 +65,11 @@ class GenerateAccessCards extends Command
             }
         }
         $this->info('stitching...');
-//        CardController::stitchAccessCards($toGenerate);
+        //        CardController::stitchAccessCards($toGenerate);
         CardController::stitchAccessCards();
 
         $this->info('done');
-//        CardController::generateAccessCardImage(1);
+        //        CardController::generateAccessCardImage(1);
 //        CardController::generateAccessCardImage(16);
     }
 }
