@@ -30,7 +30,7 @@ class ExecController extends Controller
 
     public function dashboardData()
     {
-        $interestCount = InterestSignup::count();
+        $interestCount = InterestSignup::count() || 1;
         $interestEmails = InterestSignup::all()->pluck('email');
         $signupEmails = User::all()->pluck('email');
         $interestEmailsWhoHaveNotSignedUp = $interestEmails->intersect($signupEmails)->count();
@@ -38,7 +38,7 @@ class ExecController extends Controller
 
         $reasonsMap = [];
         foreach (Application::all() as $app) {
-            foreach ($app->validationDetails()['reasons'] as $reason) {
+            foreach ($app->validationDetails()['reason_label'] as $reason) {
                 $reasonsMap[$reason] = ! array_key_exists($reason, $reasonsMap) ? 1 : $reasonsMap[$reason] + 1;
             }
         }
