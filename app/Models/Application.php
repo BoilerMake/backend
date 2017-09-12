@@ -28,6 +28,7 @@ class Application extends Model implements AuditableContract
         User::FIELD_FIRSTNAME,
         User::FIELD_LASTNAME,
         User::FIELD_EMAIL,
+        User::FIELD_PHONE,
     ];
 
     const FIELD_GENDER = 'gender';
@@ -51,6 +52,7 @@ class Application extends Model implements AuditableContract
     const FIELD_DECISION = 'decision';
     const FIELD_CHECKED_IN_AT = 'checked_in_at';
     const FIELD_GITHUB_ETAG = 'github_etag';
+    const FIELD_TSHIRT = 'tshirt';
     const FIELD_TERMS_AND_CONDITIONS_1 = 'tandc_1'; //over 18
     const FIELD_TERMS_AND_CONDITIONS_2 = 'tandc_2'; //MLH code of conduct
     const FIELD_TERMS_AND_CONDITIONS_3 = 'tandc_3'; //privacy policy
@@ -115,7 +117,7 @@ class Application extends Model implements AuditableContract
         return $this->validationDetails()['valid'];
     }
 
-    public function validationDetails()
+    public function validationDetails($includeRSVPFields = false)
     {
         $reason_label = [];
         $reason_field = [];
@@ -176,7 +178,7 @@ class Application extends Model implements AuditableContract
             $reason_field[] = self::FIELD_TERMS_AND_CONDITIONS_3;
         }
 
-        if (self::isPhaseInEffect(self::PHASE_DECISIONS_REVEALED)) {
+        if ($includeRSVPFields) {
             if (! $this->diet) {
                 $reason_label[] = 'Dietary info not provided';
             }

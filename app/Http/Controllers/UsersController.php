@@ -106,7 +106,7 @@ class UsersController extends Controller
             } elseif ($key == 'skills') {
                 //                TODO: check RSVP phase
                 $application->skills = json_encode($value);
-            } elseif (in_array($key, [Application::FIELD_DIET, Application::FIELD_DIET_RESTRICTIONS])) {
+            } elseif (in_array($key, [Application::FIELD_DIET, Application::FIELD_DIET_RESTRICTIONS, Application::FIELD_TSHIRT])) {
                 //TODO: check RSVP phase
                 $application->$key = $value;
             }
