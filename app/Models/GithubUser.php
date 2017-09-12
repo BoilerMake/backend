@@ -76,6 +76,7 @@ class GithubUser extends Model
         if (isset($result['error'])) {
             //todo: handle error here...
             Log::info('getGithubAuthToken access token fetching error', $result);
+
             return false;
         }
         Log::info('getGithubAuthToken successfully fetched userdata from access token', $result);
@@ -109,11 +110,12 @@ class GithubUser extends Model
         $emailResult = json_decode($emailResponse->getBody(), true);
         Log::info('fetchFromOauthToken: $emailResult API response', $emailResult);
         foreach ($emailResult as $email) {
-            if($email['primary']) {
+            if ($email['primary']) {
                 $thisGithubUser['email'] = $email['email'];
                 Log::info('found primary email for user! '.$email['email']);
             }
         }
+
         return self::store($thisGithubUser, $gitHub_token);
     }
 }
