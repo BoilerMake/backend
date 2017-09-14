@@ -166,15 +166,15 @@ class Application extends Model implements AuditableContract
             $reason_field[] = self::FIELD_RACE;
         }
         if (! $this[self::FIELD_TERMS_AND_CONDITIONS_1]) {
-            $reason_label[] = 'T&C 1 not checked';
+            $reason_label[] = 'Please confirm if you are 18 years of age or older.';
             $reason_field[] = self::FIELD_TERMS_AND_CONDITIONS_1;
         }
         if (! $this[self::FIELD_TERMS_AND_CONDITIONS_2]) {
-            $reason_label[] = 'T&C 2 not checked';
+            $reason_label[] = 'Please confirm if you agree to the MLH Code of Conduct.';
             $reason_field[] = self::FIELD_TERMS_AND_CONDITIONS_2;
         }
         if (! $this[self::FIELD_TERMS_AND_CONDITIONS_3]) {
-            $reason_label[] = 'T&C 3 not checked';
+            $reason_label[] = 'Please confirm that you agree to both the MLH Contest Terms and Conditions and the MLH Privacy Policy.';
             $reason_field[] = self::FIELD_TERMS_AND_CONDITIONS_3;
         }
 
