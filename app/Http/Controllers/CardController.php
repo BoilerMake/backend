@@ -17,23 +17,21 @@ class CardController extends Controller
 {
     const CARD_TYPE_HACKER = 1;
     const CARD_TYPE_EXEC = 2;
+    const CARD_ROLE_STRIPE_EXEC = '#1A4A98';
 
     /**
      * Stitches user access cards together into a PDF.
      * @param array|null $user_ids
      */
-    public static function stitchAccessCards($user_ids = null)
+    public static function stitchAccessCards($user_ids = null, $stripeColor = self::CARD_ROLE_STRIPE_EXEC)
     {
         if ($user_ids) {
-            $users = User::whereIn('id', $user_ids)->get()->pluck('card_image')->toArray();
+            $paths = User::whereIn('id', $user_ids)->get()->pluck('card_image')->toArray();
         } else {
-            $users = User::whereNotNull('card_image')->get()->pluck('card_image')->toArray();
+            $paths = User::whereNotNull('card_image')->get()->pluck('card_image')->toArray();
         }
-        $pages = array_chunk($users, 6);
-
+        $pages = array_chunk($paths, 6);
         $whitePixel = new ImagickPixel('#FFFFFF');
-
-        //        $combined   =   new Imagick();
 
         $x = 0;
         foreach ($pages as $page) {
@@ -42,6 +40,16 @@ class CardController extends Controller
             $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
             $image->setImageResolution(300, 300);
             $image->setImageFormat('jpg');
+
+            //add the BIG stripe for bleed
+            $roleColor = new ImagickPixel($stripeColor);
+            $roleStripe = new ImagickDraw();
+            $roleStripe->setFillColor($roleColor);
+            $roleStripe->rectangle(0, 0, 3300, 303);
+            $image->drawImage($roleStripe);
+            //and one on the second row
+            $roleStripe->rectangle(0, 2255, 3300, 2550);
+            $image->drawImage($roleStripe);
 
             if (isset($page[0])) {
                 $card = new Imagick();
@@ -94,9 +102,10 @@ class CardController extends Controller
                 $card->destroy();
             }
 
+
             //            $combined->addImage( $image );
             //            $combined->setImageFormat("jpg");
-            $fileName = 'cards-output/layout-'.$x.'.pdf';
+            $fileName = 'cards-output/layout-'.$x.'.png';
             $path = public_path().'/'.$fileName;
             $image->writeImage($path);
             $x++;
@@ -134,8 +143,6 @@ class CardController extends Controller
         //globals
         $whitePixel = new ImagickPixel('#FFFFFF');
         $bluePixel = new ImagickPixel('#1A4A98');
-        $allergen1 = new ImagickPixel('#59436A');
-        $allergenYellow = new ImagickPixel('#F6CF56');
         $greenPixel = new ImagickPixel('#45955E');
         $blackPixel = new ImagickPixel('#000000');
         $mainFont = resource_path('assets/fonts/Exo2-Regular.ttf');
@@ -261,32 +268,8 @@ class CardController extends Controller
         //add the stripe
         $roleStripe = new ImagickDraw();
         $roleStripe->setFillColor($isExecCard ? $bluePixel : $greenPixel);
-        $roleStripe->rectangle(0, 975, $fullWidth, 1200);
+        $roleStripe->rectangle(0, 976, $fullWidth, 1200);
         $image->drawImage($roleStripe);
-
-        //vegetarian/vegan strip
-        if ($user->application->diet == 1 || $user->application->diet == 3) {
-            $dietStripe = new ImagickDraw();
-            $dietStripe->setFillColor($allergenYellow);
-            $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth, 1200);
-            $image->drawImage($dietStripe);
-        }
-
-        //allergen strip
-        if ($user->application->diet == 3) {
-            $dietStripe = new ImagickDraw();
-            $dietStripe->setFillColor($allergen1);
-            $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth - 32, 1200);
-            $image->drawImage($dietStripe);
-        }
-
-        //alergent strip wihtout veg+vegan
-        if ($user->application->diet == 2) {
-            $dietStripe = new ImagickDraw();
-            $dietStripe->setFillColor($allergen1);
-            $dietStripe->rectangle($fullWidth - 72, 975, $fullWidth, 1200);
-            $image->drawImage($dietStripe);
-        }
 
         $roleTextLine = new ImagickDraw();
         $roleTextLine->setFont($mainFont);
