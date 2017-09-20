@@ -65,6 +65,7 @@ class UsersController extends Controller
             //don't reveal decisions early
             $application->setHidden(['decision', 'emailed_decision']);
         }
+        $application['is_rsvp_confirmed'] = $application['rsvp'];
 
         return response()->success([
             'applicationForm' => $application,
