@@ -68,25 +68,25 @@ class GenerateEmailTodo extends Command
         if ($mode == 1) {
             $this->info(json_encode($toAcceptFromNull->pluck('id')));
             foreach (User::whereIn('id', $toAcceptFromNull->pluck('user_id'))->get() as $u) {
-                $this->info($u->email.",".$u->first_name);
+                $this->info($u->email.','.$u->first_name);
             }
         }
         if ($mode == 2) {
             $this->info(json_encode($toWaitlistFromNull->pluck('id')));
             foreach (User::whereIn('id', $toWaitlistFromNull->pluck('user_id'))->get() as $u) {
-                $this->info($u->email.",".$u->first_name);
+                $this->info($u->email.','.$u->first_name);
             }
         }
         if ($mode == 3) {
             $this->info(json_encode($toAcceptFromWaitlist->pluck('id')));
             foreach (User::whereIn('id', $toAcceptFromWaitlist->pluck('user_id'))->get() as $u) {
-                $this->info($u->email.",".$u->first_name);
+                $this->info($u->email.','.$u->first_name);
             }
         }
         if ($mode == 4) {
             $this->info(json_encode($expiredFromAccepted->pluck('id')));
             foreach (User::whereIn('id', $expiredFromAccepted->pluck('user_id'))->get() as $u) {
-                $this->info($u->email.",".$u->first_name);
+                $this->info($u->email.','.$u->first_name);
             }
         }
         if ($mode == 5) {
@@ -100,7 +100,7 @@ class GenerateEmailTodo extends Command
             $this->info(json_encode($rsvpDriving));
             foreach (User::whereIn('id', $rsvpDriving)->with('application', 'application.school')->get() as $user) {
                 if ($user->application->school && $user->application->school->transit_method == 'car') {
-                    $this->info($user->email.",".$user->first_name);
+                    $this->info($user->email.','.$user->first_name);
                 }
             }
         }
