@@ -145,8 +145,8 @@ class CardController extends Controller
         $bluePixel = new ImagickPixel('#1A4A98');
         $greenPixel = new ImagickPixel('#45955E');
         $blackPixel = new ImagickPixel('#000000');
-        $mainFont = resource_path('assets/fonts/Exo2-Regular.ttf');
-        $headingFont = resource_path('assets/fonts/SanFranciscoDisplay-Regular.otf');
+        $mainFont = resource_path('assets/fonts/MoonLight.ttf');
+        $headingFont = resource_path('assets/fonts/MoonBold.ttf');
 
         /* New image */
         $fullWidth = 900; //3in @ 300ppi
