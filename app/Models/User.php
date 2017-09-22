@@ -9,6 +9,7 @@ use Hash;
 use Mail;
 use JWTAuth;
 use Carbon\Carbon;
+use Hashids\Hashids;
 use Illuminate\Support\Str;
 use App\Mail\UserRegistration;
 use OwenIt\Auditing\Auditable;
@@ -16,7 +17,6 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 use App\Mail\PasswordReset as PasswordResetEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use Hashids\Hashids;
 
 class User extends Authenticatable implements AuditableContract
 {
@@ -32,7 +32,7 @@ class User extends Authenticatable implements AuditableContract
     ];
 
     protected $hidden = ['password', self::FIELD_CONFIRMATION_CODE];
-    protected $appends = ['launch', 'name','hashid'];
+    protected $appends = ['launch', 'name', 'hashid'];
 
     const ROLE_HACKER = 'hacker';
 
@@ -116,17 +116,23 @@ class User extends Authenticatable implements AuditableContract
             }
         }
     }
-    public function getHashIDAttribute() {
+
+    public function getHashIDAttribute()
+    {
         $hashids = new Hashids('', 0, 'abcdefghijklmnopqrstuvwxyz'); // all lowercase
         return $hashids->encode($this->id);
     }
-    public static function getFromHashID($h) {
+
+    public static function getFromHashID($h)
+    {
         $hashids = new Hashids('', 0, 'abcdefghijklmnopqrstuvwxyz');
         $res = $hashids->decode($h);
-        if(sizeof($res) != 1) {
+        if (count($res) != 1) {
             Log::error("bad hashID: {$h}, could not decode");
-            return null;
+
+            return;
         }
+
         return self::find($res[0]);
     }
 
