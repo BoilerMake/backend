@@ -16,6 +16,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 use App\Mail\PasswordReset as PasswordResetEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use Hashids\Hashids;
 
 class User extends Authenticatable implements AuditableContract
 {
@@ -31,7 +32,7 @@ class User extends Authenticatable implements AuditableContract
     ];
 
     protected $hidden = ['password', self::FIELD_CONFIRMATION_CODE];
-    protected $appends = ['launch', 'name'];
+    protected $appends = ['launch', 'name','hashid'];
 
     const ROLE_HACKER = 'hacker';
 
@@ -114,17 +115,19 @@ class User extends Authenticatable implements AuditableContract
                 Log::error("postSignupActions: need to implement role {$role}");
             }
         }
-        $this->generateUniqueIdentifier();
     }
-
-    public function generateUniqueIdentifier()
-    {
-        if (! $this->identifier) {
-            $rand = substr(str_shuffle(str_repeat('0123456789', 9)), 0, 9);
-            //appending ID will ensure uniqueness as well as allow for easier visual debugging without
-            $this->identifier = $rand.str_pad($this->id, 4, '0', STR_PAD_LEFT);
-            $this->save();
+    public function getHashIDAttribute() {
+        $hashids = new Hashids('', 0, 'abcdefghijklmnopqrstuvwxyz'); // all lowercase
+        return $hashids->encode($this->id);
+    }
+    public static function getFromHashID($h) {
+        $hashids = new Hashids('', 0, 'abcdefghijklmnopqrstuvwxyz');
+        $res = $hashids->decode($h);
+        if(sizeof($res) != 1) {
+            Log::error("bad hashID: {$h}, could not decode");
+            return null;
         }
+        return self::find($res[0]);
     }
 
     public function slug()

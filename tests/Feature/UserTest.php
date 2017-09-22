@@ -34,4 +34,14 @@ class UserTest extends TestCase
             User::FIELD_FIRSTNAME=>$firstName,
         ]);
     }
+    public function testHashIDs() {
+        $user = $this->makeTestUser();
+        $hash = $user->getHashIDAttribute();
+        $lookupUser = User::getFromHashID($hash);
+        $this->assertEquals($user->id,$lookupUser->id);
+    }
+    public function testBadHashIDs() {
+        $lookupUser = User::getFromHashID("148971asdfjk");
+        $this->assertEquals($lookupUser,null);
+    }
 }

@@ -61,7 +61,6 @@ class AuthTest extends TestCase
             'email',
             'created_at',
             'updated_at',
-            'identifier',
         ]], json_decode($response->getContent(), true));
     }
 
