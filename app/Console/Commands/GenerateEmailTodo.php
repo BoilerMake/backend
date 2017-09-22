@@ -108,7 +108,14 @@ class GenerateEmailTodo extends Command
             $rsvp = Application::where('rsvp', true)->where('completed_calculated', true)->get()->pluck('user_id');
             $this->info(json_encode($rsvp));
             foreach (User::whereIn('id', $rsvp)->with('application', 'application.school')->get() as $user) {
-                $this->info($user->id."\t".$user->application->id."\t".$user->email."\t".$user->first_name."\t".$user->last_name."\t".($user->application->school ? $user->application->school->name : 'oops'));
+                $this->info($user->id
+                    ."\t".$user->application->id
+                    ."\t".$user->email
+                    ."\t".$user->first_name
+                    ."\t".$user->last_name
+                    ."\t".$user->phone
+                    ."\t".($user->application->school ? $user->application->school->name : 'no school???')
+                );
             }
         }
     }
