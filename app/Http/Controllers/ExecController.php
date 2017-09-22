@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Request;
 use Validator;
 use Carbon\Carbon;
 use App\Models\Pod;
@@ -10,7 +11,6 @@ use App\Models\User;
 use App\Models\Event;
 use App\Models\Application;
 use App\Models\Announcement;
-use Illuminate\Http\Request;
 use App\Models\InterestSignup;
 use App\Models\ApplicationNote;
 use Eluceo\iCal\Component\Calendar;
@@ -56,12 +56,44 @@ class ExecController extends Controller
      */
     public function getUsers()
     {
-        $users = User::all();
+        $users = User::with('application.school')->get();
         foreach ($users as $eachUser) {
             $eachUser->roles = $eachUser->roles()->pluck('name');
         }
 
         return response()->success($users);
+    }
+
+    /*
+     * searches for user by either:
+     * first OR last name, returning multiple results
+     * hashid, returning an array result of length 1
+     */
+    public function searchUsers()
+    {
+        $data = json_decode(Request::getContent(), true);
+        if ($data['hashid'] != '') {
+            //if provided both, hashid takes precedence
+            $user = User::getFromHashID($data['hashid']);
+            if (isset($user)) {
+                $userWithStuff = User::with('application.school')->find($user->id);
+
+                return response()->success([$userWithStuff]);
+            } else {
+                return response()->success([]);
+            }
+        } else {
+            $name = $data['name'];
+            if ($name == '') {
+                //ah, neither was filled out! lets just return errythang and we can cmd-F
+                return $this->getUsers();
+            }
+            $users = User::with('application.school')
+                ->where(User::FIELD_FIRSTNAME, 'like', '%'.$name.'%')
+                ->orWhere(User::FIELD_LASTNAME, 'like', '%'.$name.'%')->get();
+
+            return response()->success($users);
+        }
     }
 
     /**
@@ -87,30 +119,41 @@ class ExecController extends Controller
         return response()->success($user);
     }
 
-    public function doAction(Request $request, $id)
+    /**
+     * Checks in a user
+     * @param $id
+     * @return mixed
+     */
+    public function checkInUser($id)
     {
         $user = User::find($id);
-        switch ($request->action) {
-            case 'password-reset':
-                $user->sendPasswordResetEmail();
-
-                return ['status'=>'ok'];
-                break;
-            case 'check-in':
-                if (! $user->hasRole('hacker')) {
-                    return ['status'=>'error', 'message'=>'not a hacker'];
-                }
-                $application = Application::where('user_id', $user->id)->first();
-                if ($application->checked_in_at == null) {
-                    $application->checked_in_at = Carbon::now();
-                    $application->save();
-
-                    return ['status' => 'ok', 'message' => 'ok'];
-                }
-
-                return ['status' => 'error', 'message' => 'already checked in'];
-                break;
+        if (! $user->hasRole('hacker')) {
+            return response()->error('not a hacker');
         }
+        $name = $user->name;
+        $id = $user->id;
+        $application = Application::where('user_id', $user->id)->first();
+
+        if ($application->checked_in_at == null) {
+            $application->checked_in_at = Carbon::now();
+            $application->save();
+
+            return response()->success("Checked in ${name} (#${id}) successfully!");
+        } else {
+            $diff = Carbon::parse($application->checked_in_at)->diffForHumans();
+
+            return response()->error("User ${name} (#${id} is already checked in! (${diff})");
+        }
+    }
+    /*
+     * Sends the user a password reset email
+     */
+    public function sendPasswordReset($id)
+    {
+        $user = User::find($id);
+        $user->sendPasswordResetEmail();
+
+        return response()->success('ok');
     }
 
     /**

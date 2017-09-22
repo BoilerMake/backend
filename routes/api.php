@@ -75,8 +75,10 @@ Route::prefix('v1')->group(function () {
 
         //get users list/overview by ID/perform action by ID
         Route::get('users', 'ExecController@getUsers');
+        Route::post('users/search', 'ExecController@searchUsers');
         Route::get('users/{id}', 'ExecController@getUser');
-        Route::post('users/{id}/action', 'ExecController@doAction');
+        Route::post('users/{id}/passwordreset', 'ExecController@sendPasswordReset');
+        Route::post('users/{id}/checkin', 'ExecController@checkInUser');
         //applications
         Route::get('applications', 'ExecController@getApplications');
         Route::get('applications/{id}', 'ExecController@getApplication');

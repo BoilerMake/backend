@@ -9,6 +9,7 @@ use Hash;
 use Mail;
 use JWTAuth;
 use Carbon\Carbon;
+use Hashids\Hashids;
 use Illuminate\Support\Str;
 use App\Mail\UserRegistration;
 use OwenIt\Auditing\Auditable;
@@ -31,7 +32,7 @@ class User extends Authenticatable implements AuditableContract
     ];
 
     protected $hidden = ['password', self::FIELD_CONFIRMATION_CODE];
-    protected $appends = ['launch', 'name'];
+    protected $appends = ['launch', 'name', 'hashid'];
 
     const ROLE_HACKER = 'hacker';
 
@@ -114,17 +115,25 @@ class User extends Authenticatable implements AuditableContract
                 Log::error("postSignupActions: need to implement role {$role}");
             }
         }
-        $this->generateUniqueIdentifier();
     }
 
-    public function generateUniqueIdentifier()
+    public function getHashIDAttribute()
     {
-        if (! $this->identifier) {
-            $rand = substr(str_shuffle(str_repeat('0123456789', 9)), 0, 9);
-            //appending ID will ensure uniqueness as well as allow for easier visual debugging without
-            $this->identifier = $rand.str_pad($this->id, 4, '0', STR_PAD_LEFT);
-            $this->save();
+        $hashids = new Hashids('', 0, 'abcdefghijklmnopqrstuvwxyz'); // all lowercase
+        return $hashids->encode($this->id);
+    }
+
+    public static function getFromHashID($h)
+    {
+        $hashids = new Hashids('', 0, 'abcdefghijklmnopqrstuvwxyz');
+        $res = $hashids->decode($h);
+        if (count($res) != 1) {
+            Log::error("bad hashID: {$h}, could not decode");
+
+            return;
         }
+
+        return self::find($res[0]);
     }
 
     public function slug()
