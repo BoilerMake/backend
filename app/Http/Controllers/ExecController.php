@@ -64,6 +64,11 @@ class ExecController extends Controller
         return response()->success($users);
     }
 
+    /*
+     * searches for user by either:
+     * first OR last name, returning multiple results
+     * hashid, returning an array result of length 1
+     */
     public function searchUsers()
     {
         $data = json_decode(Request::getContent(), true);
@@ -89,8 +94,6 @@ class ExecController extends Controller
 
             return response()->success($users);
         }
-
-        return response()->success(['omg'=>$data]);
     }
 
     /**
@@ -116,6 +119,11 @@ class ExecController extends Controller
         return response()->success($user);
     }
 
+    /**
+     * Checks in a user
+     * @param $id
+     * @return mixed
+     */
     public function checkInUser($id)
     {
         $user = User::find($id);
@@ -137,7 +145,9 @@ class ExecController extends Controller
             return response()->error("User ${name} (#${id} is already checked in! (${diff})");
         }
     }
-
+    /*
+     * Sends the user a password reset email
+     */
     public function sendPasswordReset($id)
     {
         $user = User::find($id);
