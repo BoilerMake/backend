@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Request;
 use Validator;
 use Carbon\Carbon;
 use App\Models\Pod;
@@ -10,7 +11,6 @@ use App\Models\User;
 use App\Models\Event;
 use App\Models\Application;
 use App\Models\Announcement;
-use Request;
 use App\Models\InterestSignup;
 use App\Models\ApplicationNote;
 use Eluceo\iCal\Component\Calendar;
@@ -60,33 +60,39 @@ class ExecController extends Controller
         foreach ($users as $eachUser) {
             $eachUser->roles = $eachUser->roles()->pluck('name');
         }
+
         return response()->success($users);
     }
 
-    public function searchUsers() {
+    public function searchUsers()
+    {
         $data = json_decode(Request::getContent(), true);
-        if($data['hashid'] != "") {
+        if ($data['hashid'] != '') {
             //if provided both, hashid takes precedence
             $user = User::getFromHashID($data['hashid']);
-            if(isset($user)) {
+            if (isset($user)) {
                 $userWithStuff = User::with('application.school')->find($user->id);
+
                 return response()->success([$userWithStuff]);
             } else {
                 return response()->success([]);
             }
         } else {
             $name = $data['name'];
-            if($name == "") {
+            if ($name == '') {
                 //ah, neither was filled out! lets just return errythang and we can cmd-F
                 return $this->getUsers();
             }
             $users = User::with('application.school')
                 ->where(User::FIELD_FIRSTNAME, 'like', '%'.$name.'%')
                 ->orWhere(User::FIELD_LASTNAME, 'like', '%'.$name.'%')->get();
+
             return response()->success($users);
         }
+
         return response()->success(['omg'=>$data]);
     }
+
     /**
      * Gets all applications.
      */
@@ -110,7 +116,8 @@ class ExecController extends Controller
         return response()->success($user);
     }
 
-    public function checkInUser($id) {
+    public function checkInUser($id)
+    {
         $user = User::find($id);
         if (! $user->hasRole('hacker')) {
             return response()->error('not a hacker');
@@ -122,9 +129,11 @@ class ExecController extends Controller
         if ($application->checked_in_at == null) {
             $application->checked_in_at = Carbon::now();
             $application->save();
+
             return response()->success("Checked in ${name} (#${id}) successfully!");
         } else {
             $diff = Carbon::parse($application->checked_in_at)->diffForHumans();
+
             return response()->error("User ${name} (#${id} is already checked in! (${diff})");
         }
     }
@@ -133,6 +142,7 @@ class ExecController extends Controller
     {
         $user = User::find($id);
         $user->sendPasswordResetEmail();
+
         return response()->success('ok');
     }
 
