@@ -107,7 +107,7 @@ class CardController extends Controller
 
             //            $combined->addImage( $image );
             //            $combined->setImageFormat("jpg");
-            $fileName = 'cards-output/layout-'.$x.'.png';
+            $fileName = 'cards-output/layout-'.$x.'.pdf';
             $path = public_path().'/'.$fileName;
             $image->writeImage($path);
             $x++;
@@ -174,12 +174,8 @@ class CardController extends Controller
             return 'error';
         }
 
-        $isExecCard = $cardType == self::CARD_TYPE_EXEC;
-
         //globals
         $whitePixel = new ImagickPixel('#FFFFFF');
-        $bluePixel = new ImagickPixel('#1A4A98');
-        $greenPixel = new ImagickPixel('#45955E');
         $blackPixel = new ImagickPixel('#000000');
 
         $moonBold = resource_path('assets/fonts/MoonBold.ttf');
@@ -189,17 +185,16 @@ class CardController extends Controller
         $fullWidth = 900; //3in @ 300ppi
         $image = new Imagick();
         $image->newImage($fullWidth, 1200, $transparentPixel);
-        $image->setImageAlpha(0);
+//        $image->setImageAlpha(0);
         $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
         $image->setImageResolution(300, 300);
 
         /* GENERATE SKILLS ICONS */
-        $skills = json_decode($user->application->skills, true);
+        $skillRow = $user->application->skills;
+        $skills = $skillRow && $skillRow != "null" ? explode(",",substr($skillRow,1,strlen($skillRow)-2)) : [];
+//            explode(",",json_decode($user->application->skills, true));
 
-        $skillsYPos = 640;
-        if ($isExecCard) {
-            $skillsYPos += 100;
-        }
+        $skillsYPos = 830;
 
         if (count($skills) == 3) {
             $item1raw = new Imagick();
@@ -235,29 +230,12 @@ class CardController extends Controller
             $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 400, $skillsYPos);
         }
 
-        if (! $isExecCard) {
-            $item1raw = new Imagick();
-            $item1raw->readImageFile(fopen(resource_path('assets/logo_s17.png'), 'rb'));
-            $item1raw->cropThumbnailImage(210, 210);
-            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 92, 50);
+        $item1raw = new Imagick();
+        $item1raw->readImageFile(fopen(resource_path('assets/boilermaketxt.png'), 'rb'));
+        $item1raw->cropThumbnailImage(519, 64);
+        $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 187, 84);
 
-            $BMTextLine = new ImagickDraw();
-            $BMTextLine->setFont($moonLight);
-            $BMTextLine->setFontSize(80);
-            $BMTextLine->setFillColor($bluePixel);
-
-            $image->annotateImage($BMTextLine, 313, 180, 0, 'BOILERMAKE');
-        } else {
-            $item1raw = new Imagick();
-            $item1raw->readImageFile(fopen(resource_path('assets/logo_s17@3x.png'), 'rb'));
-            $item1raw->cropThumbnailImage(600, 600);
-            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 150, 0);
-        }
-
-        $namePosition = 440;
-        if ($isExecCard) {
-            $namePosition += 180;
-        }
+        $namePosition = 420;
 
         $nameTextLine = new ImagickDraw();
         $nameTextLine->setFont($moonBold);
@@ -275,7 +253,7 @@ class CardController extends Controller
         $schoolTextLine->setFontSize(45);
         $schoolTextLine->setFillColor($whitePixel);
 
-        $image->annotateImage($schoolTextLine, $fullWidth / 2, $namePosition + 55, 0, $schoolName);
+        $image->annotateImage($schoolTextLine, $fullWidth / 2, $namePosition + 60, 0, $schoolName);
 
         //add the stripe
         $roleStripe = new ImagickDraw();
@@ -287,10 +265,10 @@ class CardController extends Controller
         $roleTextLine->setFont($moonBold);
         $roleTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $roleTextLine->setTextKerning(2);
-        $roleTextLine->setFontSize($isExecCard ? 82 : 68);
+        $roleTextLine->setFontSize(70);
         $roleTextLine->setFillColor($blackPixel);
-        $roleText = $isExecCard ? 'ORGANIZER' : 'HACKER';
-        $image->annotateImage($roleTextLine, $fullWidth / 2, 1115, 0, $roleText);
+        $roleText = 'HACKER';
+        $image->annotateImage($roleTextLine, $fullWidth / 2, 1120, 0, $roleText);
 
         $fileName = 'cards/card_'.$cardType.'_'.$user_id.'.png';
         $path = public_path().'/'.$fileName;
