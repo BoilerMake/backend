@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Card;
 use Log;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -45,34 +46,34 @@ class GenerateAccessCards extends Command
 //        CardController::generateTableNumberImage(5);
 //        return;
 
-        //todo again:
-        //puzzle
-        //exec
-        $execs = User::whereHas('roles', function ($q) {
-            $q->where('name', 'exec');
-        })->pluck('id')->toArray();
-        $toGenerate = $execs;
-        //newly added
-        $newlyAdded = [72381];
-        $toGenerate = array_merge($toGenerate, $newlyAdded);
+        Card::where('role',User::ROLE_HACKER)->delete();
 
-        Log::info($toGenerate);
+        foreach (User::with('application', 'application.school')->get() as $user) {
+            if($user->hasRole('hacker') && $user->application && $user->application->rsvp) {
 
-        foreach (User::with('application')->get() as $user) {
-            $user->card_image = null;
-            $user->save();
-            if ($user->hasRole('exec')) {
-                CardController::generateAccessCardImage($user->id);
-            } elseif ($user->hasRole('hacker') && $user->application->rsvp) {
-                CardController::generateAccessCardImage($user->id);
+                $schoolName = '';
+                if ($user->application && $user->application->school) {
+                        $schoolName = $user->application->school->display_name
+                            ? $user->application->school->display_name
+                            : $user->application->school->name;
+                }
+                Card::create([
+                    'name'      => $user->getNameAttribute(),
+                    'subtitle'  => $schoolName,
+                    'skills'    => $user->application->skills,
+                    'role'      => User::ROLE_HACKER
+                ]);
             }
         }
-        $this->info('stitching...');
-        //        CardController::stitchAccessCards($toGenerate);
-        CardController::stitchAccessCards();
 
+        foreach (Card::all() as $card ) {
+            CardController::generateAccessCardImage($card);
+        }
+
+        $this->info('stitching...');
+        CardController::stitchAccessCards(User::ROLE_SPONSOR);
+        CardController::stitchAccessCards(User::ROLE_ORGANIZER);
+        CardController::stitchAccessCards(User::ROLE_SPONSOR);
         $this->info('done');
-        //        CardController::generateAccessCardImage(1);
-//        CardController::generateAccessCardImage(16);
     }
 }

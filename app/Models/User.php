@@ -34,6 +34,9 @@ class User extends Authenticatable implements AuditableContract
     protected $appends = ['launch', 'name'];
 
     const ROLE_HACKER = 'hacker';
+    const ROLE_ORGANIZER = 'organizer';
+    const ROLE_SPONSOR = 'sponsor';
+    const ROLE_GUEST = 'guest';
 
     const FIELD_EMAIL = 'email';
     const FIELD_FIRSTNAME = 'first_name';

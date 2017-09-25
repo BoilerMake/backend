@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Card;
 use Log;
 use Imagick;
 use ImagickDraw;
@@ -27,21 +28,22 @@ class CardController extends Controller
      * Stitches user access cards together into a PDF.
      * @param array|null $user_ids
      */
-    public static function stitchAccessCards($user_ids = null)
+    public static function stitchAccessCards($role = User::ROLE_HACKER)
     {
-        if ($user_ids) {
-            $paths = User::whereIn('id', $user_ids)->get()->pluck('card_image')->toArray();
-        } else {
-            $paths = User::whereNotNull('card_image')->get()->pluck('card_image')->toArray();
-        }
+        $paths = Card::whereNotNull('filename')->where('role',$role)->get()->pluck('filename')->toArray();
         $pages = array_chunk($paths, 6);
         $whitePixel = new ImagickPixel('#FFFFFF');
-        $color1 = new ImagickPixel('#24133A');//todo: based on role
+        $roleColors = [
+            User::ROLE_HACKER => '#24133A',
+            User::ROLE_SPONSOR => '#0CB3C1',
+            User::ROLE_ORGANIZER => '#ED1E7E',
+        ];
+        $roleColor = new ImagickPixel($roleColors[$role]);//todo: based on role
 
         $pageNum = 0;
         foreach ($pages as $page) {
             $image = new Imagick();
-            $image->newImage(self::SHEET_WIDTH_PX, self::SHEET_HEIGHT_PX, $color1);
+            $image->newImage(self::SHEET_WIDTH_PX, self::SHEET_HEIGHT_PX, $roleColor);
             $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
             $image->setImageResolution(300, 300);
             $image->setImageFormat('jpg');
@@ -77,7 +79,7 @@ class CardController extends Controller
                 }
             }
 
-            $fileName = 'cards-output/layout-'.$pageNum.'.pdf';
+            $fileName = "cards-output/${role}-layout-${pageNum}.pdf";
             $path = public_path().'/'.$fileName;
             $image->writeImage($path);
             $image->clear();
@@ -122,6 +124,7 @@ class CardController extends Controller
 
     /**
      * @param $skill
+     * @param $skill
      * @return Imagick the icon
      */
     public static function getSizedSkillIcon($skill) {
@@ -131,28 +134,11 @@ class CardController extends Controller
         return $icon;
     }
     /**
-     * Generates an access card image for a given user.
-     * @param user $user_id the user's id
+     * Generates an access card image
      * @return string file URI
      */
-    public static function generateAccessCardImage($user_id)
+    public static function generateAccessCardImage(Card $card)
     {
-        $user = User::with('application', 'application.school')->find($user_id);
-        $schoolName = null;
-        if ($user->hasRole('exec')) {
-            $cardType = self::CARD_TYPE_EXEC;
-            $schoolName = 'Purdue University';
-        } elseif ($user->hasRole('hacker')) {
-            $cardType = self::CARD_TYPE_HACKER;
-            $schoolName = $user->application->school
-                ? $user->application->school->name
-                : '';
-            $schoolName = $user->application->school && $user->application->school->display_name
-                ? $user->application->school->display_name
-                : $schoolName;
-        } else {
-            return 'error';
-        }
 
         //globals
         $whitePixel = new ImagickPixel('#FFFFFF');
@@ -166,7 +152,7 @@ class CardController extends Controller
         $image->setImageResolution(300, 300);
 
         /* SKILLS ICONS */
-        $skillRow = $user->application->skills;
+        $skillRow = $card->skills;
         $skills = $skillRow && $skillRow != "null" ? explode(",",substr($skillRow,1,strlen($skillRow)-2)) : [];
 
         $skillsYPos = 830;
@@ -196,7 +182,7 @@ class CardController extends Controller
         $nameTextLine->setTextKerning(2);
         $nameTextLine->setFontSize(80);
         $nameTextLine->setFillColor($whitePixel);
-        $image->annotateImage($nameTextLine, self::CARD_WIDTH_PX / 2, $namePosition, 0, $user->first_name.' '.$user->last_name);
+        $image->annotateImage($nameTextLine, self::CARD_WIDTH_PX / 2, $namePosition, 0, $card->name);
 
         /* Add School */
         $schoolTextLine = new ImagickDraw();
@@ -205,7 +191,7 @@ class CardController extends Controller
         $schoolTextLine->setTextKerning(2);
         $schoolTextLine->setFontSize(45);
         $schoolTextLine->setFillColor($whitePixel);
-        $image->annotateImage($schoolTextLine, self::CARD_WIDTH_PX / 2, $namePosition + 60, 0, $schoolName);
+        $image->annotateImage($schoolTextLine, self::CARD_WIDTH_PX / 2, $namePosition + 60, 0, $card->subtitle);
 
         /* Add role */
         //white stripe
@@ -220,18 +206,18 @@ class CardController extends Controller
         $roleTextLine->setTextKerning(2);
         $roleTextLine->setFontSize(70);
         $roleTextLine->setFillColor($blackPixel);
-        $roleText = 'HACKER';
+        $roleText = strtoupper($card->role);
         $image->annotateImage($roleTextLine, self::CARD_WIDTH_PX / 2, 1120, 0, $roleText);
 
 
         /* SAVE! */
-        $fileName = 'cards/card_'.$cardType.'_'.$user_id.'.png';
+        $fileName = 'cards/card_'.$card->role.'_'.$card->id.'.png';
         $path = public_path().'/'.$fileName;
-        $user->card_image = $fileName;
-        $user->save();
+        $card->filename = $fileName;
+        $card->save();
         $image->writeImage($path);
         $image->clear();
         $image->destroy();
-        Log::info('Saved card for user #'.$user_id.' to: '.$fileName);
+        Log::info('Saved card for card #'.$card->id.' to: '.$fileName);
     }
 }
