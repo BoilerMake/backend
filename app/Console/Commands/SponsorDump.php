@@ -54,7 +54,7 @@ class SponsorDump extends Command
         foreach ($apps as $app) {
             if ($app->rsvp && $app->resume_uploaded) {
                 $resumeURL = $app->user->resumeURL();
-                $resumeFilename = $app->user->first_name.'_'.$app->user->last_name.'_'.$app->user->getHashIDAttribute().$app->user->id;
+                $resumeFilename = $app->user->id.'_'.$app->user->first_name.'_'.$app->user->last_name;
                 $tmpPDF = $resumeDir.$resumeFilename.'.pdf';
                 $publicResumeURL = env('APP_URL').'/r/'.$resumeSecret.'/'.$resumeFilename.'.pdf';
                 try {
