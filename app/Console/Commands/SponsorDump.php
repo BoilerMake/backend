@@ -56,7 +56,7 @@ class SponsorDump extends Command
                 $resumeURL = $app->user->resumeURL();
                 $resumeFilename = $app->user->first_name.'_'.$app->user->last_name.'_'.$app->user->getHashIDAttribute().$app->user->id;
                 $tmpPDF = $resumeDir.$resumeFilename.'.pdf';
-                $publicResumeURL = env('APP_URL').'/r/'.$resumeSecret.$resumeFilename.'.pdf';
+                $publicResumeURL = env('APP_URL').'/r/'.$resumeSecret.'/'.$resumeFilename.'.pdf';
                 try {
                     copy($resumeURL, $tmpPDF);
                     $this->info('S3 -> local '.$tmpPDF);
