@@ -55,16 +55,18 @@ class SponsorDump extends Command
             if ($app->rsvp && $app->resume_uploaded) {
                 $resumeURL = $app->user->resumeURL();
                 $resumeFilename = $app->user->id.'_'.$app->user->first_name.'_'.$app->user->last_name;
+                $resumeFilename = str_replace(' ', '_', $resumeFilename);
                 $tmpPDF = $resumeDir.$resumeFilename.'.pdf';
                 $publicResumeURL = env('APP_URL').'/r/'.$resumeSecret.'/'.$resumeFilename.'.pdf';
                 try {
                     copy($resumeURL, $tmpPDF);
                     $this->info('S3 -> local '.$tmpPDF);
-                    $this->info($app->user->first_name
+                    $this->info($app->user->id
+                        ."\t".$app->user->first_name
                         ."\t".$app->user->last_name
                         ."\t".$app->user->email
-                        ."\t".$app->github
-                        ."\t".$app->linkedin
+                        ."\t".$app->has_no_github ? "none" : "https://github.com/".$app->github
+                        ."\t".$app->has_no_github ? "none" : "https://linkedin.com/in/".$app->linkedin
                         ."\t".$app->gender
                         ."\t".$app->major
                         ."\t".$app->grad_year
