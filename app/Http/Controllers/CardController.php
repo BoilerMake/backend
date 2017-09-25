@@ -7,7 +7,6 @@ use Imagick;
 use ImagickDraw;
 use ImagickPixel;
 use App\Models\User;
-use App\Models\PuzzleProgress;
 
 /**
  * Class CardController.
@@ -114,6 +113,40 @@ class CardController extends Controller
         }
     }
 
+    public static function generateTableNumberImage($num) {
+        $headingFont = resource_path('assets/fonts/MoonBold.ttf');
+        $whitePixel = new ImagickPixel('#FFFFFF');
+        $bluePixel = new ImagickPixel('#1A4A98');
+
+        $image = new Imagick();
+        $image->newImage(3300, 2550, $whitePixel);
+        $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+        $image->setImageResolution(300, 300);
+        $image->setImageFormat('jpg');
+
+
+        $roleStripe = new ImagickDraw();
+        $roleStripe->setFillColor($bluePixel);
+        $roleStripe->rectangle(0, 1275, 3300, 1276);
+        $image->drawImage($roleStripe);
+
+
+        $BMTextLine = new ImagickDraw();
+        $BMTextLine->setFont($headingFont);
+        $BMTextLine->setFontSize(200);
+        $BMTextLine->setFillColor($bluePixel);
+
+        $image->annotateImage($BMTextLine, 2000, 600, 0, $num);
+
+        $image->annotateImage($BMTextLine, 1300 ,1950, 180, $num);
+
+
+
+        $fileName = "table-numbers/table-${num}.pdf";
+        $path = public_path().'/'.$fileName;
+        $image->writeImage($path);
+    }
+
     /**
      * Generates an access card image for a given user.
      * @param user $user_id the user's id
@@ -158,35 +191,9 @@ class CardController extends Controller
         /* GENERATE SKILLS ICONS */
         $skills = json_decode($user->application->skills, true);
 
-        $puzzleUsers = PuzzleProgress::where('puzzle_id', 5)->get()->pluck('user_id')->toArray();
-        if (in_array($user->id, $puzzleUsers)) {
-            $skills[] = 'puzzle';
-        }
         $skillsYPos = 640;
         if ($isExecCard) {
             $skillsYPos += 100;
-        }
-
-        if (count($skills) == 4) {
-            $item1raw = new Imagick();
-            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[0].'.png'), 'rb'));
-            $item1raw->cropThumbnailImage(130, 130);
-            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 165, $skillsYPos);
-
-            $item1raw = new Imagick();
-            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[1].'.png'), 'rb'));
-            $item1raw->cropThumbnailImage(130, 130);
-            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 320, $skillsYPos);
-
-            $item1raw = new Imagick();
-            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[2].'.png'), 'rb'));
-            $item1raw->cropThumbnailImage(130, 130);
-            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 475, $skillsYPos);
-
-            $item1raw = new Imagick();
-            $item1raw->readImageFile(fopen(resource_path('assets/language_icons/'.$skills[3].'.png'), 'rb'));
-            $item1raw->cropThumbnailImage(130, 130);
-            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 630, $skillsYPos);
         }
 
         if (count($skills) == 3) {
