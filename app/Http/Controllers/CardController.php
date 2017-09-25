@@ -31,29 +31,31 @@ class CardController extends Controller
         }
         $pages = array_chunk($paths, 6);
         $whitePixel = new ImagickPixel('#FFFFFF');
+        $color1 = new ImagickPixel('#24133A');
 
         $x = 0;
         foreach ($pages as $page) {
             $image = new Imagick();
-            $image->newImage(3300, 2550, $whitePixel);
+            $image->newImage(3300, 2550, $color1);
             $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
             $image->setImageResolution(300, 300);
             $image->setImageFormat('jpg');
 
-            //add the BIG stripe for bleed
-            $roleColor = new ImagickPixel($stripeColor);
+            //hammers BG
+            $item1raw = new Imagick();
+            $item1raw->readImageFile(fopen(resource_path('assets/hammers6.png'), 'rb'));
+            $item1raw->cropThumbnailImage(3300, 2550);
+            $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 0, 0);
+
+            //add role stripe w/ bleed
             $roleStripe = new ImagickDraw();
-            $roleStripe->setFillColor($roleColor);
-            $roleStripe->rectangle(0, 0, 3300, 303);
-            $image->drawImage($roleStripe);
-            //and one on the second row
-            $roleStripe->rectangle(0, 2255, 3300, 2550);
+            $roleStripe->setFillColor($whitePixel);
+            $roleStripe->rectangle(0, 1085, 3300, 1475);
             $image->drawImage($roleStripe);
 
             if (isset($page[0])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path().'/'.$page[0], 'rb'));
-                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 80);
                 $card->clear();
                 $card->destroy();
@@ -62,7 +64,6 @@ class CardController extends Controller
             if (isset($page[1])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path().'/'.$page[1], 'rb'));
-                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 80);
                 $card->clear();
                 $card->destroy();
@@ -71,7 +72,6 @@ class CardController extends Controller
             if (isset($page[2])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path().'/'.$page[2], 'rb'));
-                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 80);
                 $card->clear();
                 $card->destroy();
@@ -80,6 +80,7 @@ class CardController extends Controller
             if (isset($page[3])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path().'/'.$page[3], 'rb'));
+                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 150, 1279);
                 $card->clear();
                 $card->destroy();
@@ -88,6 +89,7 @@ class CardController extends Controller
             if (isset($page[4])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path().'/'.$page[4], 'rb'));
+                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 1200, 1279);
                 $card->clear();
                 $card->destroy();
@@ -96,6 +98,7 @@ class CardController extends Controller
             if (isset($page[5])) {
                 $card = new Imagick();
                 $card->readImageFile(fopen(public_path().'/'.$page[5], 'rb'));
+                $card->rotateimage($whitePixel, 180);
                 $image->compositeImage($card, IMAGICK::COMPOSITE_DEFAULT, 2250, 1279);
                 $card->clear();
                 $card->destroy();
@@ -178,13 +181,15 @@ class CardController extends Controller
         $bluePixel = new ImagickPixel('#1A4A98');
         $greenPixel = new ImagickPixel('#45955E');
         $blackPixel = new ImagickPixel('#000000');
-        $mainFont = resource_path('assets/fonts/MoonLight.ttf');
-        $headingFont = resource_path('assets/fonts/MoonBold.ttf');
 
+        $moonBold = resource_path('assets/fonts/MoonBold.ttf');
+        $moonLight = resource_path('assets/fonts/MoonLight.ttf');
+        $transparentPixel = new ImagickPixel('transparent');
         /* New image */
         $fullWidth = 900; //3in @ 300ppi
         $image = new Imagick();
-        $image->newImage($fullWidth, 1200, $whitePixel);
+        $image->newImage($fullWidth, 1200, $transparentPixel);
+        $image->setImageAlpha(0);
         $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
         $image->setImageResolution(300, 300);
 
@@ -237,7 +242,7 @@ class CardController extends Controller
             $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 92, 50);
 
             $BMTextLine = new ImagickDraw();
-            $BMTextLine->setFont($headingFont);
+            $BMTextLine->setFont($moonLight);
             $BMTextLine->setFontSize(80);
             $BMTextLine->setFillColor($bluePixel);
 
@@ -255,39 +260,39 @@ class CardController extends Controller
         }
 
         $nameTextLine = new ImagickDraw();
-        $nameTextLine->setFont($mainFont);
+        $nameTextLine->setFont($moonBold);
         $nameTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $nameTextLine->setTextKerning(2);
-        $nameTextLine->setFontSize($isExecCard ? 80 : 62);
-        $nameTextLine->setFillColor($blackPixel);
+        $nameTextLine->setFontSize(80);
+        $nameTextLine->setFillColor($whitePixel);
 
         $image->annotateImage($nameTextLine, $fullWidth / 2, $namePosition, 0, $user->first_name.' '.$user->last_name);
 
         $schoolTextLine = new ImagickDraw();
-        $schoolTextLine->setFont($mainFont);
+        $schoolTextLine->setFont($moonLight);
         $schoolTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $schoolTextLine->setTextKerning(2);
         $schoolTextLine->setFontSize(45);
-        $schoolTextLine->setFillColor($blackPixel);
+        $schoolTextLine->setFillColor($whitePixel);
 
         $image->annotateImage($schoolTextLine, $fullWidth / 2, $namePosition + 55, 0, $schoolName);
 
         //add the stripe
         $roleStripe = new ImagickDraw();
-        $roleStripe->setFillColor($isExecCard ? $bluePixel : $greenPixel);
-        $roleStripe->rectangle(0, 976, $fullWidth, 1200);
+        $roleStripe->setFillColor($whitePixel);
+        $roleStripe->rectangle(0, 1007, $fullWidth, 1200);
         $image->drawImage($roleStripe);
 
         $roleTextLine = new ImagickDraw();
-        $roleTextLine->setFont($mainFont);
+        $roleTextLine->setFont($moonBold);
         $roleTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $roleTextLine->setTextKerning(2);
         $roleTextLine->setFontSize($isExecCard ? 82 : 68);
-        $roleTextLine->setFillColor($whitePixel);
+        $roleTextLine->setFillColor($blackPixel);
         $roleText = $isExecCard ? 'ORGANIZER' : 'HACKER';
         $image->annotateImage($roleTextLine, $fullWidth / 2, 1115, 0, $roleText);
 
-        $fileName = 'cards/card_'.$cardType.'_'.$user_id.'.jpg';
+        $fileName = 'cards/card_'.$cardType.'_'.$user_id.'.png';
         $path = public_path().'/'.$fileName;
         $user->card_image = $fileName;
         $user->save();

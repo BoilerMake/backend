@@ -41,9 +41,9 @@ class GenerateAccessCards extends Command
     public function handle()
     {
 
-        CardController::generateTableNumberImage(3);
-        CardController::generateTableNumberImage(5);
-        return;
+//        CardController::generateTableNumberImage(3);
+//        CardController::generateTableNumberImage(5);
+//        return;
 
         //todo again:
         //puzzle
