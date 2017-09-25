@@ -186,6 +186,7 @@ return [
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
+        Chumper\Zipper\ZipperServiceProvider::class
     ],
 
     /*
@@ -242,6 +243,7 @@ return [
         'AWS' => Aws\Laravel\AwsFacade::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
+        'Zipper' => Chumper\Zipper\Zipper::class,
 
     ],
 
