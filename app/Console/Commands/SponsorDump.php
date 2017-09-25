@@ -65,8 +65,8 @@ class SponsorDump extends Command
                         ."\t".$app->user->first_name
                         ."\t".$app->user->last_name
                         ."\t".$app->user->email
-                        ."\t".$app->has_no_github ? "none" : "https://github.com/".$app->github
-                        ."\t".$app->has_no_github ? "none" : "https://linkedin.com/in/".$app->linkedin
+                        ."\t".($app->has_no_github ? "none" : "https://github.com/".$app->github)
+                        ."\t".($app->has_no_github ? "none" : "https://linkedin.com/in/".$app->linkedin)
                         ."\t".$app->gender
                         ."\t".$app->major
                         ."\t".$app->grad_year
