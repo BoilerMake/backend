@@ -60,7 +60,7 @@ class SponsorDump extends Command
                 $publicResumeURL = env('APP_URL').'/r/'.$resumeSecret.'/'.$resumeFilename.'.pdf';
                 try {
                     copy($resumeURL, $tmpPDF);
-                    $this->info('S3 -> local '.$tmpPDF);
+//                    $this->info('S3 -> local '.$tmpPDF);
                     $this->info($app->user->id
                         ."\t".$app->user->first_name
                         ."\t".$app->user->last_name
