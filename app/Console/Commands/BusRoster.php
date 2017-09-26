@@ -63,33 +63,20 @@ class BusRoster extends Command
             $q->where('name', 'hacker');
         })->with('application', 'application.school')->get();
         foreach ($users as $user) {
-            if ($user->application->school && $user->application->school->transit_method == 'bus') {
+            if ($user->application && $user->application->school && $user->application->school->transit_method == 'bus') {
                 if (in_array($user->application->id, $appIDs)) {
                     if ($school_id !== false) {//filter by school
                         if ($user->application->school->id == $school_id) {
                             $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
                         }
                     } else {
-                        $rsvptext = '';
-                        if ($user->application->rsvp === 1) {
-                            $rsvptext = 'said yes';
-                        }
-                        if ($user->application->rsvp === 0) {
-                            $rsvptext = 'said no';
-                        }
-                        if ($user->application->rsvp === null) {
-                            $rsvptext = 'did not respond';
-                        }
 
                         if ($mode == 4) {
                             $this->info($user->application->school->name."\t"
                                 .$user['email']."\t"
                                 .$user['first_name']."\t"
                                 .$user['last_name']."\t"
-                                .'expired: '.($user->application->decision == 4 ? 'yes' : 'no')
-                                ."\twaitlisted: ".($user->application->decision == 2 ? 'yes' : 'no')
-                                ."\taccepted: ".($user->application->decision == 3 ? 'yes' : 'no')
-                                ."\trsvp: ".$rsvptext);
+                                .$user->application->getPriorityLevelForAdmittance());
                         } else {
                             $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
                         }
