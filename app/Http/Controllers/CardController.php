@@ -154,7 +154,7 @@ class CardController extends Controller
         /* SKILLS ICONS */
         $skillRow = $card->skills;
         $skills = $skillRow && $skillRow != 'null' ? explode(',', substr($skillRow, 1, strlen($skillRow) - 2)) : [];
-
+        $skills = array_values(array_filter($skills, function($value) { return $value !== ''; }));
         $skillsYPos = 730;
 
         if (count($skills) == 3) {
