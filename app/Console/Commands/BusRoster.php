@@ -40,47 +40,34 @@ class BusRoster extends Command
     public function handle()
     {
         $this->info('MODES:');
-        $this->info('1: complete applications');
-        $this->info('2: accepted hackers (subset of 1) ');
-        $this->info('3: where RSVP = yes (subset of 2)');
-        $this->info('4: magic jess thing, basically compelted applications)');
+        $this->info('1: bus apps with priority');
+        $this->info('2: all apps with priority');
         $mode = $this->ask('mode?');
         $this->info('mode: '.$mode);
 
-        if ($mode == 1 || $mode == 4) {
-            $appIDs = Application::where('completed_calculated', true)->get()->pluck('id')->toArray();
-        } elseif ($mode == 2) {
-            $appIDs = Application::where('decision', Application::DECISION_ACCEPT)->get()->pluck('id')->toArray();
-        } elseif ($mode == 3) {
-            $appIDs = Application::where('rsvp', true)->get()->pluck('id')->toArray();
-        } else {
-            return;
+        $users = User::with('application', 'application.school')->get();
+
+        if($mode == 1) {
+            foreach ($users as $user) {
+                if ($user->application && $user->application->school && $user->application->school->transit_method == 'bus') {
+                    $this->info(($user->application->school ? $user->application->school->getDisplayNameIfPossible() : "n/a")."\t"
+                        .$user['email']."\t"
+                        .$user['phone']."\t"
+                        .$user['first_name']."\t"
+                        .$user['last_name']."\t"
+                        .$user->application->getPriorityLevelForAdmittance());
+                }
+            }
         }
-
-        $school_id = $this->ask('school_id filter? (or "none")');
-        $school_id = $school_id == 'none' ? false : $school_id;
-        $users = User::whereHas('roles', function ($q) {
-            $q->where('name', 'hacker');
-        })->with('application', 'application.school')->get();
-        foreach ($users as $user) {
-            if ($user->application && $user->application->school && $user->application->school->transit_method == 'bus') {
-                if (in_array($user->application->id, $appIDs)) {
-                    if ($school_id !== false) {//filter by school
-                        if ($user->application->school->id == $school_id) {
-                            $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
-                        }
-                    } else {
-
-                        if ($mode == 4) {
-                            $this->info($user->application->school->name."\t"
-                                .$user['email']."\t"
-                                .$user['first_name']."\t"
-                                .$user['last_name']."\t"
-                                .$user->application->getPriorityLevelForAdmittance());
-                        } else {
-                            $this->info($user->application->school->name."\t".$user['email']."\t".$user['first_name']."\t".$user['last_name']);
-                        }
-                    }
+        if($mode == 2) {
+            foreach ($users as $user) {
+                if ($user->application) {
+                    $this->info(($user->application->school ? $user->application->school->getDisplayNameIfPossible() : "n/a")."\t"
+                        .$user['email']."\t"
+                        .$user['phone']."\t"
+                        .$user['first_name']."\t"
+                        .$user['last_name']."\t"
+                        .$user->application->getPriorityLevelForAdmittance());
                 }
             }
         }
