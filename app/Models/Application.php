@@ -262,8 +262,8 @@ class Application extends Model implements AuditableContract
         if($this->decision == self::DECISION_WAITLIST) {
             return "LOW (waitlisted)";
         }
-        if(!$this->getCompletedAttribute()) {
-            return "SUPER LOW (incomplete app)";
+        if(!$this->getCompletedAttribute() || $this->decision == null) {
+            return "SUPER LOW (incomplete app or applied after deadline)";
         }
         return "???";
     }
