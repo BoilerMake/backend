@@ -120,7 +120,7 @@ class ExecController extends Controller
     }
 
     /**
-     * Checks in a user
+     * Checks in a user.
      * @param $id
      * @return mixed
      */
@@ -145,6 +145,7 @@ class ExecController extends Controller
             return response()->error("User ${name} (#${id} is already checked in! (${diff})");
         }
     }
+
     /*
      * Sends the user a password reset email
      */
