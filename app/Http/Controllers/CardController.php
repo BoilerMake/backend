@@ -175,14 +175,23 @@ class CardController extends Controller
         $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 187, 84);
 
         /* Add Name */
+        $nameFontSize = 80;
+        $name = $card->name;
+        $nameChars = strlen($name);
+        if($nameChars > 17)
+            $nameFontSize = 65;
+        if($nameChars > 25)
+            $nameFontSize = 50;
+        if($nameChars > 32)
+            $nameFontSize = 38;
         $namePosition = 420;
         $nameTextLine = new ImagickDraw();
         $nameTextLine->setFont($moonBold);
         $nameTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $nameTextLine->setTextKerning(2);
-        $nameTextLine->setFontSize(80);
+        $nameTextLine->setFontSize($nameFontSize);
         $nameTextLine->setFillColor($whitePixel);
-        $image->annotateImage($nameTextLine, self::CARD_WIDTH_PX / 2, $namePosition, 0, $card->name);
+        $image->annotateImage($nameTextLine, self::CARD_WIDTH_PX / 2, $namePosition, 0, $name);
 
         /* Add School */
         $schoolTextLine = new ImagickDraw();
