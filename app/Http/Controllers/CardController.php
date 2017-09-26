@@ -134,6 +134,27 @@ class CardController extends Controller
     }
 
     /**
+     * Brute force find the largest font size that will fit in given width
+     * @param $font - which face
+     * @param $text - text to fit
+     * @param $maxWidth - bounding box
+     * @param $maxFontSize - how big do we go?
+     * @return int font size
+     */
+    public static function getMaxFontSize($font,$text,$maxWidth, $maxFontSize) {
+        $goodSize = 8;
+        for($x=$goodSize; $x<$maxFontSize; $x+=0.5) {
+            $bbox = imageftbbox($goodSize, 0, $font, $text);
+            if($bbox[2] - $bbox[0] > $maxWidth) {
+                //we went to far, return last good
+                return $goodSize;
+            } else {
+                $goodSize = $x;
+            }
+        }
+        return $goodSize;
+    }
+    /**
      * Generates an access card image.
      * @return string file URI
      */
@@ -175,21 +196,13 @@ class CardController extends Controller
         $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 187, 84);
 
         /* Add Name */
-        $nameFontSize = 80;
         $name = $card->name;
-        $nameChars = strlen($name);
-        if($nameChars > 17)
-            $nameFontSize = 65;
-        if($nameChars > 25)
-            $nameFontSize = 50;
-        if($nameChars > 32)
-            $nameFontSize = 38;
         $namePosition = 420;
         $nameTextLine = new ImagickDraw();
         $nameTextLine->setFont($moonBold);
         $nameTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $nameTextLine->setTextKerning(2);
-        $nameTextLine->setFontSize($nameFontSize);
+        $nameTextLine->setFontSize(self::getMaxFontSize($moonBold, $name,760,80));
         $nameTextLine->setFillColor($whitePixel);
         $image->annotateImage($nameTextLine, self::CARD_WIDTH_PX / 2, $namePosition, 0, $name);
 
@@ -198,7 +211,7 @@ class CardController extends Controller
         $schoolTextLine->setFont($moonLight);
         $schoolTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $schoolTextLine->setTextKerning(2);
-        $schoolTextLine->setFontSize(45);
+        $schoolTextLine->setFontSize(self::getMaxFontSize($moonLight, $card->subtitle,760,45));
         $schoolTextLine->setFillColor($whitePixel);
         $image->annotateImage($schoolTextLine, self::CARD_WIDTH_PX / 2, $namePosition + 60, 0, $card->subtitle);
 
