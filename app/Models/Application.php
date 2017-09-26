@@ -253,7 +253,7 @@ class Application extends Model implements AuditableContract
         if($this->decision == self::DECISION_ACCEPT && $this->rsvp) {
             return "SUPER HIGH (rsvp'd)";
         }
-        if($this->decision == self::DECISION_ACCEPT && !$this->rsvp) {
+        if($this->decision == self::DECISION_ACCEPT) {
             return "HIGH (did not RSVP, but not expired)";
         }
         if($this->decision == self::DECISION_EXPIRED) {
