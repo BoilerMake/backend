@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Card;
-use Log;
 use App\Models\User;
 use Illuminate\Console\Command;
 use App\Http\Controllers\CardController;
@@ -46,14 +45,13 @@ class GenerateAccessCards extends Command
 //        CardController::generateTableNumberImage(5);
 //        return;
 
-        Card::where('role',User::ROLE_HACKER)->delete();
+        Card::where('role', User::ROLE_HACKER)->delete();
 
         foreach (User::with('application', 'application.school')->get() as $user) {
-            if($user->hasRole('hacker') && $user->application && $user->application->rsvp) {
-
+            if ($user->hasRole('hacker') && $user->application && $user->application->rsvp) {
                 $schoolName = '';
                 if ($user->application && $user->application->school) {
-                        $schoolName = $user->application->school->display_name
+                    $schoolName = $user->application->school->display_name
                             ? $user->application->school->display_name
                             : $user->application->school->name;
                 }
@@ -61,12 +59,12 @@ class GenerateAccessCards extends Command
                     'name'      => $user->getNameAttribute(),
                     'subtitle'  => $schoolName,
                     'skills'    => $user->application->skills,
-                    'role'      => User::ROLE_HACKER
+                    'role'      => User::ROLE_HACKER,
                 ]);
             }
         }
 
-        foreach (Card::all() as $card ) {
+        foreach (Card::all() as $card) {
             CardController::generateAccessCardImage($card);
         }
 

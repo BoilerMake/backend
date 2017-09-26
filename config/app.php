@@ -186,7 +186,7 @@ return [
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
-        Chumper\Zipper\ZipperServiceProvider::class
+        Chumper\Zipper\ZipperServiceProvider::class,
     ],
 
     /*
