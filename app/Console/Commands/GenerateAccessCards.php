@@ -71,7 +71,7 @@ class GenerateAccessCards extends Command
         }
 
         $this->info('stitching...');
-        CardController::stitchAccessCards(User::ROLE_SPONSOR);
+        CardController::stitchAccessCards(User::ROLE_HACKER);
         CardController::stitchAccessCards(User::ROLE_ORGANIZER);
         CardController::stitchAccessCards(User::ROLE_SPONSOR);
         $this->info('done');

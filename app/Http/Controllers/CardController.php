@@ -155,7 +155,7 @@ class CardController extends Controller
         $skillRow = $card->skills;
         $skills = $skillRow && $skillRow != "null" ? explode(",",substr($skillRow,1,strlen($skillRow)-2)) : [];
 
-        $skillsYPos = 830;
+        $skillsYPos = 730;
 
         if (count($skills) == 3) {
             $image->compositeImage(self::getSizedSkillIcon($skills[0]), IMAGICK::COMPOSITE_DEFAULT, 250, $skillsYPos);
