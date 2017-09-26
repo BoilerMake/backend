@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Card;
 use Log;
 use App\Models\User;
-use App\Models\PuzzleProgress;
 use Illuminate\Console\Command;
 use App\Http\Controllers\CardController;
 
@@ -41,35 +41,39 @@ class GenerateAccessCards extends Command
      */
     public function handle()
     {
-        //todo again:
-        //puzzle
-        $puzzleUsers = PuzzleProgress::where('puzzle_id', 5)->get()->pluck('user_id')->toArray();
-        //exec
-        $execs = User::whereHas('roles', function ($q) {
-            $q->where('name', 'exec');
-        })->pluck('id')->toArray();
-        $toGenerate = array_merge($puzzleUsers, $execs);
-        //newly added
-        $newlyAdded = [72381];
-        $toGenerate = array_merge($toGenerate, $newlyAdded);
 
-        Log::info($toGenerate);
+//        CardController::generateTableNumberImage(3);
+//        CardController::generateTableNumberImage(5);
+//        return;
 
-        foreach (User::with('application')->get() as $user) {
-            $user->card_image = null;
-            $user->save();
-            if ($user->hasRole('exec')) {
-                CardController::generateAccessCardImage($user->id);
-            } elseif ($user->hasRole('hacker') && $user->application->rsvp) {
-                CardController::generateAccessCardImage($user->id);
+        Card::where('role',User::ROLE_HACKER)->delete();
+
+        foreach (User::with('application', 'application.school')->get() as $user) {
+            if($user->hasRole('hacker') && $user->application && $user->application->rsvp) {
+
+                $schoolName = '';
+                if ($user->application && $user->application->school) {
+                        $schoolName = $user->application->school->display_name
+                            ? $user->application->school->display_name
+                            : $user->application->school->name;
+                }
+                Card::create([
+                    'name'      => $user->getNameAttribute(),
+                    'subtitle'  => $schoolName,
+                    'skills'    => $user->application->skills,
+                    'role'      => User::ROLE_HACKER
+                ]);
             }
         }
-        $this->info('stitching...');
-        //        CardController::stitchAccessCards($toGenerate);
-        CardController::stitchAccessCards();
 
+        foreach (Card::all() as $card ) {
+            CardController::generateAccessCardImage($card);
+        }
+
+        $this->info('stitching...');
+        CardController::stitchAccessCards(User::ROLE_HACKER);
+        CardController::stitchAccessCards(User::ROLE_ORGANIZER);
+        CardController::stitchAccessCards(User::ROLE_SPONSOR);
         $this->info('done');
-        //        CardController::generateAccessCardImage(1);
-//        CardController::generateAccessCardImage(16);
     }
 }
