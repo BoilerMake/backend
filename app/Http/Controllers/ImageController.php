@@ -11,38 +11,55 @@ use App\Models\User;
 
 /**
  * Class ImageController.
+ * This is used to generate access cards and table numbers.
+ * How the access cards work:
+ * They are generated as 3x4 images with a transparent background.
+ *      They include name, subtitle, skill icon, and a white stripe on the bottom with $role
+ * They are then stacked 6-up on an 8.5x11 sized image (stitchAccessCards) based in the following order, and saved to a PDF:
+ * 1. colored background based on $role (stitchAccessCards is batched per-role).
+ *    We don't do background colors in card generation so that we get full bleed for printing
+ * 2. 6up transparent image of the hammers
+ * 3. White stripe to give bleed for the white background that the role label part has
+ * 4. The transparent access cards
+ *
  * @codeCoverageIgnore
  */
 class ImageController extends Controller
 {
-    const CARD_TYPE_HACKER = 1;
-    const CARD_TYPE_EXEC = 2;
+    const SHEET_WIDTH_PX = 3300; //11 in
+    const SHEET_HEIGHT_PX = 2550;//8.5 in
 
-    const SHEET_WIDTH_PX = 3300;
-    const SHEET_HEIGHT_PX = 2550;
-
-    const CARD_WIDTH_PX = 900;
-    const CARD_HEIGHT_PX = 1200;
+    const CARD_WIDTH_PX = 900;  // 3 in
+    const CARD_HEIGHT_PX = 1200;// 4 in
 
     /**
-     * Stitches user access cards together into a PDF.
-     * @param array|null $user_ids
+     * Stitches user access cards for a given role together into multiple 6-up PDFs.
+     * @param string|null $role
      */
     public static function stitchAccessCards($role = User::ROLE_HACKER)
     {
         $paths = Card::whereNotNull('filename')->where('role', $role)->get()->pluck('filename')->toArray();
-        $pages = array_chunk($paths, 6);
         $whitePixel = new ImagickPixel('#FFFFFF');
+        //background color depends on role
         $roleColors = [
             User::ROLE_HACKER    => '#24133A',
             User::ROLE_SPONSOR   => '#0CB3C1',
             User::ROLE_ORGANIZER => '#ED1E7E',
             User::ROLE_GUEST     => '#F8AF18',
         ];
-        $roleColor = new ImagickPixel($roleColors[$role]); //todo: based on role
-
+        //coordinates for the 6up layout
+        $cardPositions = [
+            0=>['x'=>150,   'y'=>80],
+            1=>['x'=>1200,  'y'=>80],
+            2=>['x'=>2250,  'y'=>80],
+            3=>['x'=>150,   'y'=>1279],
+            4=>['x'=>1200,  'y'=>1279],
+            5=>['x'=>2250,  'y'=>1279],
+        ];
+        $roleColor = new ImagickPixel($roleColors[$role]);
         $pageNum = 0;
-        foreach ($pages as $page) {
+        foreach (array_chunk($paths, 6) as $page) {
+            //make a 8.5x11 image @ 300dpi
             $image = new Imagick();
             $image->newImage(self::SHEET_WIDTH_PX, self::SHEET_HEIGHT_PX, $roleColor);
             $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
@@ -55,21 +72,15 @@ class ImageController extends Controller
             $item1raw->cropThumbnailImage(self::SHEET_WIDTH_PX, self::SHEET_HEIGHT_PX);
             $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 0, 0);
 
-            //add some bleed to the role stripe, underneath where 6up cards are placed
+            //add some bleed white to the role stripe, underneath where 6up cards are placed
             $roleStripe = new ImagickDraw();
             $roleStripe->setFillColor($whitePixel);
             $roleStripe->rectangle(0, 1085, self::SHEET_WIDTH_PX, 1475);
             $image->drawImage($roleStripe);
 
-            $cardPositions = [
-                0=>['x'=>150,   'y'=>80],
-                1=>['x'=>1200,  'y'=>80],
-                2=>['x'=>2250,  'y'=>80],
-                3=>['x'=>150,   'y'=>1279],
-                4=>['x'=>1200,  'y'=>1279],
-                5=>['x'=>2250,  'y'=>1279],
-            ];
+
             for ($cardLayoutPosNum = 0; $cardLayoutPosNum < 6; $cardLayoutPosNum++) {
+                //there could be fewer than 6 if it's the last page, so we need to check
                 if (isset($page[$cardLayoutPosNum])) {
                     $card = new Imagick();
                     $card->readImageFile(fopen(public_path().'/'.$page[$cardLayoutPosNum], 'rb'));
@@ -79,7 +90,7 @@ class ImageController extends Controller
                     $card->destroy();
                 }
             }
-
+            //save it to a pdf
             $fileName = "cards-output/${role}-layout-${pageNum}.pdf";
             $path = public_path().'/'.$fileName;
             $image->writeImage($path);
@@ -89,38 +100,8 @@ class ImageController extends Controller
         }
     }
 
-    public static function generateTableNumberImage($num)
-    {
-        $headingFont = resource_path('assets/fonts/MoonBold.ttf');
-        $whitePixel = new ImagickPixel('#FFFFFF');
-        $bluePixel = new ImagickPixel('#1A4A98');
-
-        $image = new Imagick();
-        $image->newImage(self::SHEET_WIDTH_PX, self::SHEET_HEIGHT_PX, $whitePixel);
-        $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
-        $image->setImageResolution(300, 300);
-        $image->setImageFormat('jpg');
-
-        $roleStripe = new ImagickDraw();
-        $roleStripe->setFillColor($bluePixel);
-        $roleStripe->rectangle(0, 1275, self::SHEET_WIDTH_PX, 1276);
-        $image->drawImage($roleStripe);
-
-        $BMTextLine = new ImagickDraw();
-        $BMTextLine->setFont($headingFont);
-        $BMTextLine->setFontSize(200);
-        $BMTextLine->setFillColor($bluePixel);
-
-        $image->annotateImage($BMTextLine, 2000, 600, 0, $num);
-
-        $image->annotateImage($BMTextLine, 1300, 1950, 180, $num);
-
-        $fileName = "table-numbers/table-${num}.pdf";
-        $path = public_path().'/'.$fileName;
-        $image->writeImage($path);
-    }
-
     /**
+     * Generate an a skill icon based on name
      * @param $skill
      * @param $skill
      * @return Imagick the icon
@@ -161,24 +142,29 @@ class ImageController extends Controller
      */
     public static function generateAccessCardImage(Card $card)
     {
-
-        //globals
         $whitePixel = new ImagickPixel('#FFFFFF');
         $blackPixel = new ImagickPixel('#000000');
-
         $moonBold = resource_path('assets/fonts/MoonBold.ttf');
         $moonLight = resource_path('assets/fonts/MoonLight.ttf');
+
+        //make a 3x4 image @ 300dpi, with transparent background so we can overlay it on top of hammers + bg
         $image = new Imagick();
         $image->newImage(self::CARD_WIDTH_PX, self::CARD_HEIGHT_PX, new ImagickPixel('transparent'));
         $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
         $image->setImageResolution(300, 300);
 
-        /* SKILLS ICONS */
-        $skillRow = $card->skills;
-        $skills = $skillRow && $skillRow != 'null' ? explode(',', substr($skillRow, 1, strlen($skillRow) - 2)) : [];
-        $skills = array_values(array_filter($skills, function($value) { return $value !== ''; }));
-        $skillsYPos = 730;
+        /*
+         * SKILLS ICONS
+         * skills are stored as: 'skill1,skill2' in the DB, so we need to split into array, and remove duplicates
+         * */
 
+        $skillRow = $card->skills;
+        //turn into array:
+        $skills = $skillRow && $skillRow != 'null' ? explode(',', substr($skillRow, 1, strlen($skillRow) - 2)) : [];
+        //remove duplicates:
+        $skills = array_values(array_filter($skills, function($value) { return $value !== ''; }));
+        $skillsYPos = 730;//position for the icon row
+        //someone can have 0...3 skills
         if (count($skills) == 3) {
             $image->compositeImage(self::getSizedSkillIcon($skills[0]), IMAGICK::COMPOSITE_DEFAULT, 250, $skillsYPos);
             $image->compositeImage(self::getSizedSkillIcon($skills[1]), IMAGICK::COMPOSITE_DEFAULT, 400, $skillsYPos);
@@ -207,21 +193,22 @@ class ImageController extends Controller
         $nameTextLine->setFillColor($whitePixel);
         $image->annotateImage($nameTextLine, self::CARD_WIDTH_PX / 2, $namePosition, 0, $name);
 
-        /* Add School */
-        $schoolTextLine = new ImagickDraw();
-        $schoolTextLine->setFont($moonLight);
-        $schoolTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
-        $schoolTextLine->setTextKerning(2);
-        $schoolTextLine->setFontSize(self::getMaxFontSize($moonLight, $card->subtitle,760,45));
-        $schoolTextLine->setFillColor($whitePixel);
-        $image->annotateImage($schoolTextLine, self::CARD_WIDTH_PX / 2, $namePosition + 60, 0, $card->subtitle);
+        /* Add subtitle (school/company) */
+        $subtitleTextLine = new ImagickDraw();
+        $subtitleTextLine->setFont($moonLight);
+        $subtitleTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
+        $subtitleTextLine->setTextKerning(2);
+        $subtitleTextLine->setFontSize(self::getMaxFontSize($moonLight, $card->subtitle,760,45));
+        $subtitleTextLine->setFillColor($whitePixel);
+        $image->annotateImage($subtitleTextLine, self::CARD_WIDTH_PX / 2, $namePosition + 60, 0, $card->subtitle);
 
         /* Add role */
-        //white stripe
+        //white stripe BG
         $roleStripe = new ImagickDraw();
         $roleStripe->setFillColor($whitePixel);
         $roleStripe->rectangle(0, 1007, self::CARD_WIDTH_PX, self::CARD_HEIGHT_PX);
         $image->drawImage($roleStripe);
+
         //add role text
         $roleTextLine = new ImagickDraw();
         $roleTextLine->setFont($moonBold);
@@ -229,8 +216,7 @@ class ImageController extends Controller
         $roleTextLine->setTextKerning(2);
         $roleTextLine->setFontSize(70);
         $roleTextLine->setFillColor($blackPixel);
-        $roleText = strtoupper($card->role);
-        $image->annotateImage($roleTextLine, self::CARD_WIDTH_PX / 2, 1120, 0, $roleText);
+        $image->annotateImage($roleTextLine, self::CARD_WIDTH_PX / 2, 1120, 0, strtoupper($card->role));
 
         /* SAVE! */
         $fileName = 'cards/card_'.$card->role.'_'.$card->id.'.png';
@@ -241,5 +227,35 @@ class ImageController extends Controller
         $image->clear();
         $image->destroy();
         Log::info('Saved card for card #'.$card->id.' to: '.$fileName);
+    }
+    public static function generateTableNumberImage($num)
+    {
+        $headingFont = resource_path('assets/fonts/MoonBold.ttf');
+        $whitePixel = new ImagickPixel('#FFFFFF');
+        $bluePixel = new ImagickPixel('#1A4A98');
+
+        $image = new Imagick();
+        $image->newImage(self::SHEET_WIDTH_PX, self::SHEET_HEIGHT_PX, $whitePixel);
+        $image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+        $image->setImageResolution(300, 300);
+        $image->setImageFormat('jpg');
+
+        $roleStripe = new ImagickDraw();
+        $roleStripe->setFillColor($bluePixel);
+        $roleStripe->rectangle(0, 1275, self::SHEET_WIDTH_PX, 1276);
+        $image->drawImage($roleStripe);
+
+        $BMTextLine = new ImagickDraw();
+        $BMTextLine->setFont($headingFont);
+        $BMTextLine->setFontSize(200);
+        $BMTextLine->setFillColor($bluePixel);
+
+        $image->annotateImage($BMTextLine, 2000, 600, 0, $num);
+
+        $image->annotateImage($BMTextLine, 1300, 1950, 180, $num);
+
+        $fileName = "table-numbers/table-${num}.pdf";
+        $path = public_path().'/'.$fileName;
+        $image->writeImage($path);
     }
 }

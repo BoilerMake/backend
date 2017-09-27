@@ -9,47 +9,22 @@ use App\Http\Controllers\ImageController;
 
 class GenerateAccessCards extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'users:cards';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Command description';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         parent::__construct();
     }
-
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-
-//        ImageController::generateTableNumberImage(3);
-//        ImageController::generateTableNumberImage(5);
-//        return;
-
-
+        /**
+         * Populate `card` table with data from all rsvp'd hackers.
+         */
         foreach (User::with('application', 'application.school')->get() as $user) {
             if ($user->hasRole('hacker') && $user->application && $user->application->rsvp) {
                 $schoolName = '';
                 if ($user->application && $user->application->school) {
+                    //use display_name of school if available bc it's shorter, or fall back to full name
                     $schoolName = $user->application->school->display_name
                             ? $user->application->school->display_name
                             : $user->application->school->name;
@@ -62,19 +37,18 @@ class GenerateAccessCards extends Command
                 ]);
             }
         }
-
+        /*
+         * generate access cards for all roles based on `cards` table
+         */
         foreach (Card::all() as $card) {
             ImageController::generateAccessCardImage($card);
         }
-
-        $this->info('stitching...');
-        ImageController::stitchAccessCards(User::ROLE_HACKER);
-        $this->info('stitching...');
-        ImageController::stitchAccessCards(User::ROLE_ORGANIZER);
-        $this->info('stitching...');
-        ImageController::stitchAccessCards(User::ROLE_SPONSOR);
-        $this->info('stitching...');
-        ImageController::stitchAccessCards(User::ROLE_GUEST);
-        $this->info('done');
+        /*
+         * stitch cards into 6up sheets
+         */
+        foreach (User::ROLES as $role) {
+            $this->info("stiching access cards for ${role}");
+            ImageController::stitchAccessCards($role);
+        }
     }
 }

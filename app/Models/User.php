@@ -36,8 +36,16 @@ class User extends Authenticatable implements AuditableContract
 
     const ROLE_HACKER = 'hacker';
     const ROLE_ORGANIZER = 'organizer';
+    const ROLE_EXEC = 'exec';
     const ROLE_SPONSOR = 'sponsor';
     const ROLE_GUEST = 'guest';
+    const ROLES = [
+        self::ROLE_HACKER,
+        self::ROLE_GUEST,
+        self::ROLE_SPONSOR,
+        self::ROLE_ORGANIZER,
+        self::ROLE_EXEC
+    ];
 
     const FIELD_EMAIL = 'email';
     const FIELD_FIRSTNAME = 'first_name';
