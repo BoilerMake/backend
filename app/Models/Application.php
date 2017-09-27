@@ -249,22 +249,25 @@ class Application extends Model implements AuditableContract
     {
         return $phase <= self::getCurrentPhase();
     }
-    public function getPriorityLevelForAdmittance() {
-        if($this->decision == self::DECISION_ACCEPT && $this->rsvp) {
+
+    public function getPriorityLevelForAdmittance()
+    {
+        if ($this->decision == self::DECISION_ACCEPT && $this->rsvp) {
             return "SUPER HIGH (rsvp'd)";
         }
-        if($this->decision == self::DECISION_ACCEPT) {
-            return "HIGH (did not RSVP, but not expired)";
+        if ($this->decision == self::DECISION_ACCEPT) {
+            return 'HIGH (did not RSVP, but not expired)';
         }
-        if($this->decision == self::DECISION_EXPIRED) {
-            return "MEDIUM (did not RSVP, expired)";
+        if ($this->decision == self::DECISION_EXPIRED) {
+            return 'MEDIUM (did not RSVP, expired)';
         }
-        if($this->decision == self::DECISION_WAITLIST) {
-            return "LOW (waitlisted)";
+        if ($this->decision == self::DECISION_WAITLIST) {
+            return 'LOW (waitlisted)';
         }
-        if(!$this->getCompletedAttribute() || $this->decision == null) {
-            return "SUPER LOW (incomplete app or applied after deadline)";
+        if (! $this->getCompletedAttribute() || $this->decision == null) {
+            return 'SUPER LOW (incomplete app or applied after deadline)';
         }
-        return "???";
+
+        return '???';
     }
 }

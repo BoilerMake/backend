@@ -10,7 +10,9 @@ class School extends Model
     protected $fillable = [
         '*',
     ];
-    public function getDisplayNameIfPossible() {
+
+    public function getDisplayNameIfPossible()
+    {
         return $this->display_name ? $this->display_name : $this->name;
     }
 }

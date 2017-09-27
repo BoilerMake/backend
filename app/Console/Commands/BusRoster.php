@@ -47,10 +47,10 @@ class BusRoster extends Command
 
         $users = User::with('application', 'application.school')->get();
 
-        if($mode == 1) {
+        if ($mode == 1) {
             foreach ($users as $user) {
                 if ($user->application && $user->application->school && $user->application->school->transit_method == 'bus') {
-                    $this->info(($user->application->school ? $user->application->school->getDisplayNameIfPossible() : "n/a")."\t"
+                    $this->info(($user->application->school ? $user->application->school->getDisplayNameIfPossible() : 'n/a')."\t"
                         .$user['email']."\t"
                         .$user['phone']."\t"
                         .$user['first_name']."\t"
@@ -59,10 +59,10 @@ class BusRoster extends Command
                 }
             }
         }
-        if($mode == 2) {
+        if ($mode == 2) {
             foreach ($users as $user) {
                 if ($user->application) {
-                    $this->info(($user->application->school ? $user->application->school->getDisplayNameIfPossible() : "n/a")."\t"
+                    $this->info(($user->application->school ? $user->application->school->getDisplayNameIfPossible() : 'n/a')."\t"
                         .$user['email']."\t"
                         .$user['phone']."\t"
                         .$user['first_name']."\t"

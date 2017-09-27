@@ -178,6 +178,7 @@ class ExecController extends Controller
             env('SLACK_URL'),
             ['json' => ['text' => "<!everyone> ${message}"]]
         );
+
         return response()->success('yay');
     }
 
