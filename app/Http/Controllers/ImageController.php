@@ -20,17 +20,17 @@ use App\Models\User;
  *    We don't do background colors in card generation so that we get full bleed for printing
  * 2. 6up transparent image of the hammers
  * 3. White stripe to give bleed for the white background that the role label part has
- * 4. The transparent access cards
+ * 4. The transparent access cards.
  *
  * @codeCoverageIgnore
  */
 class ImageController extends Controller
 {
     const SHEET_WIDTH_PX = 3300; //11 in
-    const SHEET_HEIGHT_PX = 2550;//8.5 in
+    const SHEET_HEIGHT_PX = 2550; //8.5 in
 
     const CARD_WIDTH_PX = 900;  // 3 in
-    const CARD_HEIGHT_PX = 1200;// 4 in
+    const CARD_HEIGHT_PX = 1200; // 4 in
 
     /**
      * Stitches user access cards for a given role together into multiple 6-up PDFs.
@@ -78,7 +78,6 @@ class ImageController extends Controller
             $roleStripe->rectangle(0, 1085, self::SHEET_WIDTH_PX, 1475);
             $image->drawImage($roleStripe);
 
-
             for ($cardLayoutPosNum = 0; $cardLayoutPosNum < 6; $cardLayoutPosNum++) {
                 //there could be fewer than 6 if it's the last page, so we need to check
                 if (isset($page[$cardLayoutPosNum])) {
@@ -101,7 +100,7 @@ class ImageController extends Controller
     }
 
     /**
-     * Generate an a skill icon based on name
+     * Generate an a skill icon based on name.
      * @param $skill
      * @param $skill
      * @return Imagick the icon
@@ -116,26 +115,29 @@ class ImageController extends Controller
     }
 
     /**
-     * Brute force find the largest font size that will fit in given width
+     * Brute force find the largest font size that will fit in given width.
      * @param $font - which face
      * @param $text - text to fit
      * @param $maxWidth - bounding box
      * @param $maxFontSize - how big do we go?
      * @return int font size
      */
-    public static function getMaxFontSize($font,$text,$maxWidth, $maxFontSize) {
+    public static function getMaxFontSize($font, $text, $maxWidth, $maxFontSize)
+    {
         $goodSize = 8;
-        for($x=$goodSize; $x<$maxFontSize; $x+=0.5) {
+        for ($x = $goodSize; $x < $maxFontSize; $x += 0.5) {
             $bbox = imageftbbox($goodSize, 0, $font, $text);
-            if($bbox[2] - $bbox[0] > $maxWidth) {
+            if ($bbox[2] - $bbox[0] > $maxWidth) {
                 //we went to far, return last good
                 return $goodSize;
             } else {
                 $goodSize = $x;
             }
         }
+
         return $goodSize;
     }
+
     /**
      * Generates an access card image.
      * @return string file URI
@@ -162,8 +164,10 @@ class ImageController extends Controller
         //turn into array:
         $skills = $skillRow && $skillRow != 'null' ? explode(',', substr($skillRow, 1, strlen($skillRow) - 2)) : [];
         //remove duplicates:
-        $skills = array_values(array_filter($skills, function($value) { return $value !== ''; }));
-        $skillsYPos = 730;//position for the icon row
+        $skills = array_values(array_filter($skills, function ($value) {
+            return $value !== '';
+        }));
+        $skillsYPos = 730; //position for the icon row
         //someone can have 0...3 skills
         if (count($skills) == 3) {
             $image->compositeImage(self::getSizedSkillIcon($skills[0]), IMAGICK::COMPOSITE_DEFAULT, 250, $skillsYPos);
@@ -189,7 +193,7 @@ class ImageController extends Controller
         $nameTextLine->setFont($moonBold);
         $nameTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $nameTextLine->setTextKerning(2);
-        $nameTextLine->setFontSize(self::getMaxFontSize($moonBold, $name,760,80));
+        $nameTextLine->setFontSize(self::getMaxFontSize($moonBold, $name, 760, 80));
         $nameTextLine->setFillColor($whitePixel);
         $image->annotateImage($nameTextLine, self::CARD_WIDTH_PX / 2, $namePosition, 0, $name);
 
@@ -198,7 +202,7 @@ class ImageController extends Controller
         $subtitleTextLine->setFont($moonLight);
         $subtitleTextLine->setTextAlignment(\Imagick::ALIGN_CENTER);
         $subtitleTextLine->setTextKerning(2);
-        $subtitleTextLine->setFontSize(self::getMaxFontSize($moonLight, $card->subtitle,760,45));
+        $subtitleTextLine->setFontSize(self::getMaxFontSize($moonLight, $card->subtitle, 760, 45));
         $subtitleTextLine->setFillColor($whitePixel);
         $image->annotateImage($subtitleTextLine, self::CARD_WIDTH_PX / 2, $namePosition + 60, 0, $card->subtitle);
 
@@ -228,6 +232,7 @@ class ImageController extends Controller
         $image->destroy();
         Log::info('Saved card for card #'.$card->id.' to: '.$fileName);
     }
+
     public static function generateTableNumberImage($num)
     {
         $headingFont = resource_path('assets/fonts/MoonBold.ttf');

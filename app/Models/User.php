@@ -44,7 +44,7 @@ class User extends Authenticatable implements AuditableContract
         self::ROLE_GUEST,
         self::ROLE_SPONSOR,
         self::ROLE_ORGANIZER,
-        self::ROLE_EXEC
+        self::ROLE_EXEC,
     ];
 
     const FIELD_EMAIL = 'email';

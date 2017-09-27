@@ -11,13 +11,15 @@ class GenerateAccessCards extends Command
 {
     protected $signature = 'users:cards';
     protected $description = 'Command description';
+
     public function __construct()
     {
         parent::__construct();
     }
+
     public function handle()
     {
-        /**
+        /*
          * Populate `card` table with data from all rsvp'd hackers.
          */
         foreach (User::with('application', 'application.school')->get() as $user) {
