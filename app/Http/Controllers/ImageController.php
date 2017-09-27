@@ -10,10 +10,10 @@ use App\Models\Card;
 use App\Models\User;
 
 /**
- * Class CardController.
+ * Class ImageController.
  * @codeCoverageIgnore
  */
-class CardController extends Controller
+class ImageController extends Controller
 {
     const CARD_TYPE_HACKER = 1;
     const CARD_TYPE_EXEC = 2;

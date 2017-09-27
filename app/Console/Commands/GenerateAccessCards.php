@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Card;
 use App\Models\User;
 use Illuminate\Console\Command;
-use App\Http\Controllers\CardController;
+use App\Http\Controllers\ImageController;
 
 class GenerateAccessCards extends Command
 {
@@ -41,8 +41,8 @@ class GenerateAccessCards extends Command
     public function handle()
     {
 
-//        CardController::generateTableNumberImage(3);
-//        CardController::generateTableNumberImage(5);
+//        ImageController::generateTableNumberImage(3);
+//        ImageController::generateTableNumberImage(5);
 //        return;
 
 
@@ -64,17 +64,17 @@ class GenerateAccessCards extends Command
         }
 
         foreach (Card::all() as $card) {
-            CardController::generateAccessCardImage($card);
+            ImageController::generateAccessCardImage($card);
         }
 
         $this->info('stitching...');
-        CardController::stitchAccessCards(User::ROLE_HACKER);
+        ImageController::stitchAccessCards(User::ROLE_HACKER);
         $this->info('stitching...');
-        CardController::stitchAccessCards(User::ROLE_ORGANIZER);
+        ImageController::stitchAccessCards(User::ROLE_ORGANIZER);
         $this->info('stitching...');
-        CardController::stitchAccessCards(User::ROLE_SPONSOR);
+        ImageController::stitchAccessCards(User::ROLE_SPONSOR);
         $this->info('stitching...');
-        CardController::stitchAccessCards(User::ROLE_GUEST);
+        ImageController::stitchAccessCards(User::ROLE_GUEST);
         $this->info('done');
     }
 }
