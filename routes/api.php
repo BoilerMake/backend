@@ -83,7 +83,7 @@ Route::prefix('v1')->group(function () {
         Route::get('applications', 'ExecController@getApplications');
         Route::get('applications/{id}', 'ExecController@getApplication');
         //day-of annoucements
-        Route::post('announcements/add', 'ExecController@addAnnouncement');
+        Route::post('announcements', 'ExecController@addAnnouncement');
         //calendar events
         Route::post('events/create', 'ExecController@createEvent');
         Route::post('events/{event}/update', 'ExecController@editEvent');

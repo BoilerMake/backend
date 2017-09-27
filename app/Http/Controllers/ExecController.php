@@ -162,18 +162,23 @@ class ExecController extends Controller
      * @param Request $request
      * @return array status
      */
-    public function addAnnouncement(Request $request)
+    public function addAnnouncement()
     {
+        $data = json_decode(Request::getContent(), true);
+        $message = $data['message'];
         $a = new Announcement();
-        $a->body = $request->message;
-        $a->sms = $request->sms || false;
-        $a->slack = $request->slack || false;
-        $a->email = $request->email || false;
-        $a->important = $request->important || false;
+        $a->title = '';
+        $a->body = $message;
+        $a->slack = true;
+        $a->important = false;
         $a->save();
-        $a->send();
 
-        return ['ok'];
+        $client = new \GuzzleHttp\Client();
+        $client->post(
+            env('SLACK_URL'),
+            ['json' => ['text' => "<!everyone> ${message}"]]
+        );
+        return response()->success('yay');
     }
 
     public function getApplication($id)
