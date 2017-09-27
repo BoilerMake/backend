@@ -45,7 +45,6 @@ class GenerateAccessCards extends Command
 //        CardController::generateTableNumberImage(5);
 //        return;
 
-        Card::where('role', User::ROLE_HACKER)->delete();
 
         foreach (User::with('application', 'application.school')->get() as $user) {
             if ($user->hasRole('hacker') && $user->application && $user->application->rsvp) {
@@ -74,6 +73,8 @@ class GenerateAccessCards extends Command
         CardController::stitchAccessCards(User::ROLE_ORGANIZER);
         $this->info('stitching...');
         CardController::stitchAccessCards(User::ROLE_SPONSOR);
+        $this->info('stitching...');
+        CardController::stitchAccessCards(User::ROLE_GUEST);
         $this->info('done');
     }
 }

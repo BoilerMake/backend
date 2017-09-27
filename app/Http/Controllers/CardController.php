@@ -34,9 +34,10 @@ class CardController extends Controller
         $pages = array_chunk($paths, 6);
         $whitePixel = new ImagickPixel('#FFFFFF');
         $roleColors = [
-            User::ROLE_HACKER => '#24133A',
-            User::ROLE_SPONSOR => '#0CB3C1',
+            User::ROLE_HACKER    => '#24133A',
+            User::ROLE_SPONSOR   => '#0CB3C1',
             User::ROLE_ORGANIZER => '#ED1E7E',
+            User::ROLE_GUEST     => '#F8AF18',
         ];
         $roleColor = new ImagickPixel($roleColors[$role]); //todo: based on role
 
