@@ -115,6 +115,7 @@ class GenerateEmailTodo extends Command
                     ."\t".$user->last_name
                     ."\t".$user->phone
                     ."\t".($user->application->school ? $user->application->school->name : 'no school???')
+                    ."\t".$user->getHashIDAttribute()
                 );
             }
         }
