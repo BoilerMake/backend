@@ -55,6 +55,7 @@ class BusRoster extends Command
                         .$user['phone']."\t"
                         .$user['first_name']."\t"
                         .$user['last_name']."\t"
+                        .$user->getHashIDAttribute()."\t"
                         .$user->application->getPriorityLevelForAdmittance());
                 }
             }
@@ -67,6 +68,7 @@ class BusRoster extends Command
                         .$user['phone']."\t"
                         .$user['first_name']."\t"
                         .$user['last_name']."\t"
+                        .$user->getHashIDAttribute()."\t"
                         .$user->application->getPriorityLevelForAdmittance());
                 }
             }
