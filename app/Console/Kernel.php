@@ -24,6 +24,7 @@ class Kernel extends ConsoleKernel
         Commands\GenerateMagicLink::class,
         Commands\SponsorDump::class,
         Commands\GetGithubActivity::class,
+        Commands\GenerateTableNumbers::class,
     ];
 
     /**

@@ -39,6 +39,9 @@ class ImageController extends Controller
     public static function stitchAccessCards($role = User::ROLE_HACKER)
     {
         $paths = Card::whereNotNull('filename')->where('role', $role)->get()->pluck('filename')->toArray();
+        if(sizeof($paths)==0) {
+            return;
+        }
         $whitePixel = new ImagickPixel('#FFFFFF');
         //background color depends on role
         $roleColors = [
@@ -245,19 +248,28 @@ class ImageController extends Controller
         $image->setImageResolution(300, 300);
         $image->setImageFormat('jpg');
 
-        $roleStripe = new ImagickDraw();
-        $roleStripe->setFillColor($bluePixel);
-        $roleStripe->rectangle(0, 1275, self::SHEET_WIDTH_PX, 1276);
-        $image->drawImage($roleStripe);
+//        $roleStripe = new ImagickDraw();
+//        $roleStripe->setFillColor($bluePixel);
+//        $roleStripe->rectangle(0, 1275, self::SHEET_WIDTH_PX, 1276);
+//        $image->drawImage($roleStripe);
 
         $BMTextLine = new ImagickDraw();
         $BMTextLine->setFont($headingFont);
-        $BMTextLine->setFontSize(200);
+        $BMTextLine->setFontSize(300);
         $BMTextLine->setFillColor($bluePixel);
 
-        $image->annotateImage($BMTextLine, 2000, 600, 0, $num);
+        $image->annotateImage($BMTextLine, 2300, 600, 180, $num);
+        $image->annotateImage($BMTextLine, self::SHEET_WIDTH_PX-2300, self::SHEET_HEIGHT_PX-600, 0, $num);
 
-        $image->annotateImage($BMTextLine, 1300, 1950, 180, $num);
+
+        $item1raw = new Imagick();
+        $item1raw->readImageFile(fopen(resource_path('assets/bmv_logo_pinkyellow.png'), 'rb'));
+        $item1raw->cropThumbnailImage(1000, 1000);
+        $item1raw->rotateImage($whitePixel,180);
+        $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 600, 180);
+
+        $item1raw->rotateImage($whitePixel,180);
+        $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 1700, 1370);
 
         $fileName = "table-numbers/table-${num}.pdf";
         $path = public_path().'/'.$fileName;
