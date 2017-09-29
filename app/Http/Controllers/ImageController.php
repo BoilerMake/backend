@@ -255,11 +255,11 @@ class ImageController extends Controller
 
         $BMTextLine = new ImagickDraw();
         $BMTextLine->setFont($headingFont);
-        $BMTextLine->setFontSize(300);
+        $BMTextLine->setFontSize(150);
         $BMTextLine->setFillColor($bluePixel);
 
-        $image->annotateImage($BMTextLine, 2300, 600, 180, $num);
-        $image->annotateImage($BMTextLine, self::SHEET_WIDTH_PX-2300, self::SHEET_HEIGHT_PX-600, 0, $num);
+        $image->annotateImage($BMTextLine, self::SHEET_WIDTH_PX-175, 600, 180, $num);
+        $image->annotateImage($BMTextLine, 175, self::SHEET_HEIGHT_PX-600, 0, $num);
 
 
         $item1raw = new Imagick();
