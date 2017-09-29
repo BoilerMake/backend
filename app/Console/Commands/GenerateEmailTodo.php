@@ -80,7 +80,7 @@ class GenerateEmailTodo extends Command
         if ($mode == 3) {
             $this->info(json_encode($toAcceptFromWaitlist->pluck('id')));
             foreach (User::whereIn('id', $toAcceptFromWaitlist->pluck('user_id'))->get() as $u) {
-                $this->info($u->email.','.$u->first_nam.','.$u->getHashIDAttribute());
+                $this->info($u->email.','.$u->first_name.','.$u->getHashIDAttribute());
             }
         }
         if ($mode == 4) {
