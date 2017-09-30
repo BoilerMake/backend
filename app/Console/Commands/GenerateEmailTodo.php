@@ -123,9 +123,7 @@ class GenerateEmailTodo extends Command
         }
         if ($mode == 8) {
             foreach (User::whereIn('id', $checkedInHackers)->with('application', 'application.school')->get() as $user) {
-                if ($user->application->school) {
-                    $this->info($user->first_name.','.$user->last_name.','.$user->email.','.($user->application && $user->application->school ? $user->application->school->name : 'n/a'));
-                }
+                $this->info($user->first_name.','.$user->last_name.','.$user->email.','.($user->application && $user->application->school ? $user->application->school->name : 'n/a'));
             }
         }
     }
