@@ -62,6 +62,7 @@ class CreateCheckedInHackers extends Command
 
         $application = Application::where('user_id',$user->id)->first();
         $application->school_id = $this->argument('school_id');
+        $application->save();
 
         $test = new ExecController();
         $test->checkInUser($user->id);
