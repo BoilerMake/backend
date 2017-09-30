@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
         Commands\SponsorDump::class,
         Commands\GetGithubActivity::class,
         Commands\GenerateTableNumbers::class,
+        Commands\CreateCheckedInHackers::class,
     ];
 
     /**
