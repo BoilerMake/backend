@@ -47,6 +47,7 @@ class GenerateEmailTodo extends Command
         $this->info('5: incomplete apps');
         $this->info('6: rsvp=yes, non bus, non purdue, i.e. driving');
         $this->info('7: rsvp=yes, with schools');
+        $this->info('8: checked in hackers');
         $mode = $this->ask('mode?');
         $this->info('mode: '.$mode);
 
@@ -62,6 +63,7 @@ class GenerateEmailTodo extends Command
         $expiredFromAccepted = Application::where('emailed_decision', Application::DECISION_ACCEPT)
                     ->where('decision', Application::DECISION_EXPIRED)
                     ->get();
+        $checkedInHackers = Application::whereNotNull(Application::FIELD_CHECKED_IN_AT)->get();
 
         $incomplete = Application::where('completed_calculated', false)->get()->pluck('user_id');
 
@@ -117,6 +119,13 @@ class GenerateEmailTodo extends Command
                     ."\t".($user->application->school ? $user->application->school->name : 'no school???')
                     ."\t".$user->getHashIDAttribute()
                 );
+            }
+        }
+        if ($mode == 8) {
+            foreach (User::whereIn('id', $checkedInHackers)->with('application', 'application.school')->get() as $user) {
+                if ($user->application->school) {
+                    $this->info($user->first_name.','.$user->last_name.','.$user->email.','.($user->application && $user->application->school ? $user->application->school->name : 'n/a'));
+                }
             }
         }
     }
