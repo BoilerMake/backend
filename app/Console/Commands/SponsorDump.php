@@ -53,7 +53,7 @@ class SponsorDump extends Command
         $this->info('saving to: '.$resumeDir);
         $apps = Application::with('user')->get();
         foreach ($apps as $app) {
-            if ($app->rsvp && $app->resume_uploaded) {
+            if ($app->rsvp && $app->resume_uploaded && ($app->checked_in_at !== null)) {
                 $resumeURL = $app->user->resumeURL();
                 $resumeFilename = $app->user->id.'_'.$app->user->first_name.'_'.$app->user->last_name;
                 $resumeFilename = str_replace(' ', '_', $resumeFilename);
