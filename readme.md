@@ -1,4 +1,4 @@
-# BoilerMake Website [backend]
+# BoilerMake API
 
 [![Build Status](https://travis-ci.org/BoilerMake/backend.svg?branch=master)](https://travis-ci.org/BoilerMake/backend)
 [![codecov](https://codecov.io/gh/BoilerMake/backend/branch/master/graph/badge.svg)](https://codecov.io/gh/BoilerMake/backend)
@@ -7,8 +7,7 @@
 
 
 ## Info
-This API is currently being actively developed for use in BoilerMake V. If you are interested in using some/all of the components with your hackathon, please email dev@boilermake.org. [featureset + more information here!](http://2016.boilermake.org/about)
-
+This API has been used for BoilerMake IV and V, powering the [frontend website](https://github.com/boilermake/frontend) as well as other ancillary services for internal use. 
 ### Prerequisites
 * Have PHP, MySQL, and Composer installed.
   * PHP: Install via package manager
