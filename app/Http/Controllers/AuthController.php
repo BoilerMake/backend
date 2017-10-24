@@ -15,6 +15,8 @@ use App\Models\PasswordReset;
 
 /**
  * Class AuthController.
+ * Used to login and register users, via both email and password
+ * Also handles password reset and email confirmations.
  */
 class AuthController extends Controller
 {

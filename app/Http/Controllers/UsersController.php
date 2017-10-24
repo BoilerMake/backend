@@ -7,6 +7,9 @@ use Request;
 use App\Models\User;
 use App\Models\Application;
 
+/*
+ * Handles basic user functions, such as updating and getting the user + their application
+ */
 class UsersController extends Controller
 {
     /**
@@ -20,6 +23,7 @@ class UsersController extends Controller
     }
 
     /**
+     * Updates the current user, based on JSON payload
      * PUT /users/me.
      * @return mixed
      */
@@ -45,6 +49,7 @@ class UsersController extends Controller
     }
 
     /**
+     * Gets an application, including validation information.
      * GET /users/me/application.
      * @return mixed
      */
@@ -75,6 +80,7 @@ class UsersController extends Controller
     }
 
     /**
+     * Updates an application based on JSON payload in request body
      * PUT /users/me/application.
      * @return mixed
      */

@@ -129,6 +129,7 @@ class GeneralController extends Controller
     }
 
     /**
+     * Submits an email for interest signup
      * POST interest/signup.
      *
      * @return mixed
@@ -153,6 +154,7 @@ class GeneralController extends Controller
     }
 
     /*
+     * Gets schedule for day-of site
      * GET /events
      */
     public function getEvents()
@@ -161,6 +163,7 @@ class GeneralController extends Controller
     }
 
     /*
+     * Gets announcements for the day-of site
      * GET /announcements
      */
     public function getAnnouncements()
