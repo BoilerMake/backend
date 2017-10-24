@@ -30,7 +30,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * GET /
+     * GET /.
      *
      * @return mixed
      */

@@ -6,7 +6,6 @@ use Auth;
 use Request;
 use App\Models\User;
 use App\Models\Application;
-use App\Models\PuzzleProgress;
 
 /*
  * Handles basic user functions, such as updating and getting the user + their application
