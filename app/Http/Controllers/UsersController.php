@@ -6,7 +6,6 @@ use Auth;
 use Request;
 use App\Models\User;
 use App\Models\Application;
-use App\Models\PuzzleProgress;
 
 class UsersController extends Controller
 {
