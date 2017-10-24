@@ -17,10 +17,8 @@ class GenerateTableNumbers extends Command
 
     public function handle()
     {
-//        for($x=1; $x<150; $x++) {
-//            ImageController::generateTableNumberImage($x);
-//        }
-        ImageController::generateTableNumberImage('Clarity Partners');
-
+        for($x=1; $x<150; $x++) {
+            ImageController::generateTableNumberImage($x);
+        }
     }
 }

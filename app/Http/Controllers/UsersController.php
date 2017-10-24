@@ -117,42 +117,4 @@ class UsersController extends Controller
 
         return $this->getApplication();
     }
-
-    //    public function completePuzzle(Request $request)
-//    {
-//        if (! Auth::user()) {
-//            return ['auth plz'];
-//        }
-//        $puzzle_id = intval($request->get('puzzle_id'));
-//        if (! isset($puzzle_id)) {
-//            return ['puzzle id null'];
-//        }
-//        $user_id = Auth::user()->id;
-//
-//        if ($request->get('puzzle_secret') != env('PUZZLE_SECRET')) {
-//            return ['bad puzzle secret'];
-//        }
-//
-//        if (PuzzleProgress::where('user_id', $user_id)->where('puzzle_id', $puzzle_id)->exists()) {
-//            return ['dup'];
-//        }
-//
-//        $r = new PuzzleProgress();
-//        $r->user_id = $user_id;
-//        $r->puzzle_id = $puzzle_id;
-//        $r->save();
-//
-//        return ['ok'];
-//    }
-//
-//    public function getCompletedPuzzleIDs(Request $request)
-//    {
-//        $user_id = Auth::user()->id;
-//        $ids = [];
-//        foreach (PuzzleProgress::where('user_id', $user_id)->get() as $each) {
-//            $ids[] = intval($each->puzzle_id);
-//        }
-//
-//        return ['puzzles'=>$ids];
-//    }
 }
