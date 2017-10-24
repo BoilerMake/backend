@@ -39,7 +39,7 @@ class ImageController extends Controller
     public static function stitchAccessCards($role = User::ROLE_HACKER)
     {
         $paths = Card::whereNotNull('filename')->where('role', $role)->get()->pluck('filename')->toArray();
-        if(sizeof($paths)==0) {
+        if (count($paths) == 0) {
             return;
         }
         $whitePixel = new ImagickPixel('#FFFFFF');
@@ -258,17 +258,16 @@ class ImageController extends Controller
         $BMTextLine->setFontSize(150);
         $BMTextLine->setFillColor($bluePixel);
 
-        $image->annotateImage($BMTextLine, self::SHEET_WIDTH_PX-175, 600, 180, $num);
-        $image->annotateImage($BMTextLine, 175, self::SHEET_HEIGHT_PX-600, 0, $num);
-
+        $image->annotateImage($BMTextLine, self::SHEET_WIDTH_PX - 175, 600, 180, $num);
+        $image->annotateImage($BMTextLine, 175, self::SHEET_HEIGHT_PX - 600, 0, $num);
 
         $item1raw = new Imagick();
         $item1raw->readImageFile(fopen(resource_path('assets/bmv_logo_pinkyellow.png'), 'rb'));
         $item1raw->cropThumbnailImage(1000, 1000);
-        $item1raw->rotateImage($whitePixel,180);
+        $item1raw->rotateImage($whitePixel, 180);
         $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 600, 180);
 
-        $item1raw->rotateImage($whitePixel,180);
+        $item1raw->rotateImage($whitePixel, 180);
         $image->compositeImage($item1raw, IMAGICK::COMPOSITE_DEFAULT, 1700, 1370);
 
         $fileName = "table-numbers/table-${num}.pdf";

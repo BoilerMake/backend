@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\ExecController;
-use App\Models\Application;
 use Hash;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Application;
 use Illuminate\Console\Command;
+use App\Http\Controllers\ExecController;
 
 class CreateCheckedInHackers extends Command
 {
@@ -52,7 +52,6 @@ class CreateCheckedInHackers extends Command
         $this->info('email: '.$this->argument('email'));
         $this->info('school_id: '.$this->argument('school_id'));
 
-
         $password = Hash::make(Carbon::now().env('APP_KEY'));
 
         $user = User::addNew($this->argument('email'), $password, false);
@@ -60,12 +59,11 @@ class CreateCheckedInHackers extends Command
         $user->last_name = $this->argument('last_name');
         $user->save();
 
-        $application = Application::where('user_id',$user->id)->first();
+        $application = Application::where('user_id', $user->id)->first();
         $application->school_id = $this->argument('school_id');
         $application->save();
 
         $test = new ExecController();
         $test->checkInUser($user->id);
-
     }
 }
