@@ -29,8 +29,7 @@
         "fzaninotto/faker": "dev-master",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~5.7",
-        "laracasts/generators": "master@dev",
-        "itsgoingd/clockwork": "~1.14"
+        "laracasts/generators": "master@dev"
     },
     "autoload": {
         "classmap": [

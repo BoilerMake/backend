@@ -19,7 +19,6 @@ class Kernel extends HttpKernel
     protected $middleware = [
         HandleCors::class,
         JWTTestFix::class,
-        \Clockwork\Support\Laravel\ClockworkMiddleware::class,
     ];
 
     /**

@@ -184,7 +184,6 @@ return [
         Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
-        Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
         Chumper\Zipper\ZipperServiceProvider::class,
     ],
