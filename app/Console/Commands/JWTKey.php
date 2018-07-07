@@ -56,6 +56,6 @@ class JWTKey extends Command
      */
     protected function generateRandomKey()
     {
-        return Str::quickRandom(32);
+        return Str::random(32);
     }
 }

@@ -36,9 +36,9 @@ class SetupTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testSamiDocs()
-    {
-        $response = $this->call('GET', '/docs');
-        //        Log::info(exec('composer run-script docs'));
-    }
+    // public function testSamiDocs()
+    // {
+    //     $response = $this->call('GET', '/docs');
+    //            Log::info(exec('composer run-script docs'));
+    // }
 }
