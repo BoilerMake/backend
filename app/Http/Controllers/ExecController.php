@@ -6,14 +6,12 @@ use Auth;
 use Request;
 use Validator;
 use Carbon\Carbon;
-use App\Models\Pod;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\Application;
 use App\Models\Announcement;
 use App\Models\InterestSignup;
 use App\Models\ApplicationNote;
-use Eluceo\iCal\Component\Calendar;
 
 /**
  * Class ExecController.
@@ -287,44 +285,8 @@ class ExecController extends Controller
      */
     public function deleteEvent(Request $request, Event $event)
     {
-        if (Pod::where('current_event_id', $event->id)->exists()) {
-            return ['message' => 'event_in_use'];
-        }
         $event->delete();
 
         return ['message' => 'success'];
-    }
-
-    /**
-     * Generates an ical calendar.
-     * @param Request $request
-     */
-    public function generateCalendar(Request $request)
-    {
-        date_default_timezone_set('America/New_York');
-        $vCalendar = new Calendar('www.boilermake.org');
-        $events = Event::where('hidden', 0)->get();
-        // Iterate through all events
-        foreach ($events as $event) {
-            $vEvent = new \Eluceo\iCal\Component\Event();
-            $vEvent->setUseTimezone(true);
-            $vEvent
-                ->setDtStart(new \DateTime($event->begin))
-                ->setDtEnd(new \DateTime($event->end))
-                ->setNoTime(false)
-                ->setSummary($event->title);
-            $vCalendar->addComponent($vEvent);
-        }
-
-        // Headers that might not actually do anything
-        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); //date in the past
-        header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); //tell it we just updated
-        header('Cache-Control: no-store, no-cache, must-revalidate'); //force revaidation
-        header('Cache-Control: post-check=0, pre-check=0', false);
-        header('Pragma: no-cache');
-
-        header('Content-Type: text/calendar; charset=utf-8');
-        header('Content-Disposition: attachment; filename="cal.ics"');
-        echo $vCalendar->render();
     }
 }

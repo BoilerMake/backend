@@ -28,7 +28,6 @@ This API has been used for BoilerMake IV and V, powering the [frontend website](
 * Run `php artisan db:seed`
 * Generate a JWT secret: `php artisan jwtkey:generate`
 * Generate an application key: `php artisan key:generate`
-* Generate a PodPod secret (OPTIONAL): `php artisan podpod:generate`
 
 * If you're using Apache, read this:
 	* https://github.com/tymondesigns/jwt-auth/wiki/Authentication

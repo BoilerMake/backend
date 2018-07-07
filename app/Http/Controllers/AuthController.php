@@ -40,14 +40,13 @@ class AuthController extends Controller
                 return response()->success(compact('token'));
             }
         }
-        // Probably a better way to do this
+
         return response()->error('Invalid email or password');
     }
 
     /**
      * Register a user.
      *
-     * TODO: error handling like duplicate accounts
      * @param  Request $request: email, password
      * @return string status message
      */
@@ -62,16 +61,13 @@ class AuthController extends Controller
             'password'    => 'required',
         ]);
 
-        $email = $request['email'];
         if ($validator->fails()) {
             return response()->error($validator->errors()->all());
-        } elseif (User::isEmailUsed($email)) {
-            return response()->error('There is already an account with that email!');
-        } else {
-            $user = User::addNew($email, $request['password']);
-
-            return response()->success(['token'=>$user->getToken()]);
         }
+
+        $user = User::addNew($request->email, $request->password);
+
+        return response()->success(['token'=>$user->getToken()]);
     }
 
     /**

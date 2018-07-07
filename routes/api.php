@@ -1,24 +1,14 @@
 <?php
 
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-//route route
 Route::any('/', 'GeneralController@info');
+
 /*
  * PHPdocs
  */
 Route::get('/docs', function () {
     return File::get(public_path().'/docs/index.html');
 });
+
 //used by sponsors.boilermake.org/packet/{secret}
 Route::get('packet/{secret}', 'SponsorsController@packet');
 
@@ -49,6 +39,7 @@ Route::prefix('v1')->group(function () {
     Route::post('users/reset/send', 'AuthController@sendPasswordReset');
     Route::post('users/reset/perform', 'AuthController@performPasswordReset');
     Route::post('users/verify/{code?}', 'AuthController@confirmEmail');
+
     /*
      * User routes
      */
@@ -61,12 +52,9 @@ Route::prefix('v1')->group(function () {
             //user application
             Route::get('application', 'UsersController@getApplication');
             Route::put('application', 'UsersController@updateApplication');
-
-            //user puzzle status
-//            Route::post('puzzles', 'UsersController@completePuzzle');
-//            Route::get('puzzles', 'UsersController@getCompletedPuzzleIDs');
         });
     });
+
     /*
      * Exec routes
      */
@@ -91,18 +79,5 @@ Route::prefix('v1')->group(function () {
 
         //?
         Route::get('interest', 'ExecController@getInterestData')->middleware(['jwt.auth', 'role:exec']);
-        Route::get('calendar', 'ExecController@generateCalendar');
-    });
-
-    /*
-     * PODPOD
-     */
-
-    Route::prefix('pods')->group(function () {
-        Route::post('scan', 'PodController@scan');
-        Route::get('list', 'PodController@listPods');
-        Route::get('events', 'PodController@listEvents');
-        Route::get('scans', 'PodController@listScans');
-        Route::post('heartbeat', 'PodController@heartbeat');
     });
 });

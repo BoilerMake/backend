@@ -9,11 +9,9 @@ use Request;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\School;
-use App\Models\PodScan;
 use App\Models\UserStat;
 use App\Models\GithubEvent;
 use App\Models\Announcement;
-use App\Models\InboundMessage;
 use App\Models\InterestSignup;
 
 class GeneralController extends Controller
@@ -105,30 +103,6 @@ class GeneralController extends Controller
     }
 
     /**
-     * Handles an incoming SMS from twillio.
-     * @deprecated
-     * @codeCoverageIgnore
-     */
-    public function inboundSMS()
-    {
-        $input = Request::all();
-
-        $phone = $input['From'];
-        $user_id = null;
-        //try to match it to user we have
-        $user = User::where('phone', 'LIKE', '%'.$phone.'%')->get()->first();
-        if ($user) {
-            $user_id = $user->id;
-        }
-        $n = new InboundMessage();
-        $n->user_id = $user_id;
-        $n->raw = json_encode($input);
-        $n->number = $phone;
-        $n->message = $input['Body'];
-        $n->save();
-    }
-
-    /**
      * Submits an email for interest signup
      * POST interest/signup.
      *
@@ -186,20 +160,8 @@ class GeneralController extends Controller
             ];
         }
 
-        $podScans = [];
-        foreach (PodScan::with('user', 'pod')->orderBy('created_at', 'DESC')->get() as $scan) {
-            if ($scan->user && $scan->pod) {
-                $podScans[] = [
-                    'id'        => $scan->id,
-                    'message'   => $scan->user->name.' scanned at pod '.$scan->pod->name,
-                    'timestamp' => $scan->created_at->toDateTimeString(),
-                ];
-            }
-        }
-
         return [
             'github'=>$github,
-            'pods'=>$podScans,
         ];
     }
 }

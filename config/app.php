@@ -13,7 +13,6 @@ return [
     */
 
     'name' => 'BoilerMake',
-    'podpod' => env('PODPOD_KEY'),
     'phase' => env('APP_PHASE'),
 
     /*
