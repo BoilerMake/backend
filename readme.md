@@ -28,7 +28,7 @@ This API has been used for BoilerMake IV and V, powering the [frontend website](
 * Copy `.env.example` to `.env` and configure your database credentials
 * Run `php artisan migrate`
 * Run `php artisan db:seed`
-* Generate a JWT secret: `php artisan jwt:generate`
+* Generate a JWT secret: `php artisan jwt:secret`
 * Generate an application key: `php artisan key:generate`
 
 * If you're using Apache, read this: https://github.com/tymondesigns/jwt-auth/wiki/Authentication

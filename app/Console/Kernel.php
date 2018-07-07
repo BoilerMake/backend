@@ -15,7 +15,6 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Inspire::class,
         Commands\CreateUser::class,
-        Commands\JWTKey::class,
         Commands\AcceptDrivingHackers::class,
         Commands\GenerateEmailTodo::class,
         Commands\BusRoster::class,
