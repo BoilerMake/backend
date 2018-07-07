@@ -8,29 +8,30 @@
 
 ## Info
 This API has been used for BoilerMake IV and V, powering the [frontend website](https://github.com/boilermake/frontend) as well as other ancillary services for internal use. 
-### Prerequisites
-* Have PHP, MySQL, and Composer installed.
-  * PHP: Install via package manager
-  * MySQL: install via package manager
-	* Remember to install/setup the PHP MySql driver
-	  * Arch Linux: https://wiki.archlinux.org/index.php/PHP#MySQL.2FMariaDB
-	  * Ubuntu/Debian Linux: `sudo apt-get install php5-mysql`
-	* Also remember to start the service if you're in Linux
-  * Composer: [instructions here](https://getcomposer.org/doc/00-intro.md)
+
+### Server Requirements
+* PHP >= 7.1.3
+  * OpenSSL PHP Extension
+  * PDO PHP Extension
+  * Mbstring PHP Extension
+  * Tokenizer PHP Extension
+  * XML PHP Extension
+  * Ctype PHP Extension
+  * JSON PHP Extension
+* [Nginx](https://www.nginx.com)
+* [Composer](https://getcomposer.org)
+* MySQL or PostgreSQL
 
 ### Installation
+* Clone the repository
 * Run `composer install`
-* Copy `.env.example` to `.env` and configure your MySQL credentials (and create a new database if you haven't already)
-  * Create the database. Type the following in your Terminal
-     * `mysql -u root -p`
-     * `create database boilermake;`
+* Copy `.env.example` to `.env` and configure your database credentials
 * Run `php artisan migrate`
 * Run `php artisan db:seed`
-* Generate a JWT secret: `php artisan jwtkey:generate`
+* Generate a JWT secret: `php artisan jwt:generate`
 * Generate an application key: `php artisan key:generate`
 
-* If you're using Apache, read this:
-	* https://github.com/tymondesigns/jwt-auth/wiki/Authentication
+* If you're using Apache, read this: https://github.com/tymondesigns/jwt-auth/wiki/Authentication
 
 #### Phases:
 These refer to the 3 phases a system can be in
