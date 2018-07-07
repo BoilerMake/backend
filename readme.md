@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/BoilerMake/backend.svg?branch=master)](https://travis-ci.org/BoilerMake/backend)
 [![codecov](https://codecov.io/gh/BoilerMake/backend/branch/master/graph/badge.svg)](https://codecov.io/gh/BoilerMake/backend)
-[![StyleCI](https://styleci.io/repos/48928914/shield?branch=cleaning)](https://styleci.io/repos/48928914)
+[![StyleCI](https://github.styleci.io/repos/48928914/shield)](https://styleci.io/repos/48928914)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/boilermake/boilermake)
 
 
