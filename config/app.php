@@ -175,14 +175,13 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Barryvdh\Cors\ServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Spatie\Tail\TailServiceProvider::class,
 
         Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
-        Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
         Chumper\Zipper\ZipperServiceProvider::class,
     ],
@@ -240,7 +239,6 @@ return [
         'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
         'AWS' => Aws\Laravel\AwsFacade::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
         'Zipper' => Chumper\Zipper\Zipper::class,
 
     ],

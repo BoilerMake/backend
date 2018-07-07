@@ -227,7 +227,7 @@ class AuthTest extends TestCase
         $response = $this->json('GET', '/v1/users/me');
         $response
             ->assertStatus(401)
-            ->assertJson(['success' => false]);
+            ->assertJson(['message' => 'Token not provided']);
     }
 
     public function testInvalidToken()
@@ -235,6 +235,6 @@ class AuthTest extends TestCase
         $response = $this->json('GET', '/v1/users/me', [], ['HTTP_Authorization'=>'Bearer blah']);
         $response
             ->assertStatus(401)
-            ->assertJson(['success' => false]);
+            ->assertJson(['message' => 'Wrong number of segments']);
     }
 }

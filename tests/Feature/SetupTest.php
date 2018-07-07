@@ -35,10 +35,4 @@ class SetupTest extends TestCase
         $response = $this->call('GET', '/v1/missingroute');
         $response->assertStatus(404);
     }
-
-    // public function testSamiDocs()
-    // {
-    //     $response = $this->call('GET', '/docs');
-    //            Log::info(exec('composer run-script docs'));
-    // }
 }

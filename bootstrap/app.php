@@ -41,39 +41,6 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
-use Monolog\Handler\StreamHandler;
-
-$app->configureMonologUsing(function ($monolog) {
-    if (env('SENTRY_DSN')) {
-        //send *errors* to sentry
-        $client = new Raven_Client(env('SENTRY_DSN'));
-        $handler = new Monolog\Handler\RavenHandler($client, Monolog\Logger::ERROR);
-        $handler->setFormatter(new Monolog\Formatter\LineFormatter("%message% %context% %extra%\n"));
-        $monolog->pushHandler($handler);
-    }
-
-    $monolog->pushProcessor(function ($r) {
-        //add in some 'extra' info
-        $r['extra'] = [
-            'app'                 => 'boilermake_api',
-            'env'                 => env('APP_ENV'),
-            'origin_request_uuid' => Request::header('X-UUID'),
-            'origin_request_path' => Request::path(),
-            ];
-
-        return $r;
-    });
-
-    //re-setup default laravel log style since we're overriding Monoog initially
-    $infoStreamHandler = new StreamHandler(storage_path('logs/laravel.log'));
-    if (env('JSON_LOG')) {
-        //logstash pipeline needs JSON logs
-        $infoStreamHandler->setFormatter(new \Monolog\Formatter\JsonFormatter());
-    } else {
-        $infoStreamHandler->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
-    }
-    $monolog->pushHandler($infoStreamHandler);
-});
 /*
 |--------------------------------------------------------------------------
 | Return The Application

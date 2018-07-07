@@ -13,15 +13,18 @@ use Hashids\Hashids;
 use Illuminate\Support\Str;
 use App\Mail\UserRegistration;
 use OwenIt\Auditing\Auditable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use App\Mail\PasswordReset as PasswordResetEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class User extends Authenticatable implements AuditableContract
+class User extends Authenticatable implements AuditableContract, JWTSubject
 {
     use Auditable;
     use EntrustUserTrait;
+    use Notifiable;
     /**
      * The attributes that are mass assignable.
      *
@@ -258,5 +261,25 @@ class User extends Authenticatable implements AuditableContract
         }
 
         return substr($url, strrpos($url, '/') + 1);
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
