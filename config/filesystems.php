@@ -63,6 +63,13 @@ return [
             'bucket' => env('AWS_BUCKET'),
         ],
 
+        'backup' => [
+            'driver' => 's3',
+            'key' => env('AWS_BACKUP_ACCESS_KEY_ID'),
+            'secret' => env('AWS_BACKUP_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_BACKUP_REGION'),
+            'bucket' => env('AWS_BACKUP_BUCKET'),
+        ],
     ],
 
 ];

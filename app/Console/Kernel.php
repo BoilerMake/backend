@@ -34,6 +34,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        if(config('app.backup_enabled')) {
+            $schedule->command('backup:clean')->weeklyOn(1, '8:00');
+            $schedule->command('backup:run --only-db')->hourly();
+        }
+        
         $schedule->command('applications:calculate')->everyFiveMinutes();
         //        $schedule->command('users:github')->everyFiveMinutes();
         $schedule->command('applications:expiredrsvp')->hourly();

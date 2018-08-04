@@ -14,6 +14,7 @@ return [
 
     'name' => 'BoilerMake',
     'phase' => env('APP_PHASE'),
+    'backup_enabled' => env('BACKUP_ENABLED', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -65,7 +66,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/New_York',
 
     /*
     |--------------------------------------------------------------------------
