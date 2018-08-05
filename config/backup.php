@@ -116,7 +116,7 @@ return [
         ],
 
         'slack' => [
-            'webhook_url' => 'https://hooks.slack.com/services/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',
+            'webhook_url' => env('SLACK_URL'),
         ],
     ],
 
