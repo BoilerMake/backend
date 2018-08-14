@@ -279,6 +279,6 @@ class User extends Authenticatable implements AuditableContract, JWTSubject
     public function getJWTCustomClaims()
     {
         $roles = $this->roles()->get()->pluck('name');
-        return ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'slug'=>$this->slug(), 'user_id'=>$this->id];
+        return ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'user_id'=>$this->id];
     }
 }

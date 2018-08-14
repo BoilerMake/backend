@@ -76,16 +76,19 @@ class AuthTest extends TestCase
         $last_name = $faker->lastName;
         $password = $faker->password;
         $email = $faker->email;
-        $this->call('POST', '/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email]);
+
+        $this->post('/v1/users/register', ['first_name' => $first_name, 'last_name' => $last_name, 'password' => $password, 'email' => $email])
+          ->assertJsonFragment(['success' => true]);
         $this->post('/v1/users/login', ['email' => $email, 'password' => $password])
             ->assertJsonStructure(['data'=>['token']]);
         $this->post('/v1/users/login', [])
-            ->assertSee('["The email field is required.","The password field is required."]');
+            ->assertJsonFragment(["message" => ["email" => ["The email field is required."],"password" => ["The password field is required."]]]);
         $this->post('/v1/users/login', ['email' => $email, 'password' => $password.'#'])
             ->assertJson([
                 'data'=>null,
-//                "message"=>"applications are not open",
-                'success'=>false, ]);
+                'success'=>false,
+            ]
+        );
     }
 
     public function testAppPhaseSignups()
