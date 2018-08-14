@@ -32,7 +32,7 @@ class AuthController extends Controller
             'password'   => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->error($validator->errors()->all());
+            return response()->error($validator->errors()->messages());
         } else {
             if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
                 $token = Auth::user()->getToken();
@@ -62,7 +62,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->error($validator->errors()->all());
+            return response()->error($validator->errors()->messages());
         }
 
         $user = User::addNew($request->email, $request->password);

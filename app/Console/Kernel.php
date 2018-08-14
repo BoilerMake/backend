@@ -13,13 +13,11 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\Inspire::class,
         Commands\CreateUser::class,
         Commands\AcceptDrivingHackers::class,
         Commands\GenerateEmailTodo::class,
         Commands\BusRoster::class,
         Commands\GenerateAccessCards::class,
-        Commands\GenerateMagicLink::class,
         Commands\SponsorDump::class,
         Commands\GetGithubActivity::class,
         Commands\GenerateTableNumbers::class,
