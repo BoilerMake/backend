@@ -82,7 +82,7 @@ class AuthTest extends TestCase
         $this->post('/v1/users/login', ['email' => $email, 'password' => $password])
             ->assertJsonStructure(['data'=>['token']]);
         $this->post('/v1/users/login', [])
-            ->assertJsonFragment(["message" => ["email" => ["The email field is required."],"password" => ["The password field is required."]]]);
+            ->assertJsonFragment(['message' => ['email' => ['The email field is required.'], 'password' => ['The password field is required.']]]);
         $this->post('/v1/users/login', ['email' => $email, 'password' => $password.'#'])
             ->assertJson([
                 'data'=>null,

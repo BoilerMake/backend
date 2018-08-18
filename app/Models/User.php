@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App;
-use AWS;
 use Log;
 use Hash;
 use Mail;
 use JWTAuth;
+use Storage;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use Illuminate\Support\Str;
@@ -213,25 +213,26 @@ class User extends Authenticatable implements AuditableContract, JWTSubject
         if (App::environment() == 'testing') {
             return "http://s3-mock-resumes/{$this->id}.pdf";
         }
-        $s3 = AWS::createClient('s3');
-        switch ($method) {
-            case 'get':
-                $cmd = $s3->getCommand('getObject', [
-                    'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$this->id.'.pdf',
-                    'ResponseContentType' => 'application/pdf',
-                ]);
-                break;
-            case 'put':
-                $cmd = $s3->getCommand('PutObject', [
-                    'Bucket' => getenv('S3_BUCKET'),
-                    'Key'    => getenv('S3_PREFIX').'/resumes/'.$this->id.'.pdf',
-                ]);
-                break;
+
+        $expiry = '+7 days';
+
+        if ($method == 'get') {
+            return Storage::cloud()->temporaryUrl($this->getResumeFilePath(), now()->modify($expiry), ['ResponseContentType' => 'application/pdf']);
         }
-        $request = $s3->createPresignedRequest($cmd, '+7 days');
+
+        $client = Storage::cloud()->getDriver()->getAdapter()->getClient();
+        $command = $client->getCommand('PutObject', [
+            'Bucket' => getenv('AWS_BUCKET'),
+            'Key'    => $this->getResumeFilePath(),
+        ]);
+        $request = $client->createPresignedRequest($command, $expiry);
 
         return (string) $request->getUri();
+    }
+
+    public function getResumeFilePath()
+    {
+        return getenv('S3_PREFIX').'/resumes/'.$this->id.'.pdf';
     }
 
     /**
@@ -279,6 +280,11 @@ class User extends Authenticatable implements AuditableContract, JWTSubject
     public function getJWTCustomClaims()
     {
         $roles = $this->roles()->get()->pluck('name');
-        return ['exp' => strtotime('+1 year'), 'roles'=>$roles, 'user_id'=>$this->id];
+
+        return [
+            'exp' => strtotime('+1 year'),
+            'roles' => $roles,
+            'user_id' => $this->id,
+        ];
     }
 }

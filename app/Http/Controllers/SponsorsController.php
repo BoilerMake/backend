@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use AWS;
 use Log;
+use Storage;
 
 class SponsorsController extends Controller
 {
@@ -20,18 +20,14 @@ class SponsorsController extends Controller
 
             return 'not authorized';
         }
+
         Log::info('sponsorship_packet_read');
-        $s3 = AWS::createClient('s3');
 
-        // Get the object
-        $result = $s3->getObject([
-            'Bucket' => getenv('S3_BUCKET'),
-            'Key'    => getenv('S3_PREFIX').'/packet.pdf',
+        $file = Storage::cloud()->get(getenv('S3_PREFIX').'/packet.pdf');
+
+        return response($file, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="BoilerMake_sponsorship_packet.pdf"',
         ]);
-
-        // Display the object in the browser
-        header("Content-Type: {$result['ContentType']}");
-        header('Content-Disposition: inline; filename="BoilerMake_sponsorship_packet.pdf"');
-        echo $result['Body'];
     }
 }

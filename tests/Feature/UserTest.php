@@ -48,4 +48,26 @@ class UserTest extends TestCase
         $lookupUser = User::getFromHashID('148971asdfjk');
         $this->assertEquals($lookupUser, null);
     }
+
+    public function testGetResumeFilePath()
+    {
+        putenv('S3_PREFIX=prod');
+        $user = $this->makeTestUser();
+        $this->assertEquals($user->getResumeFilePath(), 'prod/resumes/'.$user->id.'.pdf');
+    }
+
+    public function testSlug()
+    {
+        $user = $this->makeTestUser();
+        $this->assertEquals($user->slug(), $user->first_name.' '.$user->last_name.' (#'.$user->id.')');
+    }
+
+    public function testHasApplication()
+    {
+        $user = $this->makeTestUser();
+        $this->assertDatabaseHas('applications', [
+            'user_id' => $user->id,
+        ]);
+        $this->assertNotNull($user->application());
+    }
 }
