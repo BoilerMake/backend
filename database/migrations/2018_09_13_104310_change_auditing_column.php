@@ -14,7 +14,7 @@ class ChangeAuditingColumn extends Migration
     public function up()
     {
         Schema::table('audits', function (Blueprint $table) {
-            $table->text('user_agent')->change();
+            $table->text('user_agent')->nullable()->change();
         });
     }
 
@@ -26,7 +26,7 @@ class ChangeAuditingColumn extends Migration
     public function down()
     {
         Schema::table('audits', function (Blueprint $table) {
-            $table->string('user_agent')->change();
+            $table->string('user_agent')->nullable()->change();
         });
     }
 }
