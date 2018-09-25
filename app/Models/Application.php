@@ -129,6 +129,10 @@ class Application extends Model implements AuditableContract
             $reason_label[] = 'Last name not set.';
             $reason_field[] = 'last_name';
         }
+        if (! $this->user->phone) {
+            $reason_label[] = 'Phone number not set.';
+            $reason_field[] = 'phone';
+        }
         if (! isset($this->school_id)) {
             $reason_label[] = 'School not set.';
             $reason_field[] = 'school_id';
