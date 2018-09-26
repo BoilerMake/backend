@@ -14,7 +14,7 @@ class AddProjectNameToUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->text('project_idea');
+            $table->text('project_idea')->nullable();
         });
     }
 

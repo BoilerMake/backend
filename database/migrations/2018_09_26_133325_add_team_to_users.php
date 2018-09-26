@@ -14,7 +14,7 @@ class AddTeamToUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->text('team_names');
+            $table->text('team_names')->nullable();
         });
     }
 
