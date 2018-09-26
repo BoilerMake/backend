@@ -31,7 +31,7 @@ class UsersController extends Controller
     {
         $user = Auth::user();
         $data = json_decode(Request::getContent(), true);
-
+        info($data);
         foreach ($data as $key => $value) {
             //update the user info
             if (in_array($key, [
@@ -39,6 +39,8 @@ class UsersController extends Controller
                 User::FIELD_FIRSTNAME,
                 User::FIELD_LASTNAME,
                 User::FIELD_PHONE,
+                User::FIELD_PROJECT_IDEA,
+                User::FIELD_TEAM_NAMES,
             ])) {
                 $user->$key = $value;
                 $user->save();
