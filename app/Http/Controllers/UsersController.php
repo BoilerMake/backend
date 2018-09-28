@@ -40,7 +40,9 @@ class UsersController extends Controller
                 User::FIELD_LASTNAME,
                 User::FIELD_PHONE,
                 User::FIELD_PROJECT_IDEA,
-                User::FIELD_TEAM_NAMES,
+                User::FIELD_TEAM_NAME_1,
+                User::FIELD_TEAM_NAME_2,
+                User::FIELD_TEAM_NAME_3,
             ])) {
                 $user->$key = $value;
                 $user->save();

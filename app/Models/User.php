@@ -56,7 +56,9 @@ class User extends Authenticatable implements AuditableContract, JWTSubject
     const FIELD_PHONE = 'phone';
     const FIELD_CONFIRMATION_CODE = 'confirmation_code';
     const FIELD_PROJECT_IDEA = 'project_idea';
-    const FIELD_TEAM_NAMES = 'team_names';
+    const FIELD_TEAM_NAME_1 = 'team_name_1';
+    const FIELD_TEAM_NAME_2 = 'team_name_2';
+    const FIELD_TEAM_NAME_3 = 'team_name_3';
 
     public function getLaunchAttribute()
     {
