@@ -73,7 +73,7 @@ class GeneralController extends Controller
         ]);
         $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
         if ($shouldLog) {
-            Log::info('UserStatRecorded', [
+            Log::debug('UserStatRecorded', [
                 'user_id' => $user_id,
                 'event' => $eventName,
                 'subtitle' => $subtitle,
@@ -112,14 +112,14 @@ class GeneralController extends Controller
     {
         $email = Request::get('email');
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Log::info('InterestSignup Fail');
+            Log::debug('InterestSignup Fail');
 
             return response()->error('email is not valid!');
         }
 
         $signup = InterestSignup::firstOrCreate(['email' => $email]);
         if ($signup->wasRecentlyCreated) {
-            Log::info('InterestSignup Success');
+            Log::debug('InterestSignup Success');
 
             return response()->success('all signed up!');
         }

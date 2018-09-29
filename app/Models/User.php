@@ -123,14 +123,11 @@ class User extends Authenticatable implements AuditableContract, JWTSubject
     {
         foreach ($roles as $role) {
             $this->attachRole(Role::where('name', $role)->first());
-            Log::info("Attaching role: {$role} to user: {$this->id}", ['user_id'=>$this->id]);
+            Log::debug("Attaching role: {$role} to user: {$this->id}", ['user_id'=>$this->id]);
             if ($role == self::ROLE_HACKER) {
                 //this will create the application
                 $application = $this->getApplication();
                 $application->school_id = $this->hintSchoolIdFromEmail();
-            } else {
-                //TODO: implement
-                Log::error("postSignupActions: need to implement role {$role}");
             }
         }
     }
@@ -176,7 +173,7 @@ class User extends Authenticatable implements AuditableContract, JWTSubject
         $reset->save();
 
         $link = getenv('FRONTEND_ADDRESS').'/reset/'.$token;
-        Log::info("going to send PasswordReset to user_id {$this->id}, email {$this->email} ", ['user_id'=>$this->id]);
+        Log::debug("going to send PasswordReset to user_id {$this->id}, email {$this->email} ", ['user_id'=>$this->id]);
         Mail::to($this->email)->send(new PasswordResetEmail($this, $link));
     }
 
@@ -186,7 +183,7 @@ class User extends Authenticatable implements AuditableContract, JWTSubject
     public function getApplication()
     {
         if (! $this->hasRole(self::ROLE_HACKER)) {
-            Log::error("tried to get application for user {$this->id}, but they are not a hacker");
+            Log::alert("tried to get application for user {$this->id}, but they are not a hacker");
 
             return;
         }

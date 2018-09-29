@@ -75,7 +75,7 @@ class GithubUser extends Model
 
         if (isset($result['error'])) {
             //todo: handle error here...
-            Log::info('getGithubAuthToken access token fetching error', $result);
+            Log::error('getGithubAuthToken access token fetching error', $result);
 
             return false;
         }

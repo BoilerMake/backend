@@ -209,7 +209,7 @@ class ExecController extends Controller
     }
 
     /**
-     * POst to create an event.
+     * POST to create an event.
      * @param Request $request
      * @return array
      */

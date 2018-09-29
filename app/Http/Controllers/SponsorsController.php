@@ -16,13 +16,12 @@ class SponsorsController extends Controller
     public function packet($secret)
     {
         if ($secret != env('PACKET_SECRET')) {
-            Log::info('sponsorship_packet_auth_fail');
+            Log::notice('Unauthorized access to Sponsorship Packet with secret '.$secret);
 
             return 'not authorized';
         }
 
-        Log::info('sponsorship_packet_read');
-
+        Log::info('Sponsorship packet read');
         $file = Storage::cloud()->get(getenv('S3_PREFIX').'/packet.pdf');
 
         return response($file, 200, [

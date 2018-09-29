@@ -45,7 +45,7 @@ class ResponseServiceProvider extends ServiceProvider
         $shouldLog = (App::environment() == 'production') || env('SHOW_EXTRA_LOGS_DEV');
         Response::macro('success', function ($data) use ($requestInfo, $shouldDebugRequest, $shouldLog) {
             if ($shouldLog) {
-                Log::info('api_request', ['request' => $requestInfo]);
+                Log::debug('api_request', ['request' => $requestInfo]);
             }
 
             return Response::json([
@@ -59,7 +59,7 @@ class ResponseServiceProvider extends ServiceProvider
             $requestInfo['success'] = false;
             $requestInfo['code'] = $response_code;
             if ($shouldLog) {
-                Log::info('api_request', ['request' => $requestInfo, 'error_message' => $message]);
+                Log::debug('api_request', ['request' => $requestInfo, 'error_message' => $message]);
             }
 
             return Response::json([

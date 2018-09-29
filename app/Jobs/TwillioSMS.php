@@ -52,10 +52,12 @@ class TwillioSMS implements ShouldQueue
         }
 
         if (! $to) {
+            Log::error('Could not send SMS notification - user phone empty');
             $this->notif->logNotification('SMS', 'FAIL-'.$name, ['message'=>$message, 'to'=>$to]);
 
             return;
         }
+
         $twilioService = new Services_Twilio(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
 
         try {
@@ -67,7 +69,7 @@ class TwillioSMS implements ShouldQueue
                 ]
             );
         } catch (\Exception $e) {
-            Log::error(
+            Log::alert(
                 'Could not send SMS notification'.
                 ' Twilio replied with: '.$e
             );

@@ -18,7 +18,7 @@ Artisan::command('applications:expiredrsvp', function () {
     }
     $message = 'ExpiredRSVP: '.count($expiredAppsIds).' applications expired';
     $this->comment($message);
-    Log::info($message, ['application_ids'=>$expiredAppsIds]);
+    Log::debug($message, ['application_ids'=>$expiredAppsIds]);
 })->describe('process expired RSVPs');
 
 Artisan::command('applications:incompleteEmails', function () {

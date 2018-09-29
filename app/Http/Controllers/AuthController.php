@@ -85,7 +85,7 @@ class AuthController extends Controller
         if ($user) {
             $user->confirmed = 1;
             $user->save();
-            Log::info("confirmEmail {$user->email}");
+            Log::debug("confirmEmail {$user->email}");
 
             return response()->success(['message'=>'Email confirmed!', 'token'=>$user->getToken()]);
         }
@@ -197,7 +197,7 @@ class AuthController extends Controller
             $user = User::addNew($email, null, false);
         }
         $user->github_user_id = $githubUser->id;
-        Log::info("githubAuth success, action={$action}", ['user_id'=>$user->id]);
+        Log::debug("githubAuth success, action={$action}", ['user_id'=>$user->id]);
 
         //auto-fill names
         if (! $user->first_name && ! $user->last_name) {

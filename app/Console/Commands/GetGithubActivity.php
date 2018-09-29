@@ -97,11 +97,11 @@ class GetGithubActivity extends Command
             $rateLimitLeft = $response->getHeaders()['X-RateLimit-Remaining'][0];
             $rateLimitReset = $response->getHeaders()['X-RateLimit-Reset'][0];
             $minutesTillReset = Carbon::createFromTimestamp($rateLimitReset)->diffInMinutes(Carbon::now());
-            Log::info("getGithubActivity ratelimit: {$rateLimitLeft} left, will reset in {$minutesTillReset} minutes");
+            Log::warning("getGithubActivity ratelimit: {$rateLimitLeft} left, will reset in {$minutesTillReset} minutes");
 
             $app->github_etag = $response->getHeaders()['ETag'][0];
             $app->save();
         }
-        Log::info("getGithubActivity: pulled in github activity for {$doneUsers} users: {$doneEvents} events.");
+        Log::debug("getGithubActivity: pulled in github activity for {$doneUsers} users: {$doneEvents} events.");
     }
 }

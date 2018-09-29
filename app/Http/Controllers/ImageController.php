@@ -233,7 +233,7 @@ class ImageController extends Controller
         $image->writeImage($path);
         $image->clear();
         $image->destroy();
-        Log::info('Saved card for card #'.$card->id.' to: '.$fileName);
+        Log::debug('Saved card for card #'.$card->id.' to: '.$fileName);
     }
 
     public static function generateTableNumberImage($num)
