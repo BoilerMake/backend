@@ -18,6 +18,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "league/flysystem-cached-adapter": "^1.0",
         "owen-it/laravel-auditing": "^4.1",
+        "rollbar/rollbar-laravel": "^4.0",
         "spatie/laravel-backup": "^5.9",
         "spatie/laravel-tail": "^3.1.0",
         "symfony/psr-http-message-bridge": "1.0.*",
@@ -65,6 +66,13 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "optimize-autoloader": true
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+                "rollbar/rollbar-laravel"
+            ]
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

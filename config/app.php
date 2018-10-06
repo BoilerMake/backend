@@ -15,6 +15,7 @@ return [
     'name' => 'BoilerMake',
     'phase' => env('APP_PHASE'),
     'backup_enabled' => env('BACKUP_ENABLED', false),
+    'rollbar_enabled' => env('ROLLBAR_ENABLED', false),
 
     /*
     |--------------------------------------------------------------------------
