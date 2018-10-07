@@ -181,8 +181,6 @@ return [
         Barryvdh\Cors\ServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Spatie\Tail\TailServiceProvider::class,
-
-        Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
         Chumper\Zipper\ZipperServiceProvider::class,
