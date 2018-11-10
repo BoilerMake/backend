@@ -7,7 +7,7 @@
 
 
 ## Info
-This API has been used for BoilerMake IV and V, powering the [frontend website](https://github.com/boilermake/frontend) as well as other ancillary services for internal use. 
+This API has been used for BoilerMake IV, V, and VI, powering the [frontend website](https://github.com/boilermake/frontend) as well as other ancillary services for internal use. 
 
 ### Server Requirements
 * PHP >= 7.1.3
